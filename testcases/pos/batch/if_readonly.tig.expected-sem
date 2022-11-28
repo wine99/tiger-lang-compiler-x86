@@ -1,0 +1,24 @@
+(VOID,
+  ForExp(i,true,
+  | (INT,
+  |   IntExp(0)),
+  | (INT,
+  |   IntExp(10)),
+  | (VOID,
+  |   SeqExp[
+  |   | (INT,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(i)))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(i)))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(i)))))),
+  |   | (VOID,
+  |   |   SeqExp[])])))

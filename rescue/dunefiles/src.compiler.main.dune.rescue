@@ -1,0 +1,6 @@
+(library
+        (name tigermain)
+        (ocamlc_flags (:include rescue.byte.sexp))
+        (ocamlopt_flags (:include rescue.native.sexp))
+        (libraries  stdio cmdliner tigercommon tigerhoist tigerll tigerx86 llvmparser)
+        )

@@ -1,0 +1,18 @@
+(INT,
+  LetExp([
+  | VarDec(s,true,STRING,
+  |   (STRING,
+  |   | StringExp("whatever"))),
+  | FunctionDec[
+  |   (compare,[],
+  |   | INT,
+  |   | (INT,
+  |   |   OpExp(GtOp,
+  |   |   | (STRING,
+  |   |   |   VarExp(
+  |   |   |   | (STRING,
+  |   |   |   |   SimpleVar(s)))),
+  |   |   | (STRING,
+  |   |   |   StringExp("else")))))]],
+  | (INT,
+  |   CallExp(compare,[]))))

@@ -1,0 +1,6 @@
+(STRING,
+  SeqExp[
+  | (INT,
+  |   IntExp(0)),
+  | (STRING,
+  |   CallExp(getchar,[]))])

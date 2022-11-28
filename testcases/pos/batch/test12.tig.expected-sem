@@ -1,0 +1,27 @@
+(VOID,
+  LetExp([
+  | VarDec(a,true,INT,
+  |   (INT,
+  |   | IntExp(0)))],
+  | (VOID,
+  |   ForExp(i,true,
+  |   | (INT,
+  |   |   IntExp(0)),
+  |   | (INT,
+  |   |   IntExp(100)),
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(a)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[])])))))

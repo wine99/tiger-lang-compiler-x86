@@ -1,0 +1,411 @@
+LetExp([
+  TypeDec[
+  | (fp,
+  |   NameTy(int))],
+  VarDec(PRESISION,true,NONE,
+  | IntExp(128)),
+  FunctionDec[
+  | (mul,[
+  |   (a,true,fp),
+  |   (b,true,fp)],
+  |   SOME(fp),
+  |   OpExp(DivideOp,
+  |   | OpExp(TimesOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(a)),
+  |   |   VarExp(
+  |   |   | SimpleVar(b))),
+  |   | VarExp(
+  |   |   SimpleVar(PRESISION)))),
+  | (div,[
+  |   (a,true,fp),
+  |   (b,true,fp)],
+  |   SOME(fp),
+  |   OpExp(DivideOp,
+  |   | SeqExp[
+  |   |   OpExp(TimesOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(a)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(PRESISION)))],
+  |   | VarExp(
+  |   |   SimpleVar(b)))),
+  | (fix,[
+  |   (x,true,int)],
+  |   SOME(fp),
+  |   OpExp(TimesOp,
+  |   | VarExp(
+  |   |   SimpleVar(x)),
+  |   | VarExp(
+  |   |   SimpleVar(PRESISION)))),
+  | (base,[
+  |   (v,true,int)],
+  |   SOME(int),
+  |   LetExp([
+  |   | VarDec(acc,true,NONE,
+  |   |   IntExp(1))],
+  |   | SeqExp[
+  |   |   WhileExp(
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(v),
+  |   |   |   | OpExp(DivideOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(v)),
+  |   |   |   |   IntExp(10))),
+  |   |   |   OpExp(GeOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(v)),
+  |   |   |   | IntExp(1))],
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(10)))),
+  |   |   VarExp(
+  |   |   | SimpleVar(acc))])),
+  | (str,[
+  |   (v,true,int)],
+  |   SOME(string),
+  |   LetExp([
+  |   | VarDec(out,true,NONE,
+  |   |   IfExp(
+  |   |   | OpExp(LtOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(v)),
+  |   |   |   IntExp(0)),
+  |   |   | StringExp("-"),
+  |   |   | StringExp(""))),
+  |   | VarDec(val,true,NONE,
+  |   |   IfExp(
+  |   |   | OpExp(LtOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(v)),
+  |   |   |   IntExp(0)),
+  |   |   | OpExp(MinusOp,
+  |   |   |   IntExp(0),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(v))),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(v)))),
+  |   | VarDec(b,true,NONE,
+  |   |   CallExp(base,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(val))])),
+  |   | VarDec(off,true,NONE,
+  |   |   CallExp(ord,[
+  |   |   | StringExp("0")]))],
+  |   | SeqExp[
+  |   |   WhileExp(
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(b)),
+  |   |   |   IntExp(0)),
+  |   |   | LetExp([
+  |   |   |   VarDec(d,true,NONE,
+  |   |   |   | OpExp(DivideOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(val)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(b))))],
+  |   |   |   SeqExp[
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(val),
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(val)),
+  |   |   |   |   | OpExp(TimesOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(b)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(d))))),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(b),
+  |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(b)),
+  |   |   |   |   | IntExp(10))),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(out),
+  |   |   |   |   CallExp(concat,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(out)),
+  |   |   |   |   | CallExp(chr,[
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(off)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(d)))])]))])),
+  |   |   VarExp(
+  |   |   | SimpleVar(out))])),
+  | (sqrt,[
+  |   (x,true,fp)],
+  |   SOME(fp),
+  |   LetExp([
+  |   | VarDec(two,true,NONE,
+  |   |   CallExp(fix,[
+  |   |   | IntExp(2)])),
+  |   | VarDec(out,true,NONE,
+  |   |   CallExp(div,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(two))]))],
+  |   | SeqExp[
+  |   |   ForExp(i,true,
+  |   |   | IntExp(0),
+  |   |   | IntExp(10),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(out),
+  |   |   |   CallExp(div,[
+  |   |   |   | OpExp(PlusOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(out)),
+  |   |   |   |   CallExp(div,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(out))])),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(two))]))),
+  |   |   VarExp(
+  |   |   | SimpleVar(out))])),
+  | (sin,[
+  |   (x,true,fp)],
+  |   SOME(fp),
+  |   LetExp([
+  |   | VarDec(x3,true,NONE,
+  |   |   CallExp(mul,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x)),
+  |   |   | CallExp(mul,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x))])])),
+  |   | VarDec(x2,true,NONE,
+  |   |   CallExp(mul,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x))])),
+  |   | VarDec(out,true,NONE,
+  |   |   CallExp(div,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x3)),
+  |   |   | CallExp(fix,[
+  |   |   |   IntExp(6)])]))],
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | SimpleVar(x3),
+  |   |   | CallExp(mul,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x3)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x2))])),
+  |   |   AssignExp(
+  |   |   | SimpleVar(out),
+  |   |   | OpExp(PlusOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(out)),
+  |   |   |   CallExp(div,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x3)),
+  |   |   |   | CallExp(fix,[
+  |   |   |   |   IntExp(120)])]))),
+  |   |   AssignExp(
+  |   |   | SimpleVar(x3),
+  |   |   | CallExp(mul,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x3)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x2))])),
+  |   |   AssignExp(
+  |   |   | SimpleVar(out),
+  |   |   | OpExp(MinusOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(out)),
+  |   |   |   CallExp(div,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x3)),
+  |   |   |   | CallExp(fix,[
+  |   |   |   |   IntExp(5040)])]))),
+  |   |   AssignExp(
+  |   |   | SimpleVar(x3),
+  |   |   | CallExp(mul,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x3)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x2))])),
+  |   |   AssignExp(
+  |   |   | SimpleVar(out),
+  |   |   | OpExp(MinusOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(out)),
+  |   |   |   CallExp(div,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x3)),
+  |   |   |   | CallExp(fix,[
+  |   |   |   |   IntExp(362880)])]))),
+  |   |   OpExp(MinusOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(out)))])),
+  | (fstr,[
+  |   (x,true,fp)],
+  |   SOME(string),
+  |   LetExp([
+  |   | VarDec(sign,true,NONE,
+  |   |   StringExp(""))],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | OpExp(LtOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x)),
+  |   |   |   IntExp(0)),
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(x),
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | IntExp(0),
+  |   |   |   |   | IntExp(1)))),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(sign),
+  |   |   |   | StringExp("-"))]),
+  |   |   LetExp([
+  |   |   | VarDec(integerPart,true,NONE,
+  |   |   |   CallExp(concat,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(sign)),
+  |   |   |   | CallExp(concat,[
+  |   |   |   |   CallExp(str,[
+  |   |   |   |   | OpExp(DivideOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(PRESISION)))]),
+  |   |   |   |   StringExp(".")])])),
+  |   |   | VarDec(decimals,true,NONE,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(PRESISION))),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(PRESISION)))))],
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(decimals)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | CallExp(concat,[
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(integerPart)),
+  |   |   |   |   StringExp("0")]),
+  |   |   |   | SeqExp[
+  |   |   |   |   WhileExp(
+  |   |   |   |   | OpExp(GtOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(decimals)),
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | SeqExp[
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(integerPart),
+  |   |   |   |   |   | CallExp(concat,[
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(integerPart)),
+  |   |   |   |   |   |   CallExp(str,[
+  |   |   |   |   |   |   | OpExp(DivideOp,
+  |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(decimals)),
+  |   |   |   |   |   |   |   | IntExp(10)),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(PRESISION)))])])),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(decimals),
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(decimals)),
+  |   |   |   |   |   |   | IntExp(10)),
+  |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   | OpExp(DivideOp,
+  |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(decimals)),
+  |   |   |   |   |   |   |   | IntExp(10)),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(PRESISION))),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(PRESISION)))))]),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(integerPart))])])]))]],
+  SeqExp[
+  | CallExp(print,[
+  |   StringExp("Calculating a few squareroots:\n")]),
+  | ForExp(x,true,
+  |   IntExp(2),
+  |   IntExp(10),
+  |   SeqExp[
+  |   | CallExp(print,[
+  |   |   StringExp("\tsqrt( ")]),
+  |   | CallExp(print,[
+  |   |   CallExp(str,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x))])]),
+  |   | CallExp(print,[
+  |   |   StringExp(" ) = ")]),
+  |   | CallExp(print,[
+  |   |   CallExp(fstr,[
+  |   |   | CallExp(sqrt,[
+  |   |   |   CallExp(fix,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x))])])])]),
+  |   | CallExp(print,[
+  |   |   StringExp("\n")])]),
+  | CallExp(print,[
+  |   StringExp("Maybe a sinewave?:\n")]),
+  | ForExp(x,true,
+  |   IntExp(0),
+  |   IntExp(30),
+  |   SeqExp[
+  |   | CallExp(print,[
+  |   |   StringExp("\tsin( ")]),
+  |   | CallExp(print,[
+  |   |   CallExp(fstr,[
+  |   |   | CallExp(div,[
+  |   |   |   CallExp(fix,[
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   IntExp(10))]),
+  |   |   |   CallExp(fix,[
+  |   |   |   | IntExp(100)])])])]),
+  |   | CallExp(print,[
+  |   |   StringExp(" ) = ")]),
+  |   | CallExp(print,[
+  |   |   CallExp(fstr,[
+  |   |   | CallExp(sin,[
+  |   |   |   CallExp(div,[
+  |   |   |   | CallExp(fix,[
+  |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   | IntExp(10))]),
+  |   |   |   | CallExp(fix,[
+  |   |   |   |   IntExp(100)])])])])]),
+  |   | CallExp(print,[
+  |   |   StringExp("\n")])]),
+  | CallExp(print,[
+  |   StringExp("32 bits is not enough :(\n")])])

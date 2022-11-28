@@ -1,0 +1,114 @@
+LetExp([
+  FunctionDec[
+  | (mod,[
+  |   (a,true,int),
+  |   (b,true,int)],
+  |   SOME(int),
+  |   LetExp([
+  |   | FunctionDec[
+  |   |   (mod_pos,[
+  |   |   | (a,true,int),
+  |   |   | (b,true,int)],
+  |   |   | SOME(int),
+  |   |   | SeqExp[
+  |   |   |   WhileExp(
+  |   |   |   | OpExp(GeOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(a)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(b))),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(a),
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(a)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(b))))),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(a))]),
+  |   |   (mod_neg,[
+  |   |   | (a,true,int),
+  |   |   | (b,true,int)],
+  |   |   | SOME(int),
+  |   |   | SeqExp[
+  |   |   |   WhileExp(
+  |   |   |   | OpExp(LtOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(a)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(a),
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(a)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(b))))),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(a))])]],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | OpExp(GtOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(b)),
+  |   |   |   IntExp(0)),
+  |   |   | IfExp(
+  |   |   |   OpExp(GeOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(a)),
+  |   |   |   | IntExp(0)),
+  |   |   |   CallExp(mod_pos,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(a)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(b))]),
+  |   |   |   CallExp(mod_neg,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(a)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(b))])),
+  |   |   | IfExp(
+  |   |   |   OpExp(LtOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(b)),
+  |   |   |   | IntExp(0)),
+  |   |   |   IfExp(
+  |   |   |   | OpExp(GeOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(a)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | OpExp(MinusOp,
+  |   |   |   |   IntExp(0),
+  |   |   |   |   CallExp(mod_neg,[
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   IntExp(0),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(a))),
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   IntExp(0),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(b)))])),
+  |   |   |   | OpExp(MinusOp,
+  |   |   |   |   IntExp(0),
+  |   |   |   |   CallExp(mod_pos,[
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   IntExp(0),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(a))),
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   IntExp(0),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(b)))]))),
+  |   |   |   SeqExp[
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp("Error: mod (_,0) ")]),
+  |   |   |   | CallExp(chr,[
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | IntExp(0),
+  |   |   |   |   | IntExp(1))]),
+  |   |   |   | IntExp(0)]))]))]],
+  SeqExp[
+  | CallExp(mod,[
+  |   OpExp(MinusOp,
+  |   | IntExp(0),
+  |   | IntExp(5)),
+  |   IntExp(3)])])

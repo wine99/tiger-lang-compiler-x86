@@ -1,0 +1,9 @@
+let var blue := "\^[[44m"
+    var reset := "\027[0m" 
+in 
+      print (blue);
+      print ("Hello");
+      print (reset);
+      print ("\nBye\n");
+      print("\^[[34mHello\^[[0m")
+end   

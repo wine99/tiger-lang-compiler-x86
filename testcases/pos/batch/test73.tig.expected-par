@@ -1,0 +1,27 @@
+LetExp([
+  FunctionDec[
+  | (chk,[
+  |   (a,true,int),
+  |   (b,true,int),
+  |   (msg,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | OpExp(EqOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(a)),
+  |   |   VarExp(
+  |   |   | SimpleVar(b))),
+  |   | CallExp(print,[
+  |   |   VarExp(
+  |   |   | SimpleVar(msg))]),
+  |   | CallExp(print,[
+  |   |   StringExp(".")])))]],
+  SeqExp[
+  | CallExp(chk,[
+  |   IntExp(1),
+  |   IntExp(1),
+  |   StringExp("OK")]),
+  | CallExp(chk,[
+  |   IntExp(0),
+  |   IntExp(1),
+  |   StringExp("Not OK")])])

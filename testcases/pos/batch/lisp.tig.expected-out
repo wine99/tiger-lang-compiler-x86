@@ -1,0 +1,14 @@
+The dummy input is:
+(letrec ((collatz (lambda (v) (progn (print v) (ifb (= v 1) (progn (newline) 1) (progn (print " -> ") (ifb (= v (* (/ v 2) 2)) (collatz (/ v 2)) (collatz (+ (* v 3) 1))))))))) (collatz 117))
+ (progn (print "bye bye") (newline))
+ (progn (print "exiting...") (newline) (exit))
+Let's spin the REPL... use (exit) if you get too dizzy
+>>> Standard library loaded
+()
+>>> 117 -> 352 -> 176 -> 88 -> 44 -> 22 -> 11 -> 34 -> 17 -> 52 -> 26 -> 13 -> 40 -> 20 -> 10 -> 5 -> 16 -> 8 -> 4 -> 2 -> 1
+1
+>>> bye bye
+()
+>>> exiting...
+
+0

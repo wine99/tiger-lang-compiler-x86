@@ -1,0 +1,85 @@
+opam-version: "2.0"
+name: "tiger"
+version: "~dev"
+synopsis: "AU Compilation student project template"
+description: "AU Compilation student project template"
+maintainer: "N/A"
+authors: "AU CS"
+homepage: "https://cs.au.dk"
+bug-reports: "N/A"
+depends: [
+  "alcotest" {= "1.6.0"}
+  "astring" {= "0.8.5"}
+  "base" {= "v0.15.0"}
+  "base-bigarray" {= "base"}
+  "base-bytes" {= "base"}
+  "base-threads" {= "base"}
+  "base-unix" {= "base"}
+  "camlp-streams" {= "5.0.1"}
+  "chrome-trace" {= "3.4.1"}
+  "cmdliner" {= "1.1.1"}
+  "cppo" {= "1.6.9"}
+  "csexp" {= "1.5.1"}
+  "dot-merlin-reader" {= "4.6"}
+  "dune" {= "3.4.1"}
+  "dune-build-info" {= "3.4.1"}
+  "dune-configurator" {= "3.4.1"}
+  "dune-rpc" {= "3.4.1"}
+  "dyn" {= "3.4.1"}
+  "either" {= "1.0.0"}
+  "fiber" {= "3.4.1"}
+  "fix" {= "20220121"}
+  "fmt" {= "0.9.0"}
+  "fpath" {= "0.7.3"}
+  "lambda-term" {= "3.3.1"}
+  "logs" {= "0.7.0"}
+  "lwt" {= "5.6.1"}
+  "lwt_react" {= "1.2.0"}
+  "menhir" {= "20220210"}
+  "menhirLib" {= "20220210"}
+  "menhirSdk" {= "20220210"}
+  "merlin" {= "4.6-414"}
+  "merlin-lib" {= "4.6-414"}
+  "mew" {= "0.1.0"}
+  "mew_vi" {= "0.5.0"}
+  "ocaml" {= "4.14.0"}
+  "ocaml-base-compiler" {= "4.14.0"}
+  "ocaml-config" {= "2"}
+  "ocaml-lsp-server" {= "1.13.1"}
+  "ocaml-options-vanilla" {= "1"}
+  "ocaml-syntax-shims" {= "1.0.0"}
+  "ocaml-version" {= "3.5.0"}
+  "ocamlbuild" {= "0.14.1"}
+  "ocamlfind" {= "1.9.5"}
+  "ocamlformat" {= "0.21.0"}
+  "ocamlformat-rpc" {= "0.21.0"}
+  "ocamlformat-rpc-lib" {= "0.21.0"}
+  "ocp-indent" {= "1.8.1"}
+  "ocplib-endian" {= "1.2"}
+  "octavius" {= "1.2.2"}
+  "odoc-parser" {= "1.0.1"}
+  "omd" {= "1.3.2"}
+  "ordering" {= "3.4.1"}
+  "pp" {= "1.1.2"}
+  "ppx_yojson_conv_lib" {= "v0.15.0"}
+  "re" {= "1.10.4"}
+  "react" {= "1.2.2"}
+  "result" {= "1.5"}
+  "seq" {= "base"}
+  "sexplib0" {= "v0.15.1"}
+  "spawn" {= "v0.15.1"}
+  "stdio" {= "v0.15.0"}
+  "stdlib-shims" {= "0.3.0"}
+  "stdune" {= "3.4.1"}
+  "topkg" {= "1.0.5"}
+  "trie" {= "1.0.0"}
+  "uchar" {= "0.0.2"}
+  "utop" {= "2.10.0"}
+  "uucp" {= "14.0.0"}
+  "uuseg" {= "14.0.0"}
+  "uutf" {= "1.0.3"}
+  "xdg" {= "3.4.1"}
+  "yojson" {= "2.0.2"}
+  "zed" {= "3.2.0"}
+]
+build: ["dune" "build" "-p" name "-j" jobs]

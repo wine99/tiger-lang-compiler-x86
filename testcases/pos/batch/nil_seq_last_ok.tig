@@ -1,0 +1,7 @@
+/* allowed: type of NilExp _can_ be infered */
+let
+    type rec = {}
+    var r : rec := (1;2;3;nil)
+in
+    r
+end

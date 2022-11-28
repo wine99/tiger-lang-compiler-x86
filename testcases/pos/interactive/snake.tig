@@ -1,0 +1,182 @@
+let
+	type coord = {x:int, y:int}
+	type p_part = {x:int, y:int, r:p_part}
+
+	var board_w := 10
+	var board_h := 10
+
+	var buffer := ""
+
+	var score := 0
+
+	var fruit : coord := nil
+
+	var border_height := 3
+
+	var start_x := 5
+	var start_y := 5
+
+	var p_head := p_part {x = start_x, y = start_y, r = p_part {x = start_x, y = start_y + 1, r = p_part {x = start_x, y = start_y + 2, r = nil }}}
+
+	function isHead(x:int, y:int) : int =
+		x = p_head.x & y = p_head.y
+
+	function isBody(x:int, y:int) : int =
+		let
+			var part := p_head.r
+			function checkPart(p:p_part) : int =
+					if p = nil
+					then 0
+					else (x = p.x & y = p.y) | checkPart(p.r)
+		in
+			checkPart(part)
+		end
+
+	function isWall(x:int, y:int) : int =
+		x = -1 | x = board_w + 1 | y = -1 | y = board_h + 1
+
+	function isTile(x:int, y:int) : int =
+			x >= 0 & x <= board_w & y >= 0 & y <= board_h
+
+	function isLegalMove(x:int, y:int) : int =
+		if isWall(x,y) | isBody(x,y)
+		then 0
+		else 1
+
+	function isFruit(x:int, y:int) : int =
+		x = fruit.x & y = fruit.y
+
+	function isBorder(x:int, y:int) : int =
+		(x = -1 | x = board_w + 1) | y = 0
+
+	function mod(i:int, lim:int) : int =
+		let
+			var div := i / lim
+			var rem := i - lim * div
+		in
+			rem
+		end
+
+	function randomCoord(seed_x:int, seed_y:int) : coord =
+		let
+			var x := 0 + mod(seed_x ^ 5 + seed_y ^ 3 + 7, board_w)
+			var y := 0 + mod(seed_y ^ 3 + seed_x ^ 2 + 17, board_h)
+
+		in
+			coord {x = x, y = y}
+		end
+
+	function updateScreen() =
+		(print("\027[2J\027[H");
+		print("\n");
+		print("\n");
+		print("\n");
+		printborder();
+		printboard();
+		print("\n");
+		printcontrols();
+		flush())
+
+	function printborder() =
+		let
+			var x := -1
+			var y := 0
+			var score := concat(" Score: ", i2s(score))
+			var score_size := size(score)
+			var test := mod(score_size, 2)
+		in
+			while y <= border_height do
+				(print("\t\t\t");
+				while x <= board_w + 1 do
+					(if isBorder(x, y) then print("# ")
+					else if (y = 2 & x = 3) then (print(score); x := x + score_size/2; if test then print(" ") else print("  "))
+					else print("  ");
+					x := x + 1);
+				print("\n");
+				y := y + 1;
+				x := -1)
+		end
+
+
+	function printboard() =
+		for y := -1 to board_h + 1 do
+			(print("\t\t\t");
+			((for x := -1 to board_w + 1 do
+				if isHead(x, y) then print("X ")
+				else if isFruit(x, y) then print("@ ")
+				else if isBody(x, y) then print("o ")
+				else if isWall(x, y) then print("# ")
+				else if isTile(x, y) then print("  ")
+				else print("  "));
+			print("\n")))
+
+	function printcontrols() =
+		print("\t\t  w = up, s = down, a = left, d = right\n\t\t\t  Press enter to confirm\n\n")
+
+
+	function printint(i: int) =
+		let
+			function f(i:int) =
+				if i>0
+				then (f(i/10); print(chr(i-i/10*10+ord("0"))))
+		in
+			if i<0 then (print("-"); f(-i))
+						else if i>0 then f(i) else print("0")
+		end
+
+	function i2s(i: int) : string =
+		let
+			function f(i:int) : string =
+				if i > 0
+				then concat(f(i/10), chr(i-i/10*10+ord("0")))
+				else ""
+		in
+			if i = 0 then "0" else f(i)
+		end
+
+	function handleFruit() =
+		(p_head := p_part {x = fruit.x, y = fruit.y, r = p_head};
+		fruit := randomCoord(fruit.x, fruit.y);
+		score := score + 1;
+		while (isHead(fruit.x, fruit.y)) do
+			fruit := randomCoord(fruit.x+5, fruit.y+3))
+
+	function handleMovement(buffer:string) =
+		let
+			var dx := 0
+			var dy := 0
+		in
+			(if buffer = "a" & isLegalMove(p_head.x - 1, p_head.y) then dx := -1
+			else if buffer = "d" & isLegalMove(p_head.x + 1, p_head.y) then dx := 1
+			else if buffer = "w" & isLegalMove(p_head.x, p_head.y - 1) then dy := -1
+			else if buffer = "s" & isLegalMove(p_head.x, p_head.y + 1) then dy := 1);
+
+			if dx <> 0 | dy <> 0
+			then (if isFruit(p_head.x + dx, p_head.y + dy)
+			 			then handleFruit()
+						else updatePlayer(p_head, p_head.x + dx, p_head.y + dy);
+						updateScreen();
+						skipto())
+		end
+
+	function updatePlayer(p:p_part, x:int, y:int) =
+		if p <> nil
+		then (updatePlayer(p.r, p.x, p.y);
+				 p.x := x;
+				 p.y := y)
+
+	function skipto() =
+		while buffer <> "\n" do
+			buffer := getchar()
+
+	function gameLoop() =
+			while buffer <> "q" do
+				(buffer := getchar();
+				handleMovement(buffer))
+
+in
+	fruit := randomCoord(board_w/2, board_h/3);
+	print("\n");
+	updateScreen();
+	gameLoop()
+end

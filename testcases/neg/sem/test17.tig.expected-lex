@@ -1,0 +1,34 @@
+2:1:LET
+4:1:TYPE
+4:6:ID tree
+4:11:EQ
+4:12:LBRACE
+4:13:ID key
+4:16:COLON
+4:18:ID int
+4:21:COMMA
+4:23:ID children
+4:31:COLON
+4:33:ID treelist
+4:41:RBRACE
+5:1:VAR
+5:5:ID d
+5:6:COLON
+5:7:ID int
+5:11:ASSIGN
+5:13:INT 0
+6:1:TYPE
+6:6:ID treelist
+6:15:EQ
+6:17:LBRACE
+6:18:ID hd
+6:20:COLON
+6:22:ID tree
+6:26:COMMA
+6:28:ID tl
+6:30:COLON
+6:32:ID treelist
+6:40:RBRACE
+8:1:IN
+9:2:ID d
+10:1:END

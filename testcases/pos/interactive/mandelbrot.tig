@@ -1,0 +1,47 @@
+let 
+  var QUALITY := 100
+  var ZOOM := 1
+  var X := -15
+  var Y := 0
+  function render()=
+    ( for y := 0 to 22 do
+      ( for x := 0 to 78 do
+        let
+          var cx  := ( x - 39 + X ) * 290 / ZOOM
+          var cy  := ( y - 11 + Y ) * 890 / ZOOM
+          var zx  := cx
+          var zy  := cy
+          var num := 0
+        in
+          for i := 0 to QUALITY do
+            let
+              var px := zx * zx / 10000 - zy * zy / 10000 + cx
+              var py := 2 * zy * zx / 10000 + cy
+              var d  := ( px * px + py * py ) / 10000
+            in
+              if d > 20000 then break ;
+              num := i ;
+              zx := px ;
+              zy := py
+            end ;
+          if num = QUALITY then print("O")
+          else if num > QUALITY / 2 then print("o")
+          else if num > QUALITY / 4 then print("*")
+          else if num > QUALITY / 8 then print(",")
+          else if num > QUALITY / 16 then print(".")
+          else print(" ")
+        end ;
+      print("\n") ) )
+in 
+  render() ;
+  getchar() ;
+  for i := 0 to 100 do
+    let in
+      ZOOM := i + 1 ;
+      Y := Y - 5 ;
+      X := X - 20;
+      render() ;
+      getchar() ;
+      ()
+    end
+end

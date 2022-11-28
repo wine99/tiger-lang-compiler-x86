@@ -1,0 +1,29 @@
+(NAME rectype = RECORD {age: INT, name: STRING},
+  LetExp([
+  | TypeDec[
+  |   (rectype,
+  |   | NAME rectype = RECORD {age: INT, name: STRING})],
+  | VarDec(rec1,true,NAME rectype = RECORD {age: INT, name: STRING},
+  |   (NAME rectype = RECORD {age: INT, name: STRING},
+  |   | RecordExp([
+  |   |   (age,
+  |   |   | (INT,
+  |   |   |   IntExp(1000))),
+  |   |   (name,
+  |   |   | (STRING,
+  |   |   |   StringExp("Nobody")))])))],
+  | (NAME rectype = RECORD {age: INT, name: STRING},
+  |   SeqExp[
+  |   | (VOID,
+  |   |   AssignExp(
+  |   |   | (STRING,
+  |   |   |   FieldVar(
+  |   |   |   | (NAME rectype = RECORD {age: INT, name: STRING},
+  |   |   |   |   SimpleVar(rec1)),
+  |   |   |   | name)),
+  |   |   | (STRING,
+  |   |   |   StringExp("Somebody")))),
+  |   | (NAME rectype = RECORD {age: INT, name: STRING},
+  |   |   VarExp(
+  |   |   | (NAME rectype = RECORD {age: INT, name: STRING},
+  |   |   |   SimpleVar(rec1))))])))

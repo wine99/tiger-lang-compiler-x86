@@ -1,0 +1,535 @@
+(VOID,
+  LetExp([
+  | TypeDec[
+  |   (str_arr,
+  |   | NAME str_arr = ARRAY of STRING),
+  |   (bool_arr,
+  |   | NAME bool_arr = ARRAY of INT)],
+  | VarDec(W,true,INT,
+  |   (INT,
+  |   | IntExp(100))),
+  | VarDec(H,true,INT,
+  |   (INT,
+  |   | IntExp(40))),
+  | VarDec(TRAIL,true,INT,
+  |   (INT,
+  |   | IntExp(4))),
+  | VarDec(screen,true,NAME str_arr = ARRAY of STRING,
+  |   (NAME str_arr = ARRAY of STRING,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | OpExp(TimesOp,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(H)))),
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(W)))))),
+  |   |   (STRING,
+  |   |   | StringExp(" "))))),
+  | VarDec(draw,true,NAME bool_arr = ARRAY of INT,
+  |   (NAME bool_arr = ARRAY of INT,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | OpExp(TimesOp,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(H)))),
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(W)))))),
+  |   |   (INT,
+  |   |   | IntExp(0))))),
+  | FunctionDec[
+  |   (mod,[
+  |   | (a,true),
+  |   | (b,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   OpExp(MinusOp,
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(a)))),
+  |   |   | (INT,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(b)))))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(b))))))))),
+  |   (init,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(i,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1)))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | (NAME str_arr = ARRAY of STRING,
+  |   |   |   |   |   |   SimpleVar(screen)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)))))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   CallExp(chr,[
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(32)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(mod,[
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(64))]))))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(mod,[
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(79))])),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(mod,[
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(113))])))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(i)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(TRAIL))))))))])))),
+  |   (f,[
+  |   | (a,true),
+  |   | (b,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(b)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(TRAIL)))))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(b)))),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1))))))),
+  |   (update_screen,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   LetExp([
+  |   |   | VarDec(tmp,true,NAME bool_arr = ARRAY of INT,
+  |   |   |   (NAME bool_arr = ARRAY of INT,
+  |   |   |   | ArrayExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | SimpleVar(W)))),
+  |   |   |   |   (INT,
+  |   |   |   |   | IntExp(0)))))],
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   ForExp(x,true,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(W)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   SimpleVar(tmp)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(x)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))))))))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   ForExp(y,true,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   ForExp(x,true,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(W)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(f,[
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))))),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))))))))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))))),
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x))))))))))])))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   ForExp(x,true,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(W)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(x)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   CallExp(f,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(tmp)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x))))))))]))))))])))),
+  |   (print_screen,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("\027[2J\027[H"))])),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("\027[32m"))])),
+  |   |   | (VOID,
+  |   |   |   ForExp(y,true,
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(H)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))),
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   ForExp(x,true,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(W)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(GtOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   | (NAME bool_arr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(draw)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))))))))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   | (NAME str_arr = ARRAY of STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(screen)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(W)))))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x))))))))))])),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" "))])))))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\n"))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(flush,[]))])))]))],
+  | VarDec(DONE,true,STRING,
+  |   (STRING,
+  |   | StringExp("")))],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(init,[])),
+  |   | (VOID,
+  |   |   WhileExp(
+  |   |   | (INT,
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | (STRING,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SimpleVar(DONE)))),
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("q")))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print_screen,[])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(update_screen,[])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SimpleVar(DONE)),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   CallExp(getchar,[]))))])))])))

@@ -1,0 +1,148 @@
+LetExp([
+  TypeDec[
+  | (IntArr,
+  |   ArrayTy(int)),
+  | (IntArrayList,
+  |   RecordTy[
+  |   | (head,true,int),
+  |   | (size,true,int),
+  |   | (data,true,IntArr)])],
+  FunctionDec[
+  | (copy,[
+  |   (src,true,IntArr),
+  |   (dst,true,IntArr),
+  |   (size,true,int)],
+  |   NONE,
+  |   ForExp(ptr,true,
+  |   | IntExp(0),
+  |   | OpExp(MinusOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(size)),
+  |   |   IntExp(1)),
+  |   | AssignExp(
+  |   |   SubscriptVar(
+  |   |   | SimpleVar(src),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(ptr))),
+  |   |   VarExp(
+  |   |   | SubscriptVar(
+  |   |   |   SimpleVar(dst),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(ptr))))))),
+  | (createIntArrayList,[
+  |   (size,true,int)],
+  |   SOME(IntArrayList),
+  |   RecordExp(IntArrayList,[
+  |   | (head,
+  |   |   IntExp(0)),
+  |   | (size,
+  |   |   VarExp(
+  |   |   | SimpleVar(size))),
+  |   | (data,
+  |   |   ArrayExp(IntArr,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(size)),
+  |   |   | IntExp(0)))])),
+  | (get,[
+  |   (src,true,IntArrayList),
+  |   (index,true,int)],
+  |   SOME(int),
+  |   VarExp(
+  |   | SubscriptVar(
+  |   |   FieldVar(
+  |   |   | SimpleVar(src),
+  |   |   | data),
+  |   |   VarExp(
+  |   |   | SimpleVar(index))))),
+  | (push,[
+  |   (src,true,IntArrayList),
+  |   (num,true,int)],
+  |   NONE,
+  |   SeqExp[
+  |   | IfExp(
+  |   |   OpExp(GeOp,
+  |   |   | OpExp(PlusOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(src),
+  |   |   |   |   head)),
+  |   |   |   IntExp(1)),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(src),
+  |   |   |   | size))),
+  |   |   LetExp([
+  |   |   | VarDec(outDat,true,NONE,
+  |   |   |   ArrayExp(IntArr,
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(src),
+  |   |   |   |   |   size)),
+  |   |   |   |   IntExp(2)),
+  |   |   |   | IntExp(0)))],
+  |   |   | SeqExp[
+  |   |   |   CallExp(copy,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(outDat)),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(src),
+  |   |   |   |   | data)),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(src),
+  |   |   |   |   | size))]),
+  |   |   |   AssignExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(src),
+  |   |   |   |   data),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(outDat))),
+  |   |   |   AssignExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(src),
+  |   |   |   |   size),
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(src),
+  |   |   |   |   |   size)),
+  |   |   |   |   IntExp(2)))])),
+  |   | AssignExp(
+  |   |   SubscriptVar(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(src),
+  |   |   |   data),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(src),
+  |   |   |   | head))),
+  |   |   VarExp(
+  |   |   | SimpleVar(num))),
+  |   | AssignExp(
+  |   |   FieldVar(
+  |   |   | SimpleVar(src),
+  |   |   | head),
+  |   |   OpExp(PlusOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(src),
+  |   |   |   | head)),
+  |   |   | IntExp(1)))])],
+  VarDec(arr,true,NONE,
+  | CallExp(createIntArrayList,[
+  |   IntExp(2)]))],
+  SeqExp[
+  | ForExp(x,true,
+  |   IntExp(0),
+  |   IntExp(40),
+  |   CallExp(push,[
+  |   | VarExp(
+  |   |   SimpleVar(arr)),
+  |   | VarExp(
+  |   |   SimpleVar(x))])),
+  | CallExp(get,[
+  |   VarExp(
+  |   | SimpleVar(arr)),
+  |   IntExp(39)])])

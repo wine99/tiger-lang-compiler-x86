@@ -1,0 +1,5 @@
+/* break in nested function not allowed */
+while 1 do 
+    let function foo(): int = (break; 1)
+    in ()
+    end

@@ -1,0 +1,12 @@
+(INT,
+  LetExp([
+  | TypeDec[
+  |   (a,
+  |   | NAME a = INT)]],
+  | (INT,
+  |   LetExp([
+  |   | TypeDec[
+  |   |   (a,
+  |   |   | NAME a = STRING)]],
+  |   | (INT,
+  |   |   IntExp(0))))))

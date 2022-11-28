@@ -1,0 +1,11 @@
+WhileExp(
+  IntExp(1),
+  LetExp([
+  | FunctionDec[
+  |   (foo,[],
+  |   | SOME(int),
+  |   | SeqExp[
+  |   |   BreakExp,
+  |   |   IntExp(1)])]],
+  | SeqExp[
+  |   SeqExp[]]))

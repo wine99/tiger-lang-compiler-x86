@@ -1,0 +1,13 @@
+(INT,
+  LetExp([
+  | VarDec(s,true,STRING,
+  |   (STRING,
+  |   | StringExp("whatever")))],
+  | (INT,
+  |   OpExp(GtOp,
+  |   | (STRING,
+  |   |   VarExp(
+  |   |   | (STRING,
+  |   |   |   SimpleVar(s)))),
+  |   | (STRING,
+  |   |   StringExp("else"))))))

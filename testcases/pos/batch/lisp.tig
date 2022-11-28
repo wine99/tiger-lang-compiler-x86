@@ -1,0 +1,1981 @@
+/* To evaluate your favourite expression (in our very small LISP
+ * like language (lll)), insert it into the variable 'dummy_input' */
+/* UPDATE: It can also be used as a REPL! Just set use_dummy to 0 */
+
+let var dummy_input := "(letrec ((collatz (lambda (v) (progn (print v) (ifb (= v 1) (progn (newline) 1) (progn (print \034 -> \034) (ifb (= v (* (/ v 2) 2)) (collatz (/ v 2)) (collatz (+ (* v 3) 1))))))))) (collatz 117))\n\
+\ (progn (print \034bye bye\034) (newline))\n\
+\ (progn (print \034exiting...\034) (newline) (exit))"
+    var dummy_input_idx := 0
+    var dummy_input_size := size(dummy_input)
+
+
+    /* Flip this switch to use it as an interactive repl */
+    var use_dummy := 1
+
+
+    var lib_input := "(progn "
+    var lib_input := concat(lib_input,
+                            "(define cadr (lambda (v) (car (cdr v))))")
+    var lib_input := concat(lib_input,
+                            "(define append (lambda (a b)\
+\                 (letrec ((aux (lambda (firsts)\
+\                                 (ifb (nil? firsts)\
+\                                      b\
+\                                      (cons (car firsts) (aux (cdr firsts)))))))\
+\                   (ifb (andb (list? a) (list? b))\
+\                        (aux a)\
+\                        (progn (print \034Invalid argument to append '\034 a \034' and '\034 b \034'\n\034)\
+\                               nil)))))")
+    var lib_input := concat(lib_input,
+                            "(define nth (letrec ((nth (lambda (n ls) (ifb (= n 0) (car ls) (nth (- n 1) (cdr ls)))))) nth))")
+    var lib_input := concat(lib_input, "(print \034Standard library loaded\n\034))\n")
+    var lib_input_idx := 0
+    var lib_input_size := size(lib_input)
+    var is_reading_lib := 1
+
+    function read_char(): string =
+      if is_reading_lib
+      then if lib_input_idx = lib_input_size
+           then (is_reading_lib := 0;
+                 /* Read first char after library has been loaded */
+                 read_char())
+           else let var res := substring(lib_input, lib_input_idx, 1)
+                in lib_input_idx := lib_input_idx + 1;
+                   res
+                end
+      else if use_dummy
+      then if dummy_input_idx = dummy_input_size
+           then ""
+           else let var res := substring(dummy_input, dummy_input_idx, 1)
+                in dummy_input_idx := dummy_input_idx + 1;
+                   res
+                end
+      else getchar()
+
+
+    /* Pretty printing of Tiger types */
+    function i2s(i: int): string =
+      if i = 0
+      then "0"
+      else if i < 0
+      then concat("-", i2s(-i))
+      else if i < 10
+      then chr(ord("0") + i)
+      else concat(i2s(i / 10),
+                  chr(ord("0") + i - (i / 10) * 10))
+
+    function c2i(char: string): int =
+      ord(char) - ord("0")
+
+    function s2i(s: string): int =
+      if s = ""
+      then (print("Error in s2i. Cannot extract int from '");
+            print(s);
+            print("'\n");
+            0)
+      else let var len := size(s)
+               var s_proper := s
+               var sign := if substring(s, 0, 1) = "-"
+                           then (s_proper := substring(s, 1, len - 1);
+                                 -1)
+                           else if substring(s, 0, 1) = "+"
+                           then (s_proper := substring(s, 1, len - 1);
+                                 1)
+                           else 1
+               var len_proper := size(s_proper)
+               var res := 0
+           in for idx := 0 to len_proper - 1
+              do let var curr_digit := c2i(substring(s_proper, idx, 1))
+                 in if 0 <= curr_digit & curr_digit <= 9
+                    then res := 10 * res + curr_digit
+                    else (print("Error in s2i. Illegal character in string: '");
+                          print(s);
+                          print("'\n"))
+                 end;
+              res
+           end
+
+    function wrap_string(s: string): string =
+      concat("\034", concat(s, "\034"))
+
+    function bool2s(b: int): string =
+      if b
+      then "#t"
+      else "#f"
+
+    type token = {i: int, s: string, typ: string}
+
+    function mk_int_token(v: int): token =
+      token {i = v, s = "", typ = "int"}
+
+    function mk_id_token(id: string): token =
+      token {i = 0, s = id, typ = "id"}
+
+    function mk_str_token(str: string): token =
+      token {i = 0, s = str, typ = "str"}
+
+    function mk_bool_token(b: int): token =
+      token {i = b, s = "", typ = "bool"}
+
+    function int_token_p(t: token): int =
+      t.typ = "int"
+
+    function str_token_p(t: token): int =
+      t.typ = "str"
+
+    function id_token_p(t: token): int =
+      t.typ = "id"
+
+    function bool_token_p(t: token): int =
+      t.typ = "bool"
+
+    function get_int_token(t: token): int =
+      t.i
+
+    function get_id_token(t: token): string =
+      t.s
+
+    function get_str_token(t: token): string =
+      t.s
+
+    function get_bool_token(t: token): int =
+      t.i
+
+
+    /* payload can be anything for tokens without payloads */
+    var LPAREN := token {i = 0, s = "", typ = "syntax"}
+    var RPAREN := token {i = 0, s = "", typ = "syntax"}
+
+
+
+    function token2s(t: token): string =
+      if t = LPAREN
+      then "("
+      else if t = RPAREN
+      then ")"
+      else if int_token_p(t)
+      then i2s(get_int_token(t))
+      else if id_token_p(t)
+      then get_id_token(t)
+      else if str_token_p(t)
+      then wrap_string(get_str_token(t))
+      else if bool_token_p(t)
+      then bool2s(get_bool_token(t))
+      else (print("Unknown token in token2s. It has type '");
+            print(t.typ);
+            print("'.\n");
+            "")
+
+
+    /* Value types */
+    type Int = {v: int}
+    type String = {v: string}
+
+    /* Creation and  */
+
+
+    var whitespace := " \n\t"
+    var digit := "0123456789"
+    var syntax_char := "()"
+    var uminus_char := "-"
+    var string_indicator := "\034"
+    var string_escape_indicator := "\\"
+    var bool_indicator := "#"
+    var bool_char := "tf"
+    var id_char := concat(digit,
+                          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\
+                          \+-*/^_=<>%$@&|~!?")
+
+    function contains (char_class: string, char: string): int =
+      let var res := 0
+      in for idx := 0 to size(char_class) - 1
+         do if char = substring(char_class, idx, 1)
+            then (res := 1; break);
+         res
+      end
+
+    var prev_char_ := ""
+    var curr_char_ := ""
+    var next_char_ := ""
+
+    function prev_char (): string =
+      prev_char_
+
+    function curr_char (): string =
+      curr_char_
+
+    function next_char (): string =
+      if next_char_ <> ""
+      then next_char_
+      else if curr_char_ = ""
+      then /* We are at EOF */
+        ""
+      else (next_char_ := read_char(); next_char_)
+
+    function advance_reader () =
+      (prev_char_ := curr_char_;
+       if next_char_ <> ""
+       then curr_char_ := next_char_
+       else curr_char_ := read_char();
+       next_char_ := "")
+
+    function init_repl() =
+      advance_reader ()
+
+
+    function looking_at(char_class: string): int =
+      contains(char_class, curr_char())
+
+    function looking_at_char_followed_by(char: string, char_class: string): int =
+      curr_char() = char & contains(char_class, next_char())
+
+    function eof_p (): int =
+      curr_char() = "" & next_char() = ""
+
+    function parse_int_token(sign: int): token =
+      let var res := 0
+      in while looking_at(digit)
+         do (res := 10 * res + c2i(curr_char());
+             advance_reader ());
+         mk_int_token(sign * res)
+      end
+
+    function parse_syntax_token (): token =
+      (advance_reader ();
+       if prev_char() = "("
+       then LPAREN
+       else if prev_char() = ")"
+       then RPAREN
+       else (print("Unknown syntax token: '");
+             print(prev_char());
+             print("'\n");
+             nil))
+
+    function parse_id_token (): token =
+      let var id := ""
+      in while looking_at(id_char)
+         do (id := concat(id, curr_char());
+             advance_reader ());
+         mk_id_token(id)
+      end
+
+    function parse_bool_token (): token =
+      let var bool_char := curr_char()
+      in advance_reader ();
+         if bool_char = "t"
+         then mk_bool_token(1)
+         else if bool_char = "f"
+         then mk_bool_token(0)
+         else (print("Unknown char used for bool literal: '");
+               print(curr_char());
+               print("'\n");
+               nil)
+      end
+
+
+    function parse_string_escape (): string =
+      if curr_char() = "n"
+      then (advance_reader (); "\n")
+      else if curr_char() = "t"
+      then (advance_reader (); "\t")
+      else if curr_char() = "\034"
+      then (advance_reader (); "\034")
+      else if curr_char() = "\\"
+      then (advance_reader (); "\\")
+      else if looking_at(digit)
+      then let var d0 := c2i(curr_char())
+           in advance_reader ();
+              if looking_at(digit)
+              then let var d1 := c2i(curr_char())
+                   in advance_reader ();
+                      if looking_at(digit)
+                      then let var d2 := c2i(curr_char())
+                               var ascii_code := 100 * d0 + 10 * d1 + d2
+                           in advance_reader ();
+                              if 0 <= ascii_code & ascii_code <= 255
+                              then chr(ascii_code)
+                              else (print("Escaped ASCII code was out of range [0; 255]: ");
+                                    print(i2s(ascii_code));
+                                    print("\n");
+                                    "")
+                           end
+                      else (print("Illegal string ASCII escape sequence at third digit: '");
+                            print(curr_char());
+                            print("'\n");
+                            "")
+                   end
+              else (print("Illegal string ASCII escape sequence at second digit: '");
+                    print(curr_char());
+                    print("'\n");
+                    "")
+           end
+      else (print("Illegal string escape sequence, starting at '");
+            print(prev_char());
+            print(curr_char());
+            print(next_char());
+            print("'\n");
+            "")
+
+
+    function parse_string_token (): token =
+      let var str := ""
+      in while not(looking_at(string_indicator))
+         do (if eof_p ()
+             then (print("Unfinished string: ");
+                   print(wrap_string(str));
+                   print("\n");
+                   break);
+             if looking_at(string_escape_indicator)
+             then (advance_reader ();
+                   str := concat(str, parse_string_escape()))
+             else (str := concat(str, curr_char());
+                   advance_reader ()));
+         advance_reader ();
+         mk_str_token(str)
+      end
+
+
+    function read_token(): token =
+      if eof_p ()
+      then nil
+      else (();                 /* Debug */
+            /* print("Reading token, starting at '");
+             * print(curr_char());
+             * print(next_char());
+             * print("'\n"); */
+            while looking_at(whitespace)
+            do advance_reader ();
+            if looking_at(digit)
+            then parse_int_token (1)
+            else if looking_at_char_followed_by(uminus_char, digit)
+            then (advance_reader (); parse_int_token (-1))
+            else if looking_at_char_followed_by(bool_indicator, bool_char)
+            then (advance_reader (); parse_bool_token ())
+            else if looking_at(syntax_char)
+            then parse_syntax_token ()
+            else if looking_at(id_char)
+            then parse_id_token ()
+            else if looking_at(string_indicator)
+            then (advance_reader (); parse_string_token ())
+            else (print("Unknown character: '");
+                  print(curr_char());
+                  print("'. Cannot lex further.\n");
+                  nil))
+
+
+
+    type deque_content_type = token
+    type deque_elem = {val: deque_content_type, left: deque_elem, right: deque_elem}
+    type deque = {leftmost: deque_elem, rightmost: deque_elem}
+
+    function push_left(a: deque_content_type, Q: deque) =
+      let var old_left := Q.leftmost
+          var new_left := deque_elem {val = a,
+                                      left = nil,
+                                      right = old_left}
+      in Q.leftmost := new_left;
+         if old_left <> nil
+         then old_left.left := new_left
+         else Q.rightmost := new_left
+      end
+
+    function push_right(a: deque_content_type, Q: deque) =
+      let var old_right := Q.rightmost
+          var new_right := deque_elem {val = a,
+                                       left = old_right,
+                                       right = nil}
+      in Q.rightmost := new_right;
+         if old_right <> nil
+         then old_right.right := new_right
+         else Q.leftmost := new_right
+      end
+
+    function pop_right(Q: deque): deque_content_type =
+      if Q.leftmost = nil | Q.rightmost = nil
+      then (print("Deque error: tried to pop from empty or bad deque\n");
+            nil)
+      else let var res := Q.rightmost
+               var new_right := res.left
+           in Q.rightmost := new_right;
+              if new_right = nil
+              then Q.leftmost := nil
+              else (new_right.right := nil);
+              res.val
+           end
+
+    function empty(Q: deque): int =
+      Q.leftmost = nil | Q.rightmost = nil
+
+
+   type tokens = deque
+
+   function read_sexp_to_tokens(): tokens =
+     let var level := 1
+         var first_token := read_token ()
+         var tokens := tokens {leftmost = nil, rightmost = nil}
+     in push_right(first_token, tokens);
+        if int_token_p(first_token) | str_token_p(first_token)
+           | id_token_p(first_token) | bool_token_p(first_token)
+        then tokens
+        else if first_token <> LPAREN
+             then (print("Illegal first token for top level expression: '");
+                   print(token2s(first_token));
+                   print("'.\n");
+                   nil)
+             else (
+                   while level > 0
+                   do let var curr_token := read_token ()
+                      in (if curr_token = nil
+                          then (print("Expression was not complete before input ended: ");
+                                print("Missing ");
+                                print(i2s(level));
+                                print(" right parentheses\n");
+                                break);
+                          push_right(curr_token, tokens);
+                          if curr_token = LPAREN
+                          then level := level + 1
+                          else if curr_token = RPAREN
+                               then level := level - 1)
+                      end;
+                   tokens)
+     end
+
+
+    type sexp = {int: Int, bool: Int, str: String, sym: String, fun: Function,
+                 sexps: List}
+    type sexps = {car: sexp, cdr: sexps}
+
+    type List = {v: sexps}
+    type Function = {typ: string, name: string, pars: parameters,
+                     body: sexp, env: env}
+    type parameters = {car: string, cdr: parameters}
+
+    type env = {car: env_entry, cdr: env}
+    type env_entry = {key: string, value: sexp}
+
+    function mk_int(v: int): sexp =
+      sexp {int = Int {v = v}, bool = nil, str = nil, sym = nil, fun = nil, sexps = nil}
+
+    function mk_bool(v: int): sexp =
+      sexp {int = nil, bool = Int {v = v}, str = nil, sym = nil, fun = nil, sexps = nil}
+
+    function mk_str(v: string): sexp =
+      sexp {int = nil, bool = nil, str = String {v = v}, sym = nil, fun = nil, sexps = nil}
+
+    function mk_sym(v: string): sexp =
+      sexp {int = nil, bool = nil, str = nil, sym = String {v = v}, fun = nil, sexps = nil}
+
+    function mk_sexps(v: sexps): sexp =
+      sexp {int = nil, bool = nil, str = nil, sym = nil, fun = nil, sexps = List {v = v}}
+
+    function mk_fun_from_fun(f: Function): sexp =
+      sexp {int = nil, bool = nil, str = nil, sym = nil, fun = f, sexps = nil}
+
+    function mk_fun(pars: parameters, body: sexp, env: env): sexp =
+      let var fun := Function {typ = "user", name = "", pars = pars, body = body,
+                               env = env}
+      in mk_fun_from_fun(fun)
+      end
+
+    function mk_mt_sexp(): sexp =
+      sexp {int = nil, bool = nil, str = nil, sym = nil, fun = nil, sexps = nil}
+
+    function int_p(s: sexp): int =
+      s.int <> nil
+
+    function bool_p(s: sexp): int =
+      s.bool <> nil
+
+    function str_p(s: sexp): int =
+      s.str <> nil
+
+    function sym_p(s: sexp): int =
+      s.sym <> nil
+
+    function fun_p(s: sexp): int =
+      s.fun <> nil
+
+    function sexps_p(s: sexp): int =
+      s.sexps <> nil
+
+    function get_int(s: sexp): int =
+      s.int.v
+
+    function get_bool(s: sexp): int =
+      s.bool.v
+
+    function get_str(s: sexp): string =
+      s.str.v
+
+    function get_sym(s: sexp): string =
+      s.sym.v
+
+    function get_fun(s: sexp): Function =
+      s.fun
+
+    function get_sexps(s: sexp): sexps =
+      s.sexps.v
+
+
+    function Function2s(f: Function): string =
+      if f.name = ""
+      then "<function>"
+      else concat("<function ",
+           concat(f.name,
+                  ">"))
+
+    function sexps2s(v: sexps): string =
+      let function aux (vs: sexps): string =
+          if vs = nil
+          then ""
+          else concat(" ",
+               concat(sexp2s(vs.car),
+                      aux(vs.cdr)))
+      in if v = nil
+         then "()"
+         else concat("(",
+              concat(sexp2s(v.car),
+              concat(aux(v.cdr),
+                     ")")))
+      end
+
+    function sexp2s(s: sexp): string =
+      if int_p(s)
+      then i2s(get_int(s))
+      else if bool_p(s)
+      then bool2s(get_bool(s))
+      else if str_p(s)
+      then wrap_string(get_str(s))
+      else if sym_p(s)
+      then get_sym(s)
+      else if fun_p(s)
+      then Function2s(get_fun(s))
+      else if sexps_p(s)
+      then sexps2s(get_sexps(s))
+      else (print("Unknown sexp in sexp2s.\n");
+            "")
+
+    function parse_tokens(left_elem: deque_elem, right_elem: deque_elem): sexp =
+      let var left_token := left_elem.val
+          var right_token := right_elem.val
+                                          /* Debug */
+          /* var idk := (print("Parsing sexp, starting with '");
+           *             print(token2s(left_token));
+           *             print("' ending with '");
+           *             print(token2s(right_token));
+           *             print("'\n");
+           *             0) */
+      in if left_elem = right_elem /* Then we are parsing an atom */
+         then if int_token_p(left_token)
+              then mk_int(get_int_token(left_token))
+              else if bool_token_p(left_token)
+              then mk_bool(get_bool_token(left_token))
+              else if str_token_p(left_token)
+              then mk_str(get_str_token(left_token))
+              else if id_token_p(left_token)
+              then mk_sym(get_id_token(left_token))
+              else (print("Syntax error: Could not parse sexp from single token: '");
+                    print(token2s(left_token));
+                    print("'\n");
+                    nil)
+         else if left_token = LPAREN & right_token = RPAREN
+         then let var first_elem_inside := left_elem.right
+                  var last_elem_inside := right_elem.left
+                  var sexps: sexps := nil
+                  var end_of_next_sexp := last_elem_inside
+                 /* Parse sexps right to left */
+              in while end_of_next_sexp <> left_elem
+                 do let var beginning_of_next_sexp := find_sexp_beginning(first_elem_inside,
+                                                                          end_of_next_sexp)
+                        var nexp_sexp := parse_tokens(beginning_of_next_sexp,
+                                                      end_of_next_sexp)
+                    in (sexps := sexps {car = nexp_sexp, cdr = sexps};
+                        end_of_next_sexp := beginning_of_next_sexp.left)
+                    end;
+                 mk_sexps(sexps)
+              end
+         else (print("Syntax error: Long sexp was not parameterised properly\n");
+               nil)
+
+      end
+    function find_sexp_beginning(leftmost_elem: deque_elem,
+                                 end_elem: deque_elem): deque_elem =
+      let var end_token := end_elem.val
+      in if int_token_p(end_token) | str_token_p(end_token) | id_token_p(end_token)
+            | bool_token_p(end_token)
+         then end_elem
+         else if end_token = RPAREN
+         then let var level := 1
+                  var curr_elem := end_elem.left
+              in while level > 0
+                 do (if curr_elem = nil | leftmost_elem.left = curr_elem
+                     then (print("Syntax error: Could not find beginning of long sexp\n");
+                           break);
+                     if curr_elem.val = LPAREN
+                     then level := level - 1
+                     else if curr_elem.val = RPAREN
+                     then level := level + 1;
+                     curr_elem := curr_elem.left);
+                 curr_elem.right
+              end
+         else (print("Syntax error: Cannot find beginning of sexp ending in '");
+               print(token2s(end_token));
+               print("'\n");
+               nil)
+      end
+
+
+    function env2s_short(env: env): string =
+      if env = nil
+      then ""
+      else if env.cdr = nil
+      then env.car.key
+      else concat(env.car.key,
+           concat("  ",
+                  env2s_short(env.cdr)))
+
+    function copy_value(src: sexp, dst: sexp) =
+      if int_p(dst) | bool_p(dst) | str_p(dst) | sym_p(dst) | fun_p(dst) | sexps_p(dst)
+      then (print("Cannot copy value into dst, as dst is not an empty value. Src: '");
+            print(sexp2s(src));
+            print("', dst: '");
+            print(sexp2s(dst));
+            print("'\n"))
+      else if int_p(src)
+      then dst.int := src.int
+      else if bool_p(src)
+      then dst.bool := src.bool
+      else if str_p(src)
+      then dst.str := src.str
+      else if fun_p(src)
+      then dst.fun := src.fun
+      else if sym_p(src)
+      then dst.sym := src.sym
+      else if sexps_p(src)
+      then dst.sexps := src.sexps
+      else (print("Unknown src for copy_value: '");
+            print(sexp2s(src));
+            print("'\n"))
+
+
+    function mk_internal_fun(name: string): env_entry =
+      env_entry {key = name,
+                 value = mk_fun_from_fun(Function {typ = "internal",
+                                                   name = name,
+                                                   pars = nil,
+                                                   body = nil,
+                                                   env = nil})}
+
+    /* This is a list of all built in functions. Some are even
+     * implemented! */
+    var initial_env := env {car = mk_internal_fun("+"),
+                            cdr = env {car = mk_internal_fun("-"),
+                            cdr = env {car = mk_internal_fun("*"),
+                            cdr = env {car = mk_internal_fun("/"),
+                            cdr = env {car = mk_internal_fun("^"),
+                            cdr = env {car = mk_internal_fun("<"),
+                            cdr = env {car = mk_internal_fun("<="),
+                            cdr = env {car = mk_internal_fun("="),
+                            cdr = env {car = mk_internal_fun("!="),
+                            cdr = env {car = mk_internal_fun(">="),
+                            cdr = env {car = mk_internal_fun(">"),
+                            cdr = env {car = mk_internal_fun("or"),
+                            cdr = env {car = mk_internal_fun("and"),
+                            cdr = env {car = mk_internal_fun("notb"),
+                            cdr = env {car = mk_internal_fun("orb"),
+                            cdr = env {car = mk_internal_fun("andb"),
+                            cdr = env {car = mk_internal_fun("ifb"),
+                            cdr = env {car = mk_internal_fun("min"),
+                            cdr = env {car = mk_internal_fun("max"),
+                            cdr = env {car = mk_internal_fun("list"),
+                            cdr = env {car = mk_internal_fun("cons"),
+                            cdr = env {car = mk_internal_fun("car"),
+                            cdr = env {car = mk_internal_fun("cdr"),
+                            cdr = env {car = mk_internal_fun("progn"),
+                            cdr = env {car = mk_internal_fun("map"),
+                            cdr = env {car = mk_internal_fun("foldl"),
+                            cdr = env {car = mk_internal_fun("foldr"),
+                            cdr = env {car = mk_internal_fun("print"),
+                            cdr = env {car = mk_internal_fun("read-char"),
+                            cdr = env {car = mk_internal_fun("read-line"),
+                            cdr = env {car = mk_internal_fun("newline"),
+                            cdr = env {car = mk_internal_fun("<s"),
+                            cdr = env {car = mk_internal_fun("<=s"),
+                            cdr = env {car = mk_internal_fun("=s"),
+                            cdr = env {car = mk_internal_fun("!=s"),
+                            cdr = env {car = mk_internal_fun(">=s"),
+                            cdr = env {car = mk_internal_fun(">s"),
+                            cdr = env {car = mk_internal_fun("+s"),
+                            cdr = env {car = mk_internal_fun("ord"),
+                            cdr = env {car = mk_internal_fun("chr"),
+                            cdr = env {car = mk_internal_fun("s->i"),
+                            cdr = env {car = mk_internal_fun("i->s"),
+                            cdr = env {car = mk_internal_fun("substring"),
+                            cdr = env {car = mk_internal_fun("int?"),
+                            cdr = env {car = mk_internal_fun("string?"),
+                            cdr = env {car = mk_internal_fun("list?"),
+                            cdr = env {car = mk_internal_fun("nil?"),
+                            cdr = env {car = mk_internal_fun("fun?"),
+                            cdr = env {car = mk_internal_fun("lambda"),
+                            cdr = env {car = mk_internal_fun("let"),
+                            cdr = env {car = mk_internal_fun("let*"),
+                            cdr = env {car = mk_internal_fun("letrec"),
+                            cdr = env {car = mk_internal_fun("define"),
+                            cdr = env {car = mk_internal_fun("quote"),
+                            cdr = env {car = mk_internal_fun("quasiquote"),
+                            cdr = env {car = mk_internal_fun("unquote"),
+                            cdr = env {car = mk_internal_fun("exit"),
+                            cdr = env {car = mk_internal_fun("help"),
+                                       cdr = nil}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+
+    function lookup(id: string, env: env): sexp =
+      if env = nil
+      then (print("Error: Could not find '");
+            print(id);
+            print("' in environment.\n");
+            nil)
+      else let var curr_entry := env.car
+           in if curr_entry.key = id
+              then curr_entry.value
+              else lookup(id, env.cdr)
+           end
+
+    function eval(sexp: sexp, env: env): sexp =
+      if int_p(sexp)
+      then sexp
+      else if str_p(sexp)
+      then sexp
+      else if bool_p(sexp)
+      then sexp
+      else if sym_p(sexp)
+      then lookup(get_sym(sexp), env)
+      else if sexps_p(sexp)
+      then let var sexps := get_sexps(sexp)
+           in if sexps = nil
+              then mk_sexps(nil)
+              else let var head_sexp := sexps.car
+                       var head := eval(head_sexp, env)
+                   in if fun_p(head)
+                      then let var fun := get_fun(head)
+                           in apply_fun(fun, sexps.cdr, env)
+                           end
+                      else (print("Tried to apply non-function: '");
+                            print(sexp2s(head));
+                            print("'\n");
+                            nil)
+                   end
+           end
+      else (print("Eval error: Unknown sexp: '");
+            print(sexp2s(sexp));
+            print("'\n");
+            nil)
+    function eval_sexps(sexps: sexps, env: env): sexps =
+      if sexps = nil
+      then nil
+      else sexps {car = eval(sexps.car, env), cdr = eval_sexps(sexps.cdr, env)}
+
+    function apply_fun(fun: Function, args: sexps, env: env): sexp =
+      if lazy_fun_p(fun)
+      then apply_internal_lazy(fun.name, args, env)
+      else apply_fun_cbv(fun, eval_sexps(args, env), env)
+
+    function apply_fun_cbv(fun: Function, args: sexps, env: env): sexp =
+      if fun.typ = "internal"
+      then apply_internal_cbv(fun.name, args, env)
+      else apply_user_cbv(fun, args)
+
+
+    function apply_user_cbv(fun: Function, args: sexps): sexp =
+      let var env := fun.env
+          function fill_env(parameters: parameters, args: sexps) =
+            if parameters <> nil & args <> nil
+            then (env := env {car = env_entry {key = parameters.car,
+                                               value = args.car},
+                              cdr = env};
+                  fill_env(parameters.cdr, args.cdr))
+            else if parameters = nil & args <> nil
+            then (print("Too many arguments for function ");
+                  print(Function2s(fun));
+                  print(". Next remaining arg: '");
+                  print(sexp2s(args.car));
+                  print("'\n"))
+            else if parameters <> nil & args = nil
+            then (print("Too few arguments for function ");
+                  print(Function2s(fun));
+                  print(". Next remaining parameter: '");
+                  print(parameters.car);
+                  print("'\n"))
+            else ()             /* parameters and args are nil */
+      in fill_env(fun.pars, args);
+         eval(fun.body, env)
+      end
+
+
+    function lazy_fun_p(fun: Function): int =
+      let var fun_name := fun.name
+          var fun_typ := fun.typ
+      in fun_typ = "internal"
+         & (fun_name = "and" | fun_name = "or" | fun_name = "ifb" | fun_name = "lambda"
+            | fun_name = "define"
+            | fun_name = "let" | fun_name = "let*" | fun_name = "letrec"
+            | fun_name = "quote" | fun_name = "quasiquote" | fun_name = "unquote")
+      end
+
+    function apply_internal_lazy(fun_name: string, args: sexps, env: env): sexp =
+      /* Here is where we define the internal functions, that deals with
+       * control flow or need special syntax for the arguments. */
+      let function or(args: sexps): sexp =
+            if args = nil
+            then mk_bool(0)
+            else let var curr_arg := eval(args.car, env)
+                 in if bool_p(curr_arg) & get_bool(curr_arg) = 0
+                    then or(args.cdr)
+                    else curr_arg
+                 end
+          function and(args: sexps): sexp =
+            if args = nil
+            then mk_bool(1)
+            else let var curr_arg := eval(args.car, env)
+                 in if bool_p(curr_arg) & get_bool(curr_arg) = 0
+                    then mk_bool(0)
+                    else if args.cdr = nil
+                    then curr_arg
+                    else and(args.cdr)
+                 end
+          function ifb(args: sexps): sexp =
+            if args = nil | args.cdr = nil | args.cdr.cdr = nil
+               | (args.cdr.cdr <> nil & args.cdr.cdr.cdr <> nil)
+            then (print("ifb needs exactly 3 arguments.\n");
+                  nil)
+            else let var cond_arg := eval(args.car, env)
+                     var then_sexp := args.cdr.car
+                     var else_sexp := args.cdr.cdr.car
+                 in if bool_p(cond_arg)
+                    then if get_bool(cond_arg)
+                         then eval(then_sexp, env)
+                         else eval(else_sexp, env)
+                    else (print("Illegal argument as condition in ifb, sexp: '");
+                          print(sexp2s(cond_arg));
+                          print("'\n");
+                          nil)
+                 end
+          function lambda(args: sexps): sexp =
+            if args = nil | args.cdr = nil
+               | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("lambda needs exactly 2 arguments.\n");
+                  nil)
+            else let var parameters_sexp := args.car
+                     var body_sexp := args.cdr.car
+                 in if sexps_p(parameters_sexp)
+                    then let var parameters: parameters := nil
+                             function fill_parameters(sexps: sexps) =
+                               if sexps <> nil
+                               then (fill_parameters(sexps.cdr);
+                                     if sym_p(sexps.car)
+                                     then parameters := parameters {car = get_sym(sexps.car),
+                                                                    cdr = parameters}
+                                     else (print("Illegal parameter in lambda expression: '");
+                                           print(sexp2s(sexps.car));
+                                           print("'\n")))
+                         in fill_parameters(get_sexps(parameters_sexp));
+                            mk_fun(parameters, body_sexp, env)
+                         end
+                    else (print("Parameter list in lambda expression has to be a list: '");
+                          print(sexp2s(parameters_sexp));
+                          print("'\n");
+                          nil)
+                 end
+          function let_(args: sexps): sexp =
+            if args = nil | args.cdr = nil
+               | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("let needs exactly 2 arguments.\n");
+                  nil)
+            else let var bindings_sexp := args.car
+                     var body_sexp := args.cdr.car
+                     var body_env := env
+                     function fill_env(bindings: sexps) =
+                       if bindings <> nil
+                       then let var curr_binding_sexp := bindings.car
+                            in if sexps_p(curr_binding_sexp)
+                               then let var curr_binding := get_sexps(curr_binding_sexp)
+                                    in if curr_binding = nil | curr_binding.cdr = nil
+                                          | (curr_binding.cdr <> nil & curr_binding.cdr <> nil)
+                                       then let var name := curr_binding.car
+                                                var value_sexp := curr_binding.cdr.car
+                                            in if sym_p(name)
+                                               then (body_env := env {car = env_entry {key = get_sym(name),
+                                                                                       value = eval(value_sexp, env)},
+                                                                      cdr = body_env};
+                                                     fill_env(bindings.cdr))
+                                               else (print("Name in binding in let has to be a symbol: '");
+                                                     print(sexp2s(name));
+                                                     print("'\n"))
+                                            end
+                                       else (print("Binding in let binding have to be of length 2: '");
+                                             print(sexp2s(curr_binding_sexp));
+                                             print("'\n"))
+                                    end
+                               else (print("Illegal binding in let bindings: '");
+                                     print(sexp2s(curr_binding_sexp));
+                                     print("'\n"))
+                            end
+                 in if sexps_p(bindings_sexp)
+                    then (fill_env(get_sexps(bindings_sexp));
+                          eval(body_sexp, body_env))
+                    else (print("Bindings list in let expression has to be a list: '");
+                          print(sexp2s(bindings_sexp));
+                          print("'\n");
+                          nil)
+                 end
+          function letstar(args: sexps): sexp =
+            if args = nil | args.cdr = nil
+               | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("let* needs exactly 2 arguments.\n");
+                  nil)
+            else let var bindings_sexp := args.car
+                     var body_sexp := args.cdr.car
+                     var body_env := env
+                     function fill_env(bindings: sexps) =
+                       if bindings <> nil
+                       then let var curr_binding_sexp := bindings.car
+                            in if sexps_p(curr_binding_sexp)
+                               then let var curr_binding := get_sexps(curr_binding_sexp)
+                                    in if curr_binding = nil | curr_binding.cdr = nil
+                                          | (curr_binding.cdr <> nil & curr_binding.cdr <> nil)
+                                       then let var name := curr_binding.car
+                                                var value_sexp := curr_binding.cdr.car
+                                            in if sym_p(name)
+                                               then (body_env := env {car = env_entry {key = get_sym(name),
+                                                                                       value = eval(value_sexp, body_env)},
+                                                                      cdr = body_env};
+                                                     fill_env(bindings.cdr))
+                                               else (print("Name in binding in let* has to be a symbol: '");
+                                                     print(sexp2s(name));
+                                                     print("'\n"))
+                                            end
+                                       else (print("Binding in let* binding have to be of length 2: '");
+                                             print(sexp2s(curr_binding_sexp));
+                                             print("'\n"))
+                                    end
+                               else (print("Illegal binding in let* bindings: '");
+                                     print(sexp2s(curr_binding_sexp));
+                                     print("'\n"))
+                            end
+                 in if sexps_p(bindings_sexp)
+                    then (fill_env(get_sexps(bindings_sexp));
+                          eval(body_sexp, body_env))
+                    else (print("Bindings list in let* expression has to be a list: '");
+                          print(sexp2s(bindings_sexp));
+                          print("'\n");
+                          nil)
+                 end
+          function letrec(args: sexps): sexp =
+            if args = nil | args.cdr = nil
+               | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("letrec needs exactly 2 arguments.\n");
+                  nil)
+            else let var bindings_sexp := args.car
+                     var body_sexp := args.cdr.car
+                     type partial = {value: sexp,
+                                     env_entry: env_entry,
+                                     value_sexp: sexp}
+                     type partials = {car: partial, cdr: partials}
+
+                     function get_env_extension(bindings: sexps): partials =
+                       if bindings = nil
+                       then nil
+                       else let var curr_binding_sexp := bindings.car
+                            in if sexps_p(curr_binding_sexp)
+                               then let var curr_binding := get_sexps(curr_binding_sexp)
+                                    in if curr_binding = nil | curr_binding.cdr = nil
+                                          | (curr_binding.cdr <> nil & curr_binding.cdr <> nil)
+                                       then let var name := curr_binding.car
+                                                var value_sexp := curr_binding.cdr.car
+                                            in if sym_p(name)
+                                               then let var value := mk_mt_sexp ()
+                                                    in partials {car = partial {value = value,
+                                                                                env_entry = env_entry {key = get_sym(name), value = value},
+                                                                                value_sexp = value_sexp},
+                                                                 cdr = get_env_extension(bindings.cdr)}
+                                                    end
+                                               else (print("Name in binding in letrec has to be a symbol: '");
+                                                     print(sexp2s(name));
+                                                     print("'\n");
+                                                     nil)
+                                            end
+                                       else (print("Binding in letrec binding have to be of length 2: '");
+                                             print(sexp2s(curr_binding_sexp));
+                                             print("'\n");
+                                             nil)
+                                    end
+                               else (print("Illegal binding in letrec bindings: '");
+                                     print(sexp2s(curr_binding_sexp));
+                                     print("'\n");
+                                     nil)
+                            end
+                     function fill_body_env(partials: partials): env =
+                       if partials = nil
+                       then env
+                       else env {car = partials.car.env_entry,
+                                 cdr = fill_body_env(partials.cdr)}
+
+                     var extension := if sexps_p(bindings_sexp)
+                                      then get_env_extension(get_sexps(bindings_sexp))
+                                      else (print("Bindings list in letrec expression has to be a list: '");
+                                            print(sexp2s(bindings_sexp));
+                                            print("'\n");
+                                            nil)
+                     var body_env := fill_body_env(extension)
+
+                     function complete_partials(partials: partials) =
+                       if partials <> nil
+                       then let var value_sexp := partials.car.value_sexp
+                                var placeholder_value := partials.car.value
+                                var actual_value := eval(value_sexp, body_env)
+                            in copy_value(actual_value, placeholder_value);
+                               complete_partials(partials.cdr)
+                            end
+                 in complete_partials(extension);
+                    eval(body_sexp, body_env)
+                 end
+          function quote(args: sexps): sexp =
+            if args = nil | (args <> nil & args.cdr <> nil)
+            then (print("quote needs exactly 1 argument.\n");
+                  nil)
+            else args.car
+          function define(args: sexps): sexp =
+            if args = nil | args.cdr = nil |  (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("define needs exactly 2 arguments.\n");
+                  nil)
+            else let var name := args.car
+                     var body := args.cdr.car
+                 in if not(sym_p(name))
+                    then (print("Name in define has to be a symbol: '");
+                          print(sexp2s(name));
+                          print("'\n");
+                          nil)
+                    else (initial_env := env {car = env_entry {key = get_sym(name),
+                                                               value = eval(body, env)},
+                                              cdr = initial_env};
+                          mk_sexps(nil))
+                 end
+          function quasiquote(args: sexps): sexp =
+            let function quasi(args: sexps, level: int): sexp =
+                  if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+                  then (print("quasiquote needs exactly 1 argument.\n");
+                        nil)
+                  else if level = 0
+                  then eval(args.car, env)
+                  else if sexps_p(args.car)
+                  then let var ss := get_sexps(args.car)
+                       in if ss = nil
+                          then args.car
+                          else let var head := ss.car
+                               in if sym_p(head) & get_sym(head) = "unquote"
+                                  then let var unquote_val := lookup(get_sym(head), env)
+                                       in if fun_p(unquote_val)
+                                          then let var unquote_fun := get_fun(unquote_val)
+                                               in if unquote_fun.typ = "internal"
+                                                  then if level = 1
+                                                       then unquote(ss.cdr, level)
+                                                       else mk_sexps(quasi_tail(ss, level - 1))
+                                                  else mk_sexps(quasi_tail(ss, level))
+                                               end
+                                          else mk_sexps(quasi_tail(ss, level))
+                                       end
+                                  else if sym_p(head) & get_sym(head) = "quasiquote"
+                                  then let var quasiquote_val := lookup(get_sym(head), env)
+                                       in if fun_p(quasiquote_val)
+                                          then let var quasiquote_fun := get_fun(quasiquote_val)
+                                               in if quasiquote_fun.typ = "internal"
+                                                  then mk_sexps(quasi_tail(ss, level + 1))
+                                                  else mk_sexps(quasi_tail(ss, level))
+                                               end
+                                          else mk_sexps(quasi_tail(ss, level))
+                                       end
+                                  else mk_sexps(quasi_tail(ss, level))
+                               end
+                       end
+                  else args.car
+
+                function unquote(args: sexps, level: int): sexp =
+                  if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+                  then (print("unquote needs exactly 1 argument.\n");
+                        nil)
+                  else quasi(args, level - 1)
+
+                function quasi_tail(args: sexps, level: int): sexps =
+                  if args = nil
+                  then nil
+                  else sexps {car = quasi(sexps {car = args.car, cdr = nil}, level),
+                              cdr = quasi_tail(args.cdr, level)}
+
+            in quasi(args, 1)
+            end
+          function unquote(args: sexps): sexp =
+            (print("Misplaced unquote around '");
+             print(sexps2s(args));
+             print("'. Unquote can only be used inside quasiquotes\n");
+             mk_sexps(nil))
+      in if fun_name = "ifb"
+         then ifb(args)
+         else if fun_name = "or"
+         then or(args)
+         else if fun_name = "and"
+         then and(args)
+         else if fun_name = "lambda"
+         then lambda(args)
+         else if fun_name = "let"
+         then let_(args)
+         else if fun_name = "let*"
+         then letstar(args)
+         else if fun_name = "letrec"
+         then letrec(args)
+         else if fun_name = "define"
+         then define(args)
+         else if fun_name = "quote"
+         then quote(args)
+         else if fun_name = "quasiquote"
+         then quasiquote(args)
+         else if fun_name = "unquote"
+         then unquote(args)
+         else (print("Interpreter error: Unknown internal lazy function '");
+               print(fun_name);
+               print("' --- Perhaps it has not been implemented yet.\n");
+               nil)
+      end
+
+    function apply_internal_cbv(fun_name: string, args: sexps, env: env): sexp =
+      /* Here is where we define the rest of the internal functions */
+      let function plus(args: sexps): int =
+            if args = nil
+            then 0
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then get_int(curr_arg) + plus(args.cdr)
+                    else (print("Illegal argument to + (or tail of -), value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function minus(args: sexps): int =
+            if args = nil
+            then 0
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then get_int(curr_arg) - plus(args.cdr)
+                    else (print("Illegal argument to -, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function times(args: sexps): int =
+            if args = nil
+            then 1
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then get_int(curr_arg) * times(args.cdr)
+                    else (print("Illegal argument to * (or tail of /), value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function div(args: sexps): int =
+            if args = nil
+            then (print("Cannot apply / to 0 arguments.\n"); 1)
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then get_int(curr_arg) / times(args.cdr)
+                    else (print("Illegal argument to /, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function expt(args: sexps): int =
+            if args = nil
+            then 1
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then get_int(curr_arg) ^ expt(args.cdr)
+                    else (print("Illegal argument to ^, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+
+          function lt_int(args: sexps): int =
+            let function aux(head: int, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if int_p(curr_arg)
+                        then aux(get_int(curr_arg), args.cdr) & head < get_int(curr_arg)
+                        else (print("Illegal argument to <, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if int_p(curr_arg)
+                       then aux(get_int(curr_arg), args.cdr)
+                       else (print("Illegal argument to <, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function leq_int(args: sexps): int =
+            let function aux(head: int, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if int_p(curr_arg)
+                        then aux(get_int(curr_arg), args.cdr) & head <= get_int(curr_arg)
+                        else (print("Illegal argument to <=, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if int_p(curr_arg)
+                       then aux(get_int(curr_arg), args.cdr)
+                       else (print("Illegal argument to <=, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function eq_int(args: sexps): int =
+            let function aux(head: int, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if int_p(curr_arg)
+                        then aux(head, args.cdr) & get_int(curr_arg) = head
+                        else (print("Illegal argument to =, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if int_p(curr_arg)
+                       then aux(get_int(curr_arg), args.cdr)
+                       else (print("Illegal argument to =, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function neq_int(args: sexps): int =
+            let function aux(head: int, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if int_p(curr_arg)
+                        then aux(head, args.cdr) & get_int(curr_arg) <> head
+                        else (print("Illegal argument to !=, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if int_p(curr_arg)
+                       then aux(get_int(curr_arg), args.cdr)
+                       else (print("Illegal argument to !=, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function geq_int(args: sexps): int =
+            let function aux(head: int, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if int_p(curr_arg)
+                        then aux(get_int(curr_arg), args.cdr) & head >= get_int(curr_arg)
+                        else (print("Illegal argument to >=, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if int_p(curr_arg)
+                       then aux(get_int(curr_arg), args.cdr)
+                       else (print("Illegal argument to >=, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function gt_int(args: sexps): int =
+            let function aux(head: int, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if int_p(curr_arg)
+                        then aux(get_int(curr_arg), args.cdr) & head > get_int(curr_arg)
+                        else (print("Illegal argument to >, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if int_p(curr_arg)
+                       then aux(get_int(curr_arg), args.cdr)
+                       else (print("Illegal argument to >, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function min(args: sexps): int =
+            if args = nil
+            then (print("Cannot apply min to 0 arguments\n");
+                  0)
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then if args.cdr <> nil
+                         then let var min_rst := min(args.cdr)
+                              in if get_int(curr_arg) < min_rst
+                                 then get_int(curr_arg)
+                                 else min_rst
+                              end
+                         else get_int(curr_arg)
+                    else (print("Illegal argument to min, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function max(args: sexps): int =
+            if args = nil
+            then (print("Cannot apply max to 0 arguments\n");
+                  0)
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then if args.cdr <> nil
+                         then let var max_rst := max(args.cdr)
+                              in if get_int(curr_arg) > max_rst
+                                 then get_int(curr_arg)
+                                 else max_rst
+                              end
+                         else get_int(curr_arg)
+                    else (print("Illegal argument to min, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function progn(args: sexps): sexp =
+            if args = nil
+            then (print("Cannot apply progn to 0 arguments.\n");
+                  nil)
+            else let var curr_arg := args.car
+                 in if args.cdr = nil
+                    then curr_arg
+                    else progn(args.cdr)
+                 end
+          function map(args: sexps): sexps =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("map needs exactly 2 arguments.\n");
+                  nil)
+            else let var fun_arg := args.car
+                     var lst_arg := args.cdr.car
+                     function aux (args: sexps): sexps =
+                       if args = nil
+                       then nil
+                       else sexps {car = apply_fun_cbv(get_fun(fun_arg),
+                                                       sexps {car = args.car,
+                                                              cdr = nil},
+                                                        env),
+                                   cdr = aux(args.cdr)}
+                 in if fun_p(fun_arg)
+                    then if sexps_p(lst_arg)
+                         then aux(get_sexps(lst_arg))
+                         else (print("Illegal list argument to map, value: '");
+                               print(sexp2s(lst_arg));
+                               print("'\n");
+                               nil)
+                    else (print("Illegal function argument to map, value: '");
+                          print(sexp2s(fun_arg));
+                          print("'\n");
+                          nil)
+                 end
+          function foldr(args: sexps): sexp =
+            if args = nil | args.cdr = nil | (args.cdr.cdr <> nil & args.cdr.cdr.cdr <> nil)
+            then (print("foldr needs exactly 3 arguments.\n");
+                  nil)
+            else let var fun_arg := args.car
+                     var init_arg := args.cdr.car
+                     var lst_arg := args.cdr.cdr.car
+                     function aux(lst: sexps): sexp =
+                       if lst = nil
+                       then init_arg
+                       else apply_fun_cbv(get_fun(fun_arg),
+                                          sexps {car = lst.car,
+                                                 cdr = sexps {car = aux(lst.cdr),
+                                                              cdr = nil}},
+                                          env)
+
+                 in if fun_p(fun_arg)
+                    then if sexps_p(lst_arg)
+                         then aux(get_sexps(lst_arg))
+                         else (print("Illegal list argument to foldr, value: '");
+                               print(sexp2s(lst_arg));
+                               print("'\n");
+                               nil)
+                    else (print("Illegal function argument to foldr, value: '");
+                          print(sexp2s(fun_arg));
+                          print("'\n");
+                          nil)
+                 end
+          function foldl(args: sexps): sexp =
+            if args = nil | args.cdr = nil | (args.cdr.cdr <> nil & args.cdr.cdr.cdr <> nil)
+            then (print("foldl needs exactly 3 arguments.\n");
+                  nil)
+            else let var fun_arg := args.car
+                     var init_arg := args.cdr.car
+                     var lst_arg := args.cdr.cdr.car
+                     function aux(lst: sexps, acc: sexp): sexp =
+                       if lst = nil
+                       then acc
+                       else aux(lst.cdr, apply_fun_cbv(get_fun(fun_arg),
+                                                       sexps {car = lst.car,
+                                                              cdr = sexps {car = acc,
+                                                                           cdr = nil}},
+                                                       env))
+
+                 in if fun_p(fun_arg)
+                    then if sexps_p(lst_arg)
+                         then aux(get_sexps(lst_arg), init_arg)
+                         else (print("Illegal list argument to foldl, value: '");
+                               print(sexp2s(lst_arg));
+                               print("'\n");
+                               nil)
+                    else (print("Illegal function argument to foldl, value: '");
+                          print(sexp2s(fun_arg));
+                          print("'\n");
+                          nil)
+                 end
+
+          function orb(args: sexps): int =
+            if args = nil
+            then 0
+            else let var curr_arg := args.car
+                 in if bool_p(curr_arg)
+                    /* We need to call recursively first to prevent |
+                     * from short circuiting, as orb is call-by-value */
+                    then orb(args.cdr) | get_bool(curr_arg)
+                    else (print("Illegal argument to orb, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function andb(args: sexps): int =
+            if args = nil
+            then 1
+            else let var curr_arg := args.car
+                 in if bool_p(curr_arg)
+                    /* We need to call recursively first to prevent &
+                     * from short circuiting, as andb is call-by-value */
+                    then andb(args.cdr) & get_bool(curr_arg)
+                    else (print("Illegal argument to andb, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function notb(args: sexps): int =
+            if args = nil
+            then (print("Cannot apply notb to 0 arguments.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in if bool_p(curr_arg) & args.cdr = nil
+                    /* We need to call recursively first to prevent &
+                     * from short circuiting, as andb is call-by-value */
+                    then not(get_bool(curr_arg))
+                    else if bool_p(curr_arg)
+                    then (print("Illegal argument to notb, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                    else (print("Cannot apply notb to more than 1 argument.\n");
+                          0)
+                 end
+          function lt_str(args: sexps): int =
+            let function aux(head: string, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if str_p(curr_arg)
+                        then aux(get_str(curr_arg), args.cdr) & head < get_str(curr_arg)
+                        else (print("Illegal argument to <s, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if str_p(curr_arg)
+                       then aux(get_str(curr_arg), args.cdr)
+                       else (print("Illegal argument to <s, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function leq_str(args: sexps): int =
+            let function aux(head: string, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if str_p(curr_arg)
+                        then aux(get_str(curr_arg), args.cdr) & head <= get_str(curr_arg)
+                        else (print("Illegal argument to <=s, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if str_p(curr_arg)
+                       then aux(get_str(curr_arg), args.cdr)
+                       else (print("Illegal argument to <=s, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function eq_str(args: sexps): int =
+            let function aux(head: string, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if str_p(curr_arg)
+                        then aux(head, args.cdr) & get_str(curr_arg) = head
+                        else (print("Illegal argument to =s, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if str_p(curr_arg)
+                       then aux(get_str(curr_arg), args.cdr)
+                       else (print("Illegal argument to =s, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function neq_str(args: sexps): int =
+            let function aux(head: string, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if str_p(curr_arg)
+                        then aux(head, args.cdr) & get_str(curr_arg) <> head
+                        else (print("Illegal argument to !=s, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if str_p(curr_arg)
+                       then aux(get_str(curr_arg), args.cdr)
+                       else (print("Illegal argument to !=s, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function geq_str(args: sexps): int =
+            let function aux(head: string, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if str_p(curr_arg)
+                        then aux(get_str(curr_arg), args.cdr) & head >= get_str(curr_arg)
+                        else (print("Illegal argument to >=s, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if str_p(curr_arg)
+                       then aux(get_str(curr_arg), args.cdr)
+                       else (print("Illegal argument to >=s, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function gt_str(args: sexps): int =
+            let function aux(head: string, args: sexps): int =
+                if args = nil
+                then 1
+                else let var curr_arg := args.car
+                     in if str_p(curr_arg)
+                        then aux(get_str(curr_arg), args.cdr) & head > get_str(curr_arg)
+                        else (print("Illegal argument to >s, value: '");
+                              print(sexp2s(curr_arg));
+                              print("'\n");
+                              0)
+                     end
+            in if args = nil
+               then 1
+               else let var curr_arg := args.car
+                    in if str_p(curr_arg)
+                       then aux(get_str(curr_arg), args.cdr)
+                       else (print("Illegal argument to >s, value: '");
+                             print(sexp2s(curr_arg));
+                             print("'\n");
+                             0)
+                    end
+            end
+          function append_str(args: sexps): string =
+            if args = nil
+            then ""
+            else let var curr_arg := args.car
+                 in if str_p(curr_arg)
+                    then concat(get_str(curr_arg), append_str(args.cdr))
+                    else (print("Illegal argument to +s, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          "")
+                 end
+          function str_to_int(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("s->i needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in if str_p(curr_arg)
+                    then s2i(get_str(curr_arg))
+                    else (print("Illegal argument to s->i, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function int_to_str(args: sexps): string =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("i->s needs exactly 1 argument.\n");
+                  "")
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then i2s(get_int(curr_arg))
+                    else (print("Illegal argument to i->s, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          "")
+                 end
+          function substring_(args: sexps): string =
+            if args = nil | args.cdr = nil | args.cdr.cdr = nil
+               | (args.cdr.cdr <> nil & args.cdr.cdr.cdr <> nil)
+            then (print("substring needs exactly 3 arguments.\n");
+                  "")
+            else let var str_arg := args.car
+                     var idx_arg := args.cdr.car
+                     var len_arg := args.cdr.cdr.car
+                 in if str_p(str_arg) & int_p(idx_arg) & int_p(len_arg)
+                    then substring(get_str(str_arg), get_int(idx_arg), get_int(len_arg))
+                    else (print("Illegal argument to substring, values: '");
+                          print(sexp2s(str_arg));
+                          print("', '");
+                          print(sexp2s(idx_arg));
+                          print("', '");
+                          print(sexp2s(len_arg));
+                          print("'\n");
+                          "")
+                 end
+          function print_(args: sexps): sexps =
+            if args = nil
+            then nil
+            else let var curr_arg := args.car
+                 in if str_p(curr_arg)
+                    then print(get_str(curr_arg))
+                    else print(sexp2s(curr_arg));
+                    print_(args.cdr)
+                 end
+          function newline(args: sexps): sexps =
+            if args = nil
+            then (print("\n"); nil)
+            else (print("newline takes exactly 0 arguments.\n"); nil)
+          function read_char_(args: sexps): string =
+            if args = nil
+            then getchar()
+            else (print("read-char takes exactly 0 arguments.\n"); "")
+          function read_line_(args: sexps): string =
+            if args = nil
+            then let var nxt_char := getchar()
+                     var res := nxt_char
+                 in while nxt_char <> "\n"
+                    do (nxt_char := getchar();
+                        res := concat(res, nxt_char));
+                    res
+                 end
+            else (print("read-line takes exactly 0 arguments.\n"); "")
+          function ord_(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("ord needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in if str_p(curr_arg)
+                    then ord(get_str(curr_arg))
+                    else (print("Illegal argument to ord, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          0)
+                 end
+          function chr_(args: sexps): string =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("chr needs exactly 1 argument.\n");
+                  "")
+            else let var curr_arg := args.car
+                 in if int_p(curr_arg)
+                    then chr(get_int(curr_arg))
+                    else (print("Illegal argument to chr, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          "")
+                 end
+
+
+
+          function list(args: sexps): sexps =
+            args
+          function cons(args: sexps): sexps =
+            if args = nil
+            then (print("Cannot apply cons to 0 arguments\n");
+                  nil)
+            else let var curr_arg := args.car
+                 in if args.cdr = nil
+                    then if sexps_p(curr_arg)
+                         then get_sexps(curr_arg)
+                         else (print("Last argument to cons has to be a list. It was '");
+                               print(sexp2s(curr_arg));
+                               print("'\n");
+                               nil)
+                    else sexps {car = curr_arg, cdr = cons(args.cdr)}
+                 end
+          function car(args: sexps): sexp =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("car needs exactly 1 argument\n");
+                  nil)
+            else let var curr_arg := args.car
+                 in if sexps_p(curr_arg)
+                    then let var curr_arg_content := get_sexps(curr_arg)
+                         in curr_arg_content.car
+                         end
+                    else (print("Illegal argument to car, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          nil)
+                 end
+          function cdr(args: sexps): sexps =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("cdr needs exactly 1 argument\n");
+                  nil)
+            else let var curr_arg := args.car
+                 in if sexps_p(curr_arg)
+                    then let var curr_arg_content := get_sexps(curr_arg)
+                         in if curr_arg_content <> nil
+                            then curr_arg_content.cdr
+                            else (print("Cannot apply cdr to an empty list\n");
+                                  nil)
+                         end
+                    else (print("Illegal argument to cdr, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          nil)
+                 end
+          function intp(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("int? needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in int_p(curr_arg)
+                 end
+          function stringp(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("string? needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in str_p(curr_arg)
+                 end
+          function listp(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("list? needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in sexps_p(curr_arg)
+                 end
+          function nilp(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("nil? needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in sexps_p(curr_arg) & get_sexps(curr_arg) = nil
+                 end
+          function funp(args: sexps): int =
+            if args = nil | (args.cdr <> nil & args.cdr.cdr <> nil)
+            then (print("fun? needs exactly 1 argument.\n");
+                  0)
+            else let var curr_arg := args.car
+                 in fun_p(curr_arg)
+                 end
+          function exit_(args: sexps): sexps =
+            if args <> nil & args.cdr <> nil
+            then (print("exit cannot be used with more that 1 argument.\n");
+                  nil)
+            else if args = nil
+                 then (exit(0); nil)
+                 else let var curr_arg := args.car
+                      in if int_p(curr_arg)
+                         then (exit(get_int(curr_arg)); nil)
+                    else (print("Illegal argument to exit, value: '");
+                          print(sexp2s(curr_arg));
+                          print("'\n");
+                          nil)
+                      end
+          function help(args: sexps): sexps =
+            (print("All available entries in the environment at this point are:\n");
+             print(env2s_short(env));
+             print("\nI hope you find something useful. Oh, and execute '(exit)' to exit.\n");
+             nil)
+      in if fun_name = "+"
+         then mk_int(plus(args))
+         else if fun_name = "-"
+         then mk_int(minus(args))
+         else if fun_name = "*"
+         then mk_int(times(args))
+         else if fun_name = "/"
+         then mk_int(div(args))
+         else if fun_name = "^"
+         then mk_int(expt(args))
+         else if fun_name = "<"
+         then mk_bool(lt_int(args))
+         else if fun_name = "<="
+         then mk_bool(leq_int(args))
+         else if fun_name = "="
+         then mk_bool(eq_int(args))
+         else if fun_name = "!="
+         then mk_bool(neq_int(args))
+         else if fun_name = ">="
+         then mk_bool(geq_int(args))
+         else if fun_name = ">"
+         then mk_bool(gt_int(args))
+         else if fun_name = "min"
+         then mk_int(min(args))
+         else if fun_name = "max"
+         then mk_int(max(args))
+         else if fun_name = "progn"
+         then progn(args)
+         else if fun_name = "map"
+         then mk_sexps(map(args))
+         else if fun_name = "foldr"
+         then foldr(args)
+         else if fun_name = "foldl"
+         then foldl(args)
+         else if fun_name = "orb"
+         then mk_bool(orb(args))
+         else if fun_name = "andb"
+         then mk_bool(andb(args))
+         else if fun_name = "notb"
+         then mk_bool(andb(args))
+         else if fun_name = "<s"
+         then mk_bool(lt_str(args))
+         else if fun_name = "<=s"
+         then mk_bool(leq_str(args))
+         else if fun_name = "=s"
+         then mk_bool(eq_str(args))
+         else if fun_name = "!=s"
+         then mk_bool(neq_str(args))
+         else if fun_name = ">=s"
+         then mk_bool(geq_str(args))
+         else if fun_name = ">s"
+         then mk_bool(gt_str(args))
+         else if fun_name = "+s"
+         then mk_str(append_str(args))
+         else if fun_name = "s->i"
+         then mk_int(str_to_int(args))
+         else if fun_name = "i->s"
+         then mk_str(int_to_str(args))
+         else if fun_name = "substring"
+         then mk_str(substring_(args))
+         else if fun_name = "print"
+         then mk_sexps(print_(args))
+         else if fun_name = "newline"
+         then mk_sexps(newline(args))
+         else if fun_name = "read-char"
+         then mk_str(read_char_(args))
+         else if fun_name = "read-line"
+         then mk_str(read_line_(args))
+         else if fun_name = "ord"
+         then mk_int(ord_(args))
+         else if fun_name = "chr"
+         then mk_str(chr_(args))
+         else if fun_name = "list"
+         then mk_sexps(list(args))
+         else if fun_name = "cons"
+         then mk_sexps(cons(args))
+         else if fun_name = "car"
+         then car(args)
+         else if fun_name = "cdr"
+         then mk_sexps(cdr(args))
+         else if fun_name = "int?"
+         then mk_bool(intp(args))
+         else if fun_name = "string?"
+         then mk_bool(stringp(args))
+         else if fun_name = "list?"
+         then mk_bool(listp(args))
+         else if fun_name = "nil?"
+         then mk_bool(nilp(args))
+         else if fun_name = "fun?"
+         then mk_bool(funp(args))
+         else if fun_name = "exit"
+         then mk_sexps(exit_(args))
+         else if fun_name = "help"
+         then mk_sexps(help(args))
+         else (print("Interpreter error: Unknown internal function '");
+               print(fun_name);
+               print("' --- Perhaps it has not been implemented yet.\n");
+               nil)
+      end
+
+    var prompt := ">>> "
+
+
+in if use_dummy
+   then (print("The dummy input is:\n");
+         print(dummy_input);
+         print("\n"));
+   print("Let's spin the REPL... use (exit) if you get too dizzy\n");
+   print(prompt);
+   init_repl ();
+   while 1                      /* Let us hope the user calls exit */
+   do (let var tokens := read_sexp_to_tokens ()
+           var sexp := parse_tokens(tokens.leftmost, tokens.rightmost)
+           var result := eval(sexp, initial_env)
+       in print(sexp2s(result));
+          print("\n");
+          print(prompt)
+       end);
+   0
+end

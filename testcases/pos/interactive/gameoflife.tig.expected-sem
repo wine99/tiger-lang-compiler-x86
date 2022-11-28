@@ -1,0 +1,1005 @@
+(VOID,
+  LetExp([
+  | TypeDec[
+  |   (state,
+  |   | NAME state = INT),
+  |   (states,
+  |   | NAME states = ARRAY of NAME state)],
+  | VarDec(dead,true,NAME state = INT,
+  |   (INT,
+  |   | IntExp(0))),
+  | VarDec(alive,true,NAME state = INT,
+  |   (INT,
+  |   | IntExp(1))),
+  | VarDec(N,true,INT,
+  |   (INT,
+  |   | IntExp(13))),
+  | VarDec(Nmo,true,INT,
+  |   (INT,
+  |   | OpExp(MinusOp,
+  |   |   (INT,
+  |   |   | VarExp(
+  |   |   |   (INT,
+  |   |   |   | SimpleVar(N)))),
+  |   |   (INT,
+  |   |   | IntExp(1))))),
+  | VarDec(board1,true,NAME states = ARRAY of NAME state,
+  |   (NAME states = ARRAY of NAME state,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | OpExp(TimesOp,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(N)))),
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(N)))))),
+  |   |   (NAME state = INT,
+  |   |   | VarExp(
+  |   |   |   (NAME state = INT,
+  |   |   |   | SimpleVar(dead))))))),
+  | VarDec(board2,true,NAME states = ARRAY of NAME state,
+  |   (NAME states = ARRAY of NAME state,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | OpExp(TimesOp,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(N)))),
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(N)))))),
+  |   |   (NAME state = INT,
+  |   |   | VarExp(
+  |   |   |   (NAME state = INT,
+  |   |   |   | SimpleVar(dead))))))),
+  | VarDec(currentBoard,true,NAME states = ARRAY of NAME state,
+  |   (NAME states = ARRAY of NAME state,
+  |   | VarExp(
+  |   |   (NAME states = ARRAY of NAME state,
+  |   |   | SimpleVar(board1))))),
+  | VarDec(nextBoard,true,NAME states = ARRAY of NAME state,
+  |   (NAME states = ARRAY of NAME state,
+  |   | VarExp(
+  |   |   (NAME states = ARRAY of NAME state,
+  |   |   | SimpleVar(board2))))),
+  | FunctionDec[
+  |   (switchBoards,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   LetExp([
+  |   |   | VarDec(tmp,true,NAME states = ARRAY of NAME state,
+  |   |   |   (NAME states = ARRAY of NAME state,
+  |   |   |   | VarExp(
+  |   |   |   |   (NAME states = ARRAY of NAME state,
+  |   |   |   |   | SimpleVar(currentBoard)))))],
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   SimpleVar(nextBoard)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   SimpleVar(nextBoard)),
+  |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   SimpleVar(tmp))))))]))))],
+  | VarDec(initial,true,STRING,
+  |   (STRING,
+  |   | StringExp("0000000000000000000000000000000000000000000000000000000010000000000000010000000001100111000000000000000000000000000000000000000000000000000000000000000000000000000000000"))),
+  | FunctionDec[
+  |   (index,[
+  |   | (x,true),
+  |   | (y,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   OpExp(PlusOp,
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(x)))),
+  |   |   | (INT,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(N))))))))),
+  |   (numChildren,[
+  |   | (x,true),
+  |   | (y,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   LetExp([
+  |   |   | VarDec(acc,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0)))],
+  |   |   | (INT,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(Nmo)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(Nmo)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(Nmo)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(Nmo)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(Nmo)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(Nmo)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1))))])))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))))))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(acc))))])))),
+  |   (simulateBoard,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(x,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(N)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1)))),
+  |   |   | (VOID,
+  |   |   |   ForExp(y,true,
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(N)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))),
+  |   |   |   | (VOID,
+  |   |   |   |   LetExp([
+  |   |   |   |   | VarDec(children,true,INT,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | CallExp(numChildren,[
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | SimpleVar(x)))),
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | SimpleVar(y))))])))],
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))))),
+  |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(children)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(2)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(children)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(3)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   SimpleVar(nextBoard)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(dead)))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))))),
+  |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(dead)))))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(children)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(3)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(nextBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))),
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(nextBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))])))),
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y))))]))))))))))))))))))),
+  |   (printBoard,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(y,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(N)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1)))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   ForExp(x,true,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(N)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(N)))))))))))),
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(alive)))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("*"))])),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" "))])))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\n"))]))]))))]],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   ForExp(x,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(N)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1)))),
+  |   |   | (VOID,
+  |   |   |   ForExp(y,true,
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(N)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(substring,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(initial)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(N)))))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1))])),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("0")))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | (NAME states = ARRAY of NAME state,
+  |   |   |   |   |   |   |   SimpleVar(currentBoard)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(y)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(N)))))))))),
+  |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME state = INT,
+  |   |   |   |   |   |   |   SimpleVar(alive)))))))))))),
+  |   | (VOID,
+  |   |   CallExp(printBoard,[])),
+  |   | (VOID,
+  |   |   ForExp(i,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   IntExp(100)),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("Press char for next state"))])),
+  |   |   |   | (STRING,
+  |   |   |   |   CallExp(getchar,[])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("Step\n"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(simulateBoard,[])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(switchBoards,[])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(printBoard,[]))]))),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Done"))]))])))

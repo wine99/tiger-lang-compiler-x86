@@ -1,0 +1,42 @@
+(INT,
+  LetExp([
+  | FunctionDec[
+  |   (do_nothing1,[
+  |   | (a,true),
+  |   | (b,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   SeqExp[
+  |   |   | (STRING,
+  |   |   |   CallExp(do_nothing2,[
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1))))])),
+  |   |   | (INT,
+  |   |   |   IntExp(0))])),
+  |   (do_nothing2,[
+  |   | (d,true)],
+  |   | STRING,
+  |   | (STRING,
+  |   |   SeqExp[
+  |   |   | (INT,
+  |   |   |   CallExp(do_nothing1,[
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(d)))),
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("str"))])),
+  |   |   | (STRING,
+  |   |   |   StringExp(" "))]))]],
+  | (INT,
+  |   CallExp(do_nothing1,[
+  |   | (INT,
+  |   |   IntExp(0)),
+  |   | (STRING,
+  |   |   StringExp("str2"))]))))

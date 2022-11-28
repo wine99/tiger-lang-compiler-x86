@@ -1,0 +1,13 @@
+(INT,
+  LetExp([
+  | TypeDec[
+  |   (a,
+  |   | NAME a = INT)],
+  | VarDec(b,true,INT,
+  |   (INT,
+  |   | IntExp(4))),
+  | TypeDec[
+  |   (a,
+  |   | NAME a = STRING)]],
+  | (INT,
+  |   IntExp(0))))

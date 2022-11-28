@@ -1,0 +1,282 @@
+LetExp([
+  VarDec(PAD,true,NONE,
+  | IntExp(5)),
+  VarDec(SCREEN_X,true,NONE,
+  | IntExp(50)),
+  VarDec(NO_PARTICLES,true,NONE,
+  | IntExp(2)),
+  VarDec(SCALE,true,NONE,
+  | IntExp(20)),
+  VarDec(MAX_VEL,true,NONE,
+  | IntExp(30)),
+  VarDec(COL_MIN,true,NONE,
+  | IntExp(31)),
+  VarDec(COL_MAX,true,NONE,
+  | IntExp(37)),
+  VarDec(col,true,NONE,
+  | VarExp(
+  |   SimpleVar(COL_MIN))),
+  TypeDec[
+  | (particle,
+  |   RecordTy[
+  |   | (char,true,string),
+  |   | (pos,true,int),
+  |   | (vel,true,int),
+  |   | (acc,true,int)]),
+  | (system,
+  |   ArrayTy(particle))],
+  VarDec(sys,true,NONE,
+  | ArrayExp(system,
+  |   VarExp(
+  |   | SimpleVar(NO_PARTICLES)),
+  |   NilExp)),
+  VarDec(GRAPHIC,true,NONE,
+  | StringExp("dOvs")),
+  FunctionDec[
+  | (setup,[],
+  |   NONE,
+  |   SeqExp[
+  |   | AssignExp(
+  |   |   SubscriptVar(
+  |   |   | SimpleVar(sys),
+  |   |   | IntExp(0)),
+  |   |   RecordExp(particle,[
+  |   |   | (char,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(GRAPHIC))),
+  |   |   | (pos,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(PAD)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(SCALE)))),
+  |   |   | (vel,
+  |   |   |   IntExp(0)),
+  |   |   | (acc,
+  |   |   |   IntExp(1))])),
+  |   | AssignExp(
+  |   |   SubscriptVar(
+  |   |   | SimpleVar(sys),
+  |   |   | IntExp(1)),
+  |   |   RecordExp(particle,[
+  |   |   | (char,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(GRAPHIC))),
+  |   |   | (pos,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(SCREEN_X)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(SCALE)))),
+  |   |   | (vel,
+  |   |   |   IntExp(0)),
+  |   |   | (acc,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | IntExp(0),
+  |   |   |   | IntExp(1)))]))]),
+  | (i2s,[
+  |   (i,true,int)],
+  |   SOME(string),
+  |   LetExp([
+  |   | FunctionDec[
+  |   |   (f,[
+  |   |   | (i,true,int)],
+  |   |   | SOME(string),
+  |   |   | IfExp(
+  |   |   |   OpExp(GtOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(i)),
+  |   |   |   | IntExp(0)),
+  |   |   |   CallExp(concat,[
+  |   |   |   | CallExp(f,[
+  |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   | IntExp(10))]),
+  |   |   |   | CallExp(chr,[
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   | OpExp(DivideOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   |   IntExp(10)),
+  |   |   |   |   |   | IntExp(10))),
+  |   |   |   |   | CallExp(ord,[
+  |   |   |   |   |   StringExp("0")]))])]),
+  |   |   |   StringExp("")))]],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(i)),
+  |   |   |   IntExp(0)),
+  |   |   | StringExp("0"),
+  |   |   | CallExp(f,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(i))]))])),
+  | (print_particles,[],
+  |   NONE,
+  |   ForExp(i,true,
+  |   | OpExp(MinusOp,
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(PAD))),
+  |   | VarExp(
+  |   |   SimpleVar(SCREEN_X)),
+  |   | LetExp([
+  |   |   VarDec(c,true,NONE,
+  |   |   | StringExp(" "))],
+  |   |   SeqExp[
+  |   |   | ForExp(j,true,
+  |   |   |   IntExp(0),
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(NO_PARTICLES)),
+  |   |   |   | IntExp(1)),
+  |   |   |   SeqExp[
+  |   |   |   | LetExp([
+  |   |   |   |   VarDec(p,true,NONE,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(sys),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(j)))))],
+  |   |   |   |   SeqExp[
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | OpExp(DivideOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   SimpleVar(p),
+  |   |   |   |   |   |   |   pos)),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(SCALE))),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(i))),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(c),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | SimpleVar(p),
+  |   |   |   |   |   |   | char))))])]),
+  |   |   | CallExp(print,[
+  |   |   |   CallExp(concat,[
+  |   |   |   | StringExp("\027["),
+  |   |   |   | CallExp(concat,[
+  |   |   |   |   CallExp(i2s,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(col))]),
+  |   |   |   |   StringExp(";1m")])])]),
+  |   |   | CallExp(print,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(c))]),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\027[0m")]),
+  |   |   | CallExp(flush,[])]))),
+  | (update,[
+  |   (p,true,particle)],
+  |   NONE,
+  |   SeqExp[
+  |   | IfExp(
+  |   |   IfExp(
+  |   |   | OpExp(GeOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(p),
+  |   |   |   |   vel)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(MAX_VEL))),
+  |   |   | IntExp(1),
+  |   |   | OpExp(GeOp,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | IntExp(0),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(p),
+  |   |   |   |   | vel))),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(MAX_VEL)))),
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(p),
+  |   |   |   acc),
+  |   |   | OpExp(TimesOp,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | IntExp(0),
+  |   |   |   | IntExp(1)),
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(p),
+  |   |   |   |   acc))))),
+  |   | AssignExp(
+  |   |   FieldVar(
+  |   |   | SimpleVar(p),
+  |   |   | vel),
+  |   |   OpExp(PlusOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(p),
+  |   |   |   | vel)),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(p),
+  |   |   |   | acc)))),
+  |   | AssignExp(
+  |   |   FieldVar(
+  |   |   | SimpleVar(p),
+  |   |   | pos),
+  |   |   OpExp(PlusOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(p),
+  |   |   |   | pos)),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(p),
+  |   |   |   | vel))))]),
+  | (loop,[],
+  |   NONE,
+  |   SeqExp[
+  |   | WhileExp(
+  |   |   OpExp(NeqOp,
+  |   |   | CallExp(getchar,[]),
+  |   |   | StringExp("q")),
+  |   |   SeqExp[
+  |   |   | ForExp(i,true,
+  |   |   |   IntExp(0),
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(NO_PARTICLES)),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(update,[
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(sys),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(i))))])),
+  |   |   | CallExp(print_particles,[]),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(col),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(col)),
+  |   |   |   | IntExp(1))),
+  |   |   | IfExp(
+  |   |   |   OpExp(GtOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(col)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(COL_MAX))),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(col),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(COL_MIN))))])])]],
+  SeqExp[
+  | CallExp(print,[
+  |   StringExp("Press and hold Enter to play...\n")]),
+  | CallExp(flush,[]),
+  | CallExp(setup,[]),
+  | CallExp(loop,[])])

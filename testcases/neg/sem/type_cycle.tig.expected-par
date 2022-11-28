@@ -1,0 +1,12 @@
+LetExp([
+  TypeDec[
+  | (x,
+  |   NameTy(a)),
+  | (a,
+  |   NameTy(x))]],
+  SeqExp[
+  | LetExp([
+  |   VarDec(v,true,SOME(a),
+  |   | IntExp(0))],
+  |   SeqExp[
+  |   | IntExp(0)])])

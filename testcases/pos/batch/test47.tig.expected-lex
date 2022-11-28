@@ -1,0 +1,16 @@
+5:1:LET
+6:2:TYPE
+6:7:ID a
+6:9:EQ
+6:11:ID int
+7:2:VAR
+7:6:ID b
+7:8:ASSIGN
+7:11:INT 4
+8:2:TYPE
+8:7:ID a
+8:9:EQ
+8:11:ID string
+9:1:IN
+10:2:INT 0
+11:1:END

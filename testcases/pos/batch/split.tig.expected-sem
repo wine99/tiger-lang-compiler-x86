@@ -1,0 +1,301 @@
+(VOID,
+  LetExp([
+  | TypeDec[
+  |   (stringlist,
+  |   | NAME stringlist = RECORD {head: STRING, tail: NAME stringlist})],
+  | FunctionDec[
+  |   (rev,[
+  |   | (l,true)],
+  |   | NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   LetExp([
+  |   |   | VarDec(out,true,NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   (NIL,
+  |   |   |   | NilExp))],
+  |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   WhileExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   SimpleVar(l)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   SimpleVar(out)),
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   RecordExp([
+  |   |   |   |   |   |   |   | (head,
+  |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   |   |   | SimpleVar(l)),
+  |   |   |   |   |   |   |   |   |   |   head))))),
+  |   |   |   |   |   |   |   | (tail,
+  |   |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   |   | SimpleVar(out)))))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   SimpleVar(l)),
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   |   SimpleVar(l)),
+  |   |   |   |   |   |   |   |   | tail))))))]))),
+  |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   SimpleVar(out))))])))),
+  |   (split,[
+  |   | (inp,true),
+  |   | (spl,true)],
+  |   | NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   LetExp([
+  |   |   | VarDec(out,true,NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   (NIL,
+  |   |   |   | NilExp)),
+  |   |   | VarDec(si,true,INT,
+  |   |   |   (INT,
+  |   |   |   | CallExp(size,[
+  |   |   |   |   (STRING,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   (STRING,
+  |   |   |   |   |   | SimpleVar(spl))))]))),
+  |   |   | VarDec(from,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0)))],
+  |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   ForExp(x,true,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(size,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(inp))))])),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(si)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(LtOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(from)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(x)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   CallExp(substring,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(inp)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(si))))])),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(spl)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   SimpleVar(out)),
+  |   |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   RecordExp([
+  |   |   |   |   |   |   |   |   | (head,
+  |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(inp)))),
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(from)))),
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(from))))))]))),
+  |   |   |   |   |   |   |   |   | (tail,
+  |   |   |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   |   |   | SimpleVar(out)))))])))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(from)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(x)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(si))))))))]))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(from)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   CallExp(size,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(inp))))])))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   SimpleVar(out)),
+  |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   RecordExp([
+  |   |   |   |   |   |   | (head,
+  |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   | SimpleVar(inp)))),
+  |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | SimpleVar(from)))),
+  |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | CallExp(size,[
+  |   |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(inp))))])),
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | SimpleVar(from))))))]))),
+  |   |   |   |   |   |   | (tail,
+  |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   |   | SimpleVar(out)))))])))))),
+  |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   CallExp(rev,[
+  |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   SimpleVar(out))))]))]))))],
+  | VarDec(str,true,STRING,
+  |   (STRING,
+  |   | StringExp("This string will be a list of tokens"))),
+  | VarDec(toks,true,NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   | CallExp(split,[
+  |   |   (STRING,
+  |   |   | VarExp(
+  |   |   |   (STRING,
+  |   |   |   | SimpleVar(str)))),
+  |   |   (STRING,
+  |   |   | StringExp(" "))])))],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   VarExp(
+  |   |   |   | (STRING,
+  |   |   |   |   SimpleVar(str))))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\n"))])),
+  |   | (VOID,
+  |   |   WhileExp(
+  |   |   | (INT,
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   SimpleVar(toks)))),
+  |   |   |   | (NIL,
+  |   |   |   |   NilExp))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   SimpleVar(toks)),
+  |   |   |   |   |   |   | head))))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("*"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   SimpleVar(toks)),
+  |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME stringlist = RECORD {head: STRING, tail: NAME stringlist},
+  |   |   |   |   |   |   |   SimpleVar(toks)),
+  |   |   |   |   |   |   | tail))))))])))])))

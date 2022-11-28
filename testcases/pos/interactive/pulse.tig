@@ -1,0 +1,74 @@
+let
+  var PAD := 5
+  var SCREEN_X := 50
+  var NO_PARTICLES := 2
+  var SCALE := 20
+  var MAX_VEL := 30
+
+  var COL_MIN := 31
+  var COL_MAX := 37
+  var col := COL_MIN
+
+  type particle = {char: string, pos: int, vel: int, acc: int}
+  type system = array of particle
+
+  var sys := system[NO_PARTICLES] of nil
+
+  var GRAPHIC := "dOvs"
+
+  function setup() = (
+    sys[0] := particle{char=GRAPHIC, pos=PAD*SCALE, vel=0, acc=1};
+    sys[1] := particle{char=GRAPHIC, pos=SCREEN_X*SCALE, vel=0, acc=-1}
+  )
+
+  function i2s(i: int) : string =
+		let
+			function f(i:int) : string =
+				if i > 0
+				then concat(f(i/10), chr(i-i/10*10+ord("0")))
+				else ""
+		in
+			if i = 0 then "0" else f(i)
+		end
+  
+  function print_particles() =
+    for i := -PAD to SCREEN_X do
+      let var c := " "
+      in
+        for j := 0 to NO_PARTICLES-1 do (
+          let var p := sys[j]
+          in
+            if p.pos/SCALE = i
+            then c := p.char
+          end
+        );
+        print(concat("\027[", concat(i2s(col), ";1m")));
+        print(c);
+        print("\027[0m");
+        flush()
+      end
+    
+  function update(p: particle) = (
+    if p.vel >= MAX_VEL | -p.vel >= MAX_VEL
+    then p.acc := -1 * p.acc;
+
+    p.vel := p.vel + p.acc;
+    p.pos := p.pos + p.vel
+  )
+
+  function loop() = (
+    while getchar() <> "q" do (
+      for i := 0 to NO_PARTICLES-1 do
+        update(sys[i]);
+      print_particles();
+      col := col + 1;
+      if col > COL_MAX then col := COL_MIN
+    )
+  )
+   
+in
+  print("Press and hold Enter to play...\n");
+  flush();
+  setup();
+  loop()
+end

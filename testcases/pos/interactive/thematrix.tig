@@ -1,0 +1,65 @@
+let
+  type str_arr = array of string
+  type bool_arr = array of int
+  var W := 100
+  var H := 40
+  var TRAIL := 4
+
+  var screen := str_arr[H*W] of " "
+  var draw := bool_arr[H*W] of 0
+
+  function mod(a:int, b:int): int =
+    a - a/b*b
+
+  function init() =
+    for i := 0 to H*W-1 do (
+      screen[i] := chr(32+mod(i,64));
+      if (mod(i,79) * mod(i,113)) = 0
+      then draw[i] := TRAIL
+    )
+
+  function f(a:int,b:int): int =
+    if b = TRAIL
+    then b
+    else a - 1
+
+  function update_screen() =
+    let
+      var tmp := bool_arr[W] of 0
+    in
+      for x := 0 to W-1 do (
+        tmp[x] := draw[(H-1)*W+x]
+      );
+      for y := 1 to H-1 do (
+        for x := 0 to W-1 do (
+          draw[(H-y)*W+x] := f(draw[(H-y)*W+x],draw[(H-y-1)*W+x])
+        )
+      );
+      for x := 0 to W-1 do (
+        draw[x] := f(draw[x],tmp[x])
+      )
+    end
+
+  function print_screen() = (
+    print("\027[2J\027[H"); /* clear screen */
+    print("\027[32m"); /* set color */
+    for y := 0 to H-1 do (
+      for x := 0 to W-1 do (
+        if draw[y*W+x] > 0
+        then print(screen[y*W+x])
+        else print(" ")
+      );
+      print("\n");
+      flush()
+    )
+  )
+
+  var DONE := ""
+in
+  init();
+  while(DONE <> "q") do (
+    print_screen();
+    update_screen();
+    DONE := getchar()
+  )
+end

@@ -1,0 +1,5 @@
+(library
+        (name tigermain)
+        (libraries stdio cmdliner tigercommon tigerlexer tigerparser tigersemant tigerhoist tigerll tigerx86 llvmparser)
+        )
+

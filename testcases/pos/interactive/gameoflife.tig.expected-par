@@ -1,0 +1,520 @@
+LetExp([
+  TypeDec[
+  | (state,
+  |   NameTy(int)),
+  | (states,
+  |   ArrayTy(state))],
+  VarDec(dead,true,SOME(state),
+  | IntExp(0)),
+  VarDec(alive,true,SOME(state),
+  | IntExp(1)),
+  VarDec(N,true,NONE,
+  | IntExp(13)),
+  VarDec(Nmo,true,NONE,
+  | OpExp(MinusOp,
+  |   VarExp(
+  |   | SimpleVar(N)),
+  |   IntExp(1))),
+  VarDec(board1,true,NONE,
+  | ArrayExp(states,
+  |   OpExp(TimesOp,
+  |   | VarExp(
+  |   |   SimpleVar(N)),
+  |   | VarExp(
+  |   |   SimpleVar(N))),
+  |   VarExp(
+  |   | SimpleVar(dead)))),
+  VarDec(board2,true,NONE,
+  | ArrayExp(states,
+  |   OpExp(TimesOp,
+  |   | VarExp(
+  |   |   SimpleVar(N)),
+  |   | VarExp(
+  |   |   SimpleVar(N))),
+  |   VarExp(
+  |   | SimpleVar(dead)))),
+  VarDec(currentBoard,true,NONE,
+  | VarExp(
+  |   SimpleVar(board1))),
+  VarDec(nextBoard,true,NONE,
+  | VarExp(
+  |   SimpleVar(board2))),
+  FunctionDec[
+  | (switchBoards,[],
+  |   NONE,
+  |   LetExp([
+  |   | VarDec(tmp,true,NONE,
+  |   |   VarExp(
+  |   |   | SimpleVar(currentBoard)))],
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | SimpleVar(currentBoard),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(nextBoard))),
+  |   |   AssignExp(
+  |   |   | SimpleVar(nextBoard),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(tmp)))]))],
+  VarDec(initial,true,NONE,
+  | StringExp("0000000000000000000000000000000000000000000000000000000010000000000000010000000001100111000000000000000000000000000000000000000000000000000000000000000000000000000000000")),
+  FunctionDec[
+  | (index,[
+  |   (x,true,int),
+  |   (y,true,int)],
+  |   SOME(int),
+  |   OpExp(PlusOp,
+  |   | VarExp(
+  |   |   SimpleVar(x)),
+  |   | OpExp(TimesOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(y)),
+  |   |   VarExp(
+  |   |   | SimpleVar(N))))),
+  | (numChildren,[
+  |   (x,true,int),
+  |   (y,true,int)],
+  |   SOME(int),
+  |   LetExp([
+  |   | VarDec(acc,true,SOME(int),
+  |   |   IntExp(0))],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | IntExp(0)),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(y))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(Nmo))),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(y))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(y)),
+  |   |   |   | IntExp(0)),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(y)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(Nmo))),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | IntExp(0)),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(Nmo))),
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | IntExp(0)),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(Nmo))),
+  |   |   |   | IntExp(0)),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(Nmo))),
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(Nmo))),
+  |   |   |   | IntExp(0)),
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   IntExp(0)),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(acc),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(acc)),
+  |   |   |   | IntExp(1)))),
+  |   |   VarExp(
+  |   |   | SimpleVar(acc))])),
+  | (simulateBoard,[],
+  |   NONE,
+  |   ForExp(x,true,
+  |   | IntExp(0),
+  |   | OpExp(MinusOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(N)),
+  |   |   IntExp(1)),
+  |   | ForExp(y,true,
+  |   |   IntExp(0),
+  |   |   OpExp(MinusOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(N)),
+  |   |   | IntExp(1)),
+  |   |   LetExp([
+  |   |   | VarDec(children,true,NONE,
+  |   |   |   CallExp(numChildren,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(y))]))],
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | IfExp(
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   SimpleVar(currentBoard),
+  |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(y))]))),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(alive))),
+  |   |   |   |   | OpExp(NeqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(children)),
+  |   |   |   |   |   IntExp(2)),
+  |   |   |   |   | IntExp(0)),
+  |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(children)),
+  |   |   |   |   | IntExp(3)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | AssignExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(nextBoard),
+  |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(y))])),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(dead))),
+  |   |   |   | IfExp(
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   SimpleVar(currentBoard),
+  |   |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(y))]))),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(dead))),
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(children)),
+  |   |   |   |   |   IntExp(3)),
+  |   |   |   |   | IntExp(0)),
+  |   |   |   |   AssignExp(
+  |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   SimpleVar(nextBoard),
+  |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y))])),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(alive))),
+  |   |   |   |   AssignExp(
+  |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   SimpleVar(nextBoard),
+  |   |   |   |   |   CallExp(index,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y))])),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   |   | CallExp(index,[
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(y))]))))))])))),
+  | (printBoard,[],
+  |   NONE,
+  |   ForExp(y,true,
+  |   | IntExp(0),
+  |   | OpExp(MinusOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(N)),
+  |   |   IntExp(1)),
+  |   | SeqExp[
+  |   |   ForExp(x,true,
+  |   |   | IntExp(0),
+  |   |   | OpExp(MinusOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(N)),
+  |   |   |   IntExp(1)),
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(currentBoard),
+  |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(N)))))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(alive))),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp("*")]),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" ")]))),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\n")])]))]],
+  SeqExp[
+  | ForExp(x,true,
+  |   IntExp(0),
+  |   OpExp(MinusOp,
+  |   | VarExp(
+  |   |   SimpleVar(N)),
+  |   | IntExp(1)),
+  |   ForExp(y,true,
+  |   | IntExp(0),
+  |   | OpExp(MinusOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(N)),
+  |   |   IntExp(1)),
+  |   | IfExp(
+  |   |   OpExp(NeqOp,
+  |   |   | CallExp(substring,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(initial)),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(N)))),
+  |   |   |   IntExp(1)]),
+  |   |   | StringExp("0")),
+  |   |   AssignExp(
+  |   |   | SubscriptVar(
+  |   |   |   SimpleVar(currentBoard),
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(N))))),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(alive)))))),
+  | CallExp(printBoard,[]),
+  | ForExp(i,true,
+  |   IntExp(0),
+  |   IntExp(100),
+  |   SeqExp[
+  |   | CallExp(print,[
+  |   |   StringExp("Press char for next state")]),
+  |   | CallExp(getchar,[]),
+  |   | CallExp(print,[
+  |   |   StringExp("Step\n")]),
+  |   | CallExp(simulateBoard,[]),
+  |   | CallExp(switchBoards,[]),
+  |   | CallExp(printBoard,[])]),
+  | CallExp(print,[
+  |   StringExp("Done")])])

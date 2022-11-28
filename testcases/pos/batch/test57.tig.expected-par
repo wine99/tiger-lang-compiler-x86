@@ -1,0 +1,24 @@
+LetExp([
+  FunctionDec[
+  | (f,[
+  |   (n,true,int)],
+  |   SOME(int),
+  |   IfExp(
+  |   | OpExp(EqOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(n)),
+  |   |   IntExp(0)),
+  |   | IntExp(1),
+  |   | IntExp(2)))],
+  VarDec(f10,true,SOME(int),
+  | CallExp(f,[
+  |   IntExp(10)])),
+  VarDec(f0,true,SOME(int),
+  | CallExp(f,[
+  |   IntExp(0)]))],
+  SeqExp[
+  | OpExp(PlusOp,
+  |   VarExp(
+  |   | SimpleVar(f10)),
+  |   VarExp(
+  |   | SimpleVar(f0)))])

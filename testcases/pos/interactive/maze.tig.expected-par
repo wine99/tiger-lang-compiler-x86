@@ -1,0 +1,1173 @@
+LetExp([
+  TypeDec[
+  | (input,
+  |   RecordTy[
+  |   | (cmd,true,string),
+  |   | (arg,true,string)]),
+  | (exit,
+  |   RecordTy[
+  |   | (locked,true,int)]),
+  | (items,
+  |   RecordTy[
+  |   | (map,true,int),
+  |   | (flask,true,int),
+  |   | (key,true,int),
+  |   | (exit,true,exit)]),
+  | (room,
+  |   RecordTy[
+  |   | (n,true,room),
+  |   | (e,true,room),
+  |   | (s,true,room),
+  |   | (w,true,room),
+  |   | (items,true,items)]),
+  | (dungeon,
+  |   ArrayTy(room))],
+  VarDec(X,true,NONE,
+  | IntExp(9)),
+  VarDec(Y,true,NONE,
+  | IntExp(9)),
+  VarDec(d,true,NONE,
+  | ArrayExp(dungeon,
+  |   OpExp(TimesOp,
+  |   | VarExp(
+  |   |   SimpleVar(X)),
+  |   | VarExp(
+  |   |   SimpleVar(Y))),
+  |   NilExp)),
+  VarDec(inventory,true,NONE,
+  | RecordExp(items,[
+  |   (map,
+  |   | IntExp(0)),
+  |   (flask,
+  |   | IntExp(0)),
+  |   (key,
+  |   | IntExp(0)),
+  |   (exit,
+  |   | NilExp)])),
+  VarDec(loc,true,SOME(room),
+  | NilExp),
+  VarDec(layout,true,NONE,
+  | StringExp("          F-S-O-E  |   |    F-O-M-F  |   | |  O-F-O-O    |   |  F-O-O-K          ")),
+  VarDec(map,true,NONE,
+  | StringExp("")),
+  FunctionDec[
+  | (get_input,[],
+  |   SOME(input),
+  |   LetExp([
+  |   | VarDec(parse,true,NONE,
+  |   |   IntExp(1)),
+  |   | VarDec(cmd,true,NONE,
+  |   |   StringExp("")),
+  |   | VarDec(arg,true,NONE,
+  |   |   StringExp("")),
+  |   | VarDec(c,true,NONE,
+  |   |   CallExp(getchar,[]))],
+  |   | SeqExp[
+  |   |   WhileExp(
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(c)),
+  |   |   |   StringExp("\n")),
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(parse)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(cmd),
+  |   |   |   |   CallExp(concat,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(c))])),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(arg),
+  |   |   |   |   CallExp(concat,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(c))]))),
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(parse)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | SeqExp[
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(cmd)),
+  |   |   |   |   |   StringExp("look at ")),
+  |   |   |   |   | AssignExp(
+  |   |   |   |   |   SimpleVar(parse),
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   |   | StringExp("go ")),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(parse),
+  |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(cmd)),
+  |   |   |   |   |   |   StringExp("pick up ")),
+  |   |   |   |   |   | AssignExp(
+  |   |   |   |   |   |   SimpleVar(parse),
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | IfExp(
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   |   |   | StringExp("use ")),
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | SimpleVar(parse),
+  |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(cmd)),
+  |   |   |   |   |   |   |   StringExp("drop ")),
+  |   |   |   |   |   |   | AssignExp(
+  |   |   |   |   |   |   |   SimpleVar(parse),
+  |   |   |   |   |   |   |   IntExp(0)))))))]),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(c),
+  |   |   |   | CallExp(getchar,[]))]),
+  |   |   RecordExp(input,[
+  |   |   | (cmd,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(cmd))),
+  |   |   | (arg,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(arg)))])])),
+  | (print_map,[],
+  |   NONE,
+  |   ForExp(i,true,
+  |   | IntExp(0),
+  |   | OpExp(MinusOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(Y)),
+  |   |   IntExp(2)),
+  |   | CallExp(print,[
+  |   |   CallExp(concat,[
+  |   |   | CallExp(substring,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(map)),
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(i)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(X))),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(X))]),
+  |   |   | StringExp("\n")])]))),
+  | (print_room,[
+  |   (r,true,room)],
+  |   NONE,
+  |   LetExp([
+  |   | VarDec(i,true,NONE,
+  |   |   IntExp(0))],
+  |   | SeqExp[
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe see")]),
+  |   |   CallExp(print_items,[
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(loc),
+  |   |   |   | items))]),
+  |   |   CallExp(print,[
+  |   |   | StringExp(" in the ROOM.\n")]),
+  |   |   CallExp(print,[
+  |   |   | StringExp("Obvious exits are")]),
+  |   |   IfExp(
+  |   |   | SeqExp[
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(r),
+  |   |   |   |   | n)),
+  |   |   |   | NilExp)],
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" NORTH")])]),
+  |   |   IfExp(
+  |   |   | SeqExp[
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(r),
+  |   |   |   |   | e)),
+  |   |   |   | NilExp)],
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" and")])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" EAST")])]),
+  |   |   IfExp(
+  |   |   | SeqExp[
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(r),
+  |   |   |   |   | s)),
+  |   |   |   | NilExp)],
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" and")])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" SOUTH")])]),
+  |   |   IfExp(
+  |   |   | SeqExp[
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(r),
+  |   |   |   |   | w)),
+  |   |   |   | NilExp)],
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" and")])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" WEST")])]),
+  |   |   CallExp(print,[
+  |   |   | StringExp(".\n")])])),
+  | (print_items,[
+  |   (items,true,items)],
+  |   NONE,
+  |   LetExp([
+  |   | VarDec(i,true,NONE,
+  |   |   IntExp(0))],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(items),
+  |   |   |   | map)),
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" a MAP")])]),
+  |   |   IfExp(
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(items),
+  |   |   |   | flask)),
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" and")])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" a FLASK")])]),
+  |   |   IfExp(
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(items),
+  |   |   |   | key)),
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" and")])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" a KEY")])]),
+  |   |   IfExp(
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(items),
+  |   |   |   |   exit)),
+  |   |   |   NilExp),
+  |   |   | SeqExp[
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" and")])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(i),
+  |   |   |   | IntExp(1)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp(" a DOOR")])]),
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(i)),
+  |   |   |   IntExp(0)),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp(" nothing of interest")]))])),
+  | (look,[
+  |   (arg,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | OpExp(EqOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(arg)),
+  |   |   StringExp("self")),
+  |   | SeqExp[
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe holdeth")]),
+  |   |   CallExp(print_items,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(inventory))])],
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(arg)),
+  |   |   | StringExp("room")),
+  |   |   CallExp(print_room,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(loc))]),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg)),
+  |   |   |   | StringExp("map")),
+  |   |   |   SeqExp[
+  |   |   |   | IfExp(
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(inventory),
+  |   |   |   |   |   map)),
+  |   |   |   |   IntExp(1),
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   | items),
+  |   |   |   |   |   map)))],
+  |   |   |   IntExp(0)),
+  |   |   | CallExp(print_map,[]),
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(arg)),
+  |   |   |   |   StringExp("flask")),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   items),
+  |   |   |   |   | flask)),
+  |   |   |   | IntExp(0)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp("\n'Tis an ordinary flask.\n")]),
+  |   |   |   IfExp(
+  |   |   |   | IfExp(
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(arg)),
+  |   |   |   |   |   StringExp("door")),
+  |   |   |   |   | OpExp(NeqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   |   | items),
+  |   |   |   |   |   |   exit)),
+  |   |   |   |   |   NilExp),
+  |   |   |   |   | IntExp(0)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   |   items),
+  |   |   |   |   |   | exit),
+  |   |   |   |   |   locked)),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp("\nThe door is locked.\n")]),
+  |   |   |   | IfExp(
+  |   |   |   |   IfExp(
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   |   | StringExp("door")),
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   |   |   items),
+  |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   | NilExp),
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | CallExp(not,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   |   |   items),
+  |   |   |   |   |   |   | exit),
+  |   |   |   |   |   |   locked))]),
+  |   |   |   |   | IntExp(0)),
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | StringExp("\nThe door is unlocked.\n")]),
+  |   |   |   |   IfExp(
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   |   | StringExp("key")),
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | IfExp(
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   SimpleVar(inventory),
+  |   |   |   |   |   |   |   key)),
+  |   |   |   |   |   |   IntExp(1),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   |   |   | items),
+  |   |   |   |   |   |   |   key)))],
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | CallExp(print,[
+  |   |   |   |   |   StringExp("\n'Tis an ornate key.\n")]),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   |   | StringExp("room")),
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | CallExp(print,[
+  |   |   |   |   |   |   StringExp("\n")]),
+  |   |   |   |   |   | CallExp(print_room,[
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(loc))])],
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | CallExp(concat,[
+  |   |   |   |   |   |   StringExp("\nYe do not see any "),
+  |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   |   |   | StringExp("!\n")])])])))))))))),
+  | (get,[
+  |   (arg,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(arg)),
+  |   |   | StringExp("map")),
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(loc),
+  |   |   |   | items),
+  |   |   |   map)),
+  |   |   IntExp(0)),
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(inventory),
+  |   |   |   map),
+  |   |   | IntExp(1)),
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(loc),
+  |   |   |   | items),
+  |   |   |   map),
+  |   |   | IntExp(0)),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe picketh up the MAP.\n")])],
+  |   | IfExp(
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(arg)),
+  |   |   |   StringExp("flask")),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   items),
+  |   |   |   | flask)),
+  |   |   | IntExp(0)),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYou cannot get ye flask.\n")]),
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg)),
+  |   |   |   | StringExp("door")),
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   items),
+  |   |   |   |   | exit)),
+  |   |   |   | NilExp),
+  |   |   |   IntExp(0)),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\nThe door will not budge.\n")]),
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(arg)),
+  |   |   |   |   StringExp("key")),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   items),
+  |   |   |   |   | key)),
+  |   |   |   | IntExp(0)),
+  |   |   |   SeqExp[
+  |   |   |   | AssignExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(inventory),
+  |   |   |   |   | key),
+  |   |   |   |   IntExp(1)),
+  |   |   |   | AssignExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   items),
+  |   |   |   |   | key),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp("\nYe picketh up the KEY.\n")])],
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp("\nYe cannot pick that up!\n")])))))),
+  | (drop,[
+  |   (arg,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(arg)),
+  |   |   | StringExp("map")),
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(inventory),
+  |   |   |   map)),
+  |   |   IntExp(0)),
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(loc),
+  |   |   |   | items),
+  |   |   |   map),
+  |   |   | IntExp(1)),
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(inventory),
+  |   |   |   map),
+  |   |   | IntExp(0)),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe droppeth the MAP.\n")])],
+  |   | IfExp(
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(arg)),
+  |   |   |   StringExp("key")),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(inventory),
+  |   |   |   | key)),
+  |   |   | IntExp(0)),
+  |   |   SeqExp[
+  |   |   | AssignExp(
+  |   |   |   FieldVar(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   items),
+  |   |   |   | key),
+  |   |   |   IntExp(1)),
+  |   |   | AssignExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(inventory),
+  |   |   |   | key),
+  |   |   |   IntExp(0)),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\nYe droppeth the KEY.\n")])],
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe cannot drop that!\n")])))),
+  | (use,[
+  |   (arg,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | IfExp(
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg)),
+  |   |   |   | StringExp("key")),
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(inventory),
+  |   |   |   |   key)),
+  |   |   |   IntExp(0)),
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   | items),
+  |   |   |   |   exit)),
+  |   |   |   NilExp),
+  |   |   | IntExp(0)),
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   FieldVar(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   items),
+  |   |   |   | exit),
+  |   |   |   locked)),
+  |   |   IntExp(0)),
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   FieldVar(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   items),
+  |   |   |   | exit),
+  |   |   |   locked),
+  |   |   | IntExp(0)),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe unlocketh the DOOR.\n")])],
+  |   | IfExp(
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg)),
+  |   |   |   | StringExp("key")),
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(inventory),
+  |   |   |   |   key)),
+  |   |   |   IntExp(0)),
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   | items),
+  |   |   |   |   exit)),
+  |   |   |   NilExp),
+  |   |   | IntExp(0)),
+  |   |   SeqExp[
+  |   |   | AssignExp(
+  |   |   |   FieldVar(
+  |   |   |   | FieldVar(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   | items),
+  |   |   |   |   exit),
+  |   |   |   | locked),
+  |   |   |   IntExp(1)),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\nYe locketh the DOOR.\n")])],
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg)),
+  |   |   |   | StringExp("key")),
+  |   |   |   SeqExp[
+  |   |   |   | IfExp(
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   | items),
+  |   |   |   |   |   key)),
+  |   |   |   |   IntExp(1),
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(inventory),
+  |   |   |   |   |   key)))],
+  |   |   |   IntExp(0)),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\nThe KEY does nothing on its own.\n")]),
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | IfExp(
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   | StringExp("door")),
+  |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   |   items),
+  |   |   |   |   |   | exit)),
+  |   |   |   |   | NilExp),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   | items),
+  |   |   |   |   |   exit),
+  |   |   |   |   | locked)),
+  |   |   |   | IntExp(0)),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp("\nThe DOOR is locked.\n")]),
+  |   |   |   IfExp(
+  |   |   |   | IfExp(
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(arg)),
+  |   |   |   |   |   StringExp("door")),
+  |   |   |   |   | OpExp(NeqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   |   | items),
+  |   |   |   |   |   |   exit)),
+  |   |   |   |   |   NilExp),
+  |   |   |   |   | IntExp(0)),
+  |   |   |   |   CallExp(not,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   |   | items),
+  |   |   |   |   |   |   exit),
+  |   |   |   |   |   | locked))]),
+  |   |   |   |   IntExp(0)),
+  |   |   |   | SeqExp[
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | StringExp("\nYe have escapeth yon dungeon. Well done!\n")]),
+  |   |   |   |   CallExp(exit,[
+  |   |   |   |   | IntExp(0)])],
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp("\nYe cannot use that!\n")]))))))),
+  | (go,[
+  |   (arg,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(arg)),
+  |   |   | StringExp("north")),
+  |   |   OpExp(NeqOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(loc),
+  |   |   |   | n)),
+  |   |   | NilExp),
+  |   |   IntExp(0)),
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | SimpleVar(loc),
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   n),
+  |   |   |   | n))),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nYe moveth to yonder ROOM.\n")])],
+  |   | IfExp(
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(arg)),
+  |   |   |   StringExp("south")),
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   s)),
+  |   |   |   NilExp),
+  |   |   | IntExp(0)),
+  |   |   SeqExp[
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(loc),
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   | s),
+  |   |   |   |   s))),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\nYe moveth to yonder ROOM.\n")])],
+  |   |   IfExp(
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg)),
+  |   |   |   | StringExp("east")),
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   | e)),
+  |   |   |   | NilExp),
+  |   |   |   IntExp(0)),
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(loc),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   e),
+  |   |   |   |   | e))),
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp("\nYe moveth to yonder ROOM.\n")])],
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(arg)),
+  |   |   |   |   StringExp("west")),
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   SimpleVar(loc),
+  |   |   |   |   |   w)),
+  |   |   |   |   NilExp),
+  |   |   |   | IntExp(0)),
+  |   |   |   SeqExp[
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(loc),
+  |   |   |   |   VarExp(
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   | w),
+  |   |   |   |   |   w))),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp("\nYe moveth to yonder ROOM.\n")])],
+  |   |   |   CallExp(print,[
+  |   |   |   | StringExp("\nYe cannot do that!\n")])))))),
+  | (handle_command,[],
+  |   NONE,
+  |   LetExp([
+  |   | VarDec(i,true,SOME(input),
+  |   |   CallExp(get_input,[])),
+  |   | VarDec(cmd,true,NONE,
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(i),
+  |   |   |   cmd))),
+  |   | VarDec(arg,true,NONE,
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(i),
+  |   |   |   arg)))],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(cmd)),
+  |   |   |   StringExp("look at ")),
+  |   |   | CallExp(look,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(arg))]),
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(cmd)),
+  |   |   |   | StringExp("pick up ")),
+  |   |   |   CallExp(get,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(arg))]),
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(cmd)),
+  |   |   |   |   StringExp("use ")),
+  |   |   |   | CallExp(use,[
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(arg))]),
+  |   |   |   | IfExp(
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   | StringExp("drop ")),
+  |   |   |   |   CallExp(drop,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(arg))]),
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(cmd)),
+  |   |   |   |   |   StringExp("go ")),
+  |   |   |   |   | CallExp(go,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(arg))]),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   |   | StringExp("help")),
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | StringExp("\nYou can:\n- go <direction>\n- look at <object>\n- pick up <object>\n- use <object>\n- drop <object>\n")]),
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | CallExp(concat,[
+  |   |   |   |   |   |   StringExp("\nYe cannot "),
+  |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   |   |   | CallExp(concat,[
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(arg)),
+  |   |   |   |   |   |   |   StringExp("!\n")])])])])))))))])),
+  | (update,[],
+  |   NONE,
+  |   SeqExp[
+  |   | CallExp(handle_command,[]),
+  |   | CallExp(print,[
+  |   |   StringExp("\n> ")]),
+  |   | CallExp(flush,[]),
+  |   | CallExp(update,[])]),
+  | (setup_level,[],
+  |   NONE,
+  |   SeqExp[
+  |   | ForExp(i,true,
+  |   |   IntExp(0),
+  |   |   OpExp(MinusOp,
+  |   |   | OpExp(TimesOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(X)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(Y))),
+  |   |   | IntExp(1)),
+  |   |   LetExp([
+  |   |   | VarDec(s,true,NONE,
+  |   |   |   CallExp(substring,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(layout)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(i)),
+  |   |   |   | IntExp(1)])),
+  |   |   | VarDec(special,true,NONE,
+  |   |   |   IntExp(0)),
+  |   |   | VarDec(items,true,NONE,
+  |   |   |   RecordExp(items,[
+  |   |   |   | (map,
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(s)),
+  |   |   |   |   |   StringExp("M")),
+  |   |   |   |   | SeqExp[
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(special),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   IntExp(1)],
+  |   |   |   |   | IntExp(0))),
+  |   |   |   | (flask,
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(s)),
+  |   |   |   |   |   StringExp("F")),
+  |   |   |   |   | SeqExp[
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(special),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   IntExp(1)],
+  |   |   |   |   | IntExp(0))),
+  |   |   |   | (key,
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(s)),
+  |   |   |   |   |   StringExp("K")),
+  |   |   |   |   | SeqExp[
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(special),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   IntExp(1)],
+  |   |   |   |   | IntExp(0))),
+  |   |   |   | (exit,
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(s)),
+  |   |   |   |   |   StringExp("E")),
+  |   |   |   |   | SeqExp[
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(special),
+  |   |   |   |   |   | IntExp(1)),
+  |   |   |   |   |   RecordExp(exit,[
+  |   |   |   |   |   | (locked,
+  |   |   |   |   |   |   IntExp(1))])],
+  |   |   |   |   | NilExp))]))],
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(map),
+  |   |   |   | CallExp(concat,[
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(map)),
+  |   |   |   |   IfExp(
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(special)),
+  |   |   |   |   | StringExp("?"),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(s)),
+  |   |   |   |   |   | StringExp("S")),
+  |   |   |   |   |   StringExp("O"),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(s))))])),
+  |   |   |   IfExp(
+  |   |   |   | OpExp(NeqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(s)),
+  |   |   |   |   StringExp(" ")),
+  |   |   |   | LetExp([
+  |   |   |   |   VarDec(n,true,NONE,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(d),
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(X)))))),
+  |   |   |   |   VarDec(w,true,NONE,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(d),
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   |   IntExp(1))))),
+  |   |   |   |   VarDec(r,true,NONE,
+  |   |   |   |   | RecordExp(room,[
+  |   |   |   |   |   (n,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(n))),
+  |   |   |   |   |   (e,
+  |   |   |   |   |   | NilExp),
+  |   |   |   |   |   (s,
+  |   |   |   |   |   | NilExp),
+  |   |   |   |   |   (w,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(w))),
+  |   |   |   |   |   (items,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(items)))]))],
+  |   |   |   |   SeqExp[
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(s)),
+  |   |   |   |   |   | StringExp("S")),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(loc),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(r)))),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(n)),
+  |   |   |   |   |   | NilExp),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   SimpleVar(n),
+  |   |   |   |   |   |   s),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(r)))),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(w)),
+  |   |   |   |   |   | NilExp),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   SimpleVar(w),
+  |   |   |   |   |   |   e),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(r)))),
+  |   |   |   |   | AssignExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(d),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(i))),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(r)))]))]))])]],
+  SeqExp[
+  | CallExp(setup_level,[]),
+  | CallExp(print,[
+  |   StringExp("Ye find yeSELF in yon dungeon.")]),
+  | CallExp(print_room,[
+  |   VarExp(
+  |   | SimpleVar(loc))]),
+  | CallExp(print,[
+  |   StringExp("\nWhat wouldst thou deau?")]),
+  | CallExp(print,[
+  |   StringExp("\n> ")]),
+  | CallExp(flush,[]),
+  | CallExp(update,[])])

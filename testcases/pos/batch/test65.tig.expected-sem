@@ -1,0 +1,10 @@
+(INT,
+  OpExp(GeOp,
+  | (INT,
+  |   CallExp(ord,[
+  |   | (STRING,
+  |   |   StringExp("1"))])),
+  | (INT,
+  |   CallExp(ord,[
+  |   | (STRING,
+  |   |   StringExp("0"))]))))

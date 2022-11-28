@@ -1,0 +1,377 @@
+(VOID,
+  LetExp([
+  | FunctionDec[
+  |   (base,[
+  |   | (v,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   LetExp([
+  |   |   | VarDec(acc,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(1)))],
+  |   |   | (INT,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   WhileExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(v)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(v)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(10)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(GeOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(v)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1))))]),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(acc)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(acc)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(10)))))))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(acc))))])))),
+  |   (toString,[
+  |   | (v,true)],
+  |   | STRING,
+  |   | (STRING,
+  |   |   LetExp([
+  |   |   | VarDec(out,true,STRING,
+  |   |   |   (STRING,
+  |   |   |   | IfExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | OpExp(LtOp,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(v)))),
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(0)))),
+  |   |   |   |   (STRING,
+  |   |   |   |   | StringExp("-")),
+  |   |   |   |   (STRING,
+  |   |   |   |   | StringExp(""))))),
+  |   |   | VarDec(val,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IfExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | OpExp(LtOp,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(v)))),
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(0)))),
+  |   |   |   |   (INT,
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(v)))))),
+  |   |   |   |   (INT,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | SimpleVar(v))))))),
+  |   |   | VarDec(b,true,INT,
+  |   |   |   (INT,
+  |   |   |   | CallExp(base,[
+  |   |   |   |   (INT,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | SimpleVar(val))))]))),
+  |   |   | VarDec(off,true,INT,
+  |   |   |   (INT,
+  |   |   |   | CallExp(ord,[
+  |   |   |   |   (STRING,
+  |   |   |   |   | StringExp("0"))])))],
+  |   |   | (STRING,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   WhileExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(b)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   LetExp([
+  |   |   |   |   |   | VarDec(d,true,INT,
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | OpExp(DivideOp,
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   | SimpleVar(val)))),
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   | SimpleVar(b)))))))],
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(val)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(val)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(b)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(d)))))))))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(b)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(b)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(10)))))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(out)),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(out)))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   CallExp(chr,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(off)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(d))))))]))]))))]))))),
+  |   |   |   | (STRING,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SimpleVar(out))))]))))],
+  | TypeDec[
+  |   (DoorState,
+  |   | NAME DoorState = INT),
+  |   (DoorArray,
+  |   | NAME DoorArray = ARRAY of NAME DoorState)],
+  | VarDec(CLOSED,true,INT,
+  |   (INT,
+  |   | IntExp(0))),
+  | VarDec(OPEN,true,INT,
+  |   (INT,
+  |   | IntExp(1))),
+  | FunctionDec[
+  |   (toggle,[
+  |   | (state,true)],
+  |   | NAME DoorState = INT,
+  |   | (INT,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   SimpleVar(state)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(OPEN)))))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(CLOSED)))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(OPEN))))))),
+  |   (mod,[
+  |   | (a,true),
+  |   | (b,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   OpExp(MinusOp,
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(a)))),
+  |   |   | (INT,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(b)))),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(b)))))))))))],
+  | VarDec(doors,true,NAME DoorArray = ARRAY of NAME DoorState,
+  |   (NAME DoorArray = ARRAY of NAME DoorState,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | IntExp(100)),
+  |   |   (INT,
+  |   |   | VarExp(
+  |   |   |   (INT,
+  |   |   |   | SimpleVar(CLOSED)))))))],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Calculating: "))])),
+  |   | (VOID,
+  |   |   ForExp(pass,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   IntExp(99)),
+  |   |   | (VOID,
+  |   |   |   ForExp(door,true,
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(99)),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   CallExp(mod,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(door)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(pass)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1))))])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | (NAME DoorArray = ARRAY of NAME DoorState,
+  |   |   |   |   |   |   |   SimpleVar(doors)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(door)))))),
+  |   |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   |   CallExp(toggle,[
+  |   |   |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   | (NAME DoorArray = ARRAY of NAME DoorState,
+  |   |   |   |   |   |   |   |   |   SimpleVar(doors)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(door))))))))])))))))))),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Door states: "))])),
+  |   | (VOID,
+  |   |   ForExp(door,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   IntExp(99)),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME DoorState = INT,
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | (NAME DoorArray = ARRAY of NAME DoorState,
+  |   |   |   |   |   |   |   SimpleVar(doors)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(door)))))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(OPEN)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("Door number "))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(toString,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(door)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1))))]))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp(" is open.\n"))]))])))))])))

@@ -1,0 +1,7 @@
+LetExp([
+  VarDec(a,true,NONE,
+  | IntExp(0)),
+  VarDec(a,true,NONE,
+  | StringExp(" "))],
+  SeqExp[
+  | IntExp(0)])

@@ -1,0 +1,22 @@
+LetExp([
+  VarDec(buffer,true,NONE,
+  | StringExp("5")),
+  FunctionDec[
+  | (isdigit,[],
+  |   SOME(int),
+  |   IfExp(
+  |   | OpExp(GeOp,
+  |   |   CallExp(ord,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(buffer))]),
+  |   |   CallExp(ord,[
+  |   |   | StringExp("0")])),
+  |   | OpExp(LeOp,
+  |   |   CallExp(ord,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(buffer))]),
+  |   |   CallExp(ord,[
+  |   |   | StringExp("9")])),
+  |   | IntExp(0)))]],
+  SeqExp[
+  | CallExp(isdigit,[])])

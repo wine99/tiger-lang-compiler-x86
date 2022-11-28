@@ -1,0 +1,5 @@
+inserting the value 2
+inserting the value 15
+Does set contain the value 1?: false
+Does set contain the value 2?: true
+Does set contain the value 10?: false

@@ -1,0 +1,27 @@
+3:1:LET
+4:2:TYPE
+4:7:ID arrtype1
+4:16:EQ
+4:18:ARRAY
+4:24:OF
+4:27:ID int
+5:2:TYPE
+5:7:ID arrtype2
+5:16:EQ
+5:18:ARRAY
+5:24:OF
+5:27:ID int
+7:2:VAR
+7:6:ID arr1
+7:10:COLON
+7:12:ID arrtype1
+7:21:ASSIGN
+7:24:ID arrtype2
+7:33:LBRACK
+7:34:INT 10
+7:36:RBRACK
+7:38:OF
+7:41:INT 0
+8:1:IN
+9:2:ID arr1
+10:1:END

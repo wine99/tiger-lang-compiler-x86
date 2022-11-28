@@ -1,0 +1,12 @@
+(library
+        (name llvmparser)
+        (libraries tigercommon)
+        )
+
+(ocamllex lllexer)
+
+(menhir
+  (merge_into llparser)
+  (modules llparser)
+  (flags --explain)
+)

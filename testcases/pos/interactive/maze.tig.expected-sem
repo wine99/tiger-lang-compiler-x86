@@ -1,0 +1,2128 @@
+(VOID,
+  LetExp([
+  | TypeDec[
+  |   (input,
+  |   | NAME input = RECORD {cmd: STRING, arg: STRING}),
+  |   (exit,
+  |   | NAME exit = RECORD {locked: INT}),
+  |   (items,
+  |   | NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit}),
+  |   (room,
+  |   | NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items}),
+  |   (dungeon,
+  |   | NAME dungeon = ARRAY of NAME room)],
+  | VarDec(X,true,INT,
+  |   (INT,
+  |   | IntExp(9))),
+  | VarDec(Y,true,INT,
+  |   (INT,
+  |   | IntExp(9))),
+  | VarDec(d,true,NAME dungeon = ARRAY of NAME room,
+  |   (NAME dungeon = ARRAY of NAME room,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | OpExp(TimesOp,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(X)))),
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(Y)))))),
+  |   |   (NIL,
+  |   |   | NilExp)))),
+  | VarDec(inventory,true,NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   | RecordExp([
+  |   |   (map,
+  |   |   | (INT,
+  |   |   |   IntExp(0))),
+  |   |   (flask,
+  |   |   | (INT,
+  |   |   |   IntExp(0))),
+  |   |   (key,
+  |   |   | (INT,
+  |   |   |   IntExp(0))),
+  |   |   (exit,
+  |   |   | (NIL,
+  |   |   |   NilExp))]))),
+  | VarDec(loc,true,NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   (NIL,
+  |   | NilExp)),
+  | VarDec(layout,true,STRING,
+  |   (STRING,
+  |   | StringExp("          F-S-O-E  |   |    F-O-M-F  |   | |  O-F-O-O    |   |  F-O-O-K          "))),
+  | VarDec(map,true,STRING,
+  |   (STRING,
+  |   | StringExp(""))),
+  | FunctionDec[
+  |   (get_input,[],
+  |   | NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   | (NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   LetExp([
+  |   |   | VarDec(parse,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(1))),
+  |   |   | VarDec(cmd,true,STRING,
+  |   |   |   (STRING,
+  |   |   |   | StringExp(""))),
+  |   |   | VarDec(arg,true,STRING,
+  |   |   |   (STRING,
+  |   |   |   | StringExp(""))),
+  |   |   | VarDec(c,true,STRING,
+  |   |   |   (STRING,
+  |   |   |   | CallExp(getchar,[])))],
+  |   |   | (NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   WhileExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(c)))),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\n")))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(parse)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(cmd)),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(c))))])))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(c))))])))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(parse)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("look at ")))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(parse)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("go ")))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(parse)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   StringExp("pick up ")))),
+  |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(parse)),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   StringExp("use ")))),
+  |   |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(parse)),
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   StringExp("drop ")))),
+  |   |   |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(parse)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   IntExp(0)))))))))))))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(c)),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   CallExp(getchar,[]))))]))),
+  |   |   |   | (NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   |   |   RecordExp([
+  |   |   |   |   | (cmd,
+  |   |   |   |   |   (STRING,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   | SimpleVar(cmd))))),
+  |   |   |   |   | (arg,
+  |   |   |   |   |   (STRING,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   | SimpleVar(arg)))))]))])))),
+  |   (print_map,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(i,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(Y)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(2)))),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   CallExp(concat,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   CallExp(substring,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(map)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(X)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(X))))])),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\n"))]))]))))),
+  |   (print_room,[
+  |   | (r,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   LetExp([
+  |   |   | VarDec(i,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0)))],
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe see"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print_items,[
+  |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   | items))))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp(" in the ROOM.\n"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("Obvious exits are"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(r)),
+  |   |   |   |   |   |   |   | n)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" NORTH"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(r)),
+  |   |   |   |   |   |   |   | e)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" and"))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" EAST"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(r)),
+  |   |   |   |   |   |   |   | s)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" and"))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" SOUTH"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(r)),
+  |   |   |   |   |   |   |   | w)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" and"))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" WEST"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp(".\n"))]))])))),
+  |   (print_items,[
+  |   | (items,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   LetExp([
+  |   |   | VarDec(i,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0)))],
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   SimpleVar(items)),
+  |   |   |   |   |   |   | map)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" a MAP"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   SimpleVar(items)),
+  |   |   |   |   |   |   | flask)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" and"))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" a FLASK"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   SimpleVar(items)),
+  |   |   |   |   |   |   | key)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" and"))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" a KEY"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   SimpleVar(items)),
+  |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(" and"))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" a DOOR"))]))]))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp(" nothing of interest"))]))))])))),
+  |   (look,[
+  |   | (arg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (STRING,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("self")))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe holdeth"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print_items,[
+  |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   SimpleVar(inventory))))]))]),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("room")))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print_room,[
+  |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   SimpleVar(loc))))])),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("map")))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   |   |   | map)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   | map)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print_map,[])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("flask")))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   | flask)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("\n'Tis an ordinary flask.\n"))])),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("door")))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   |   |   |   |   | locked)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("\nThe door is locked.\n"))])),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   StringExp("door")))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(not,[
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   |   |   |   |   |   |   | locked))))])),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("\nThe door is unlocked.\n"))])),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   StringExp("key")))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | key)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | key)))))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("\n'Tis an ornate key.\n"))])),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   StringExp("room")))),
+  |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   StringExp("\n"))])),
+  |   |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   |   CallExp(print_room,[
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc))))]))]),
+  |   |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   StringExp("\nYe do not see any ")),
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   StringExp("!\n"))]))]))]))))))))))))))))))),
+  |   (get,[
+  |   | (arg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("map")))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   | items)),
+  |   |   |   |   |   | map)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   | map)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   | items)),
+  |   |   |   |   |   | map)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe picketh up the MAP.\n"))]))]),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("flask")))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   | flask)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYou cannot get ye flask.\n"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("door")))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\nThe door will not budge.\n"))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("key")))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   | key)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   |   |   | key)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   | key)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("\nYe picketh up the KEY.\n"))]))]),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("\nYe cannot pick that up!\n"))]))))))))))),
+  |   (drop,[
+  |   | (arg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("map")))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   | map)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   | items)),
+  |   |   |   |   |   | map)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   | map)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe droppeth the MAP.\n"))]))]),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("key")))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   | key)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   | key)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   | key)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\nYe droppeth the KEY.\n"))]))]),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe cannot drop that!\n"))]))))))),
+  |   (use,[
+  |   | (arg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("key")))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   |   | key)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   | locked)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   | locked)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe unlocketh the DOOR.\n"))]))]),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("key")))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   |   | key)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   |   | locked)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\nYe locketh the DOOR.\n"))]))]),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("key")))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   | key)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   SimpleVar(inventory)),
+  |   |   |   |   |   |   |   |   | key)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\nThe KEY does nothing on its own.\n"))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("door")))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   |   |   |   | locked)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("\nThe DOOR is locked.\n"))])),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("door")))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   |   | exit)))),
+  |   |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(not,[
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   |   |   | items)),
+  |   |   |   |   |   |   |   |   |   |   |   | exit)),
+  |   |   |   |   |   |   |   |   |   |   | locked))))])),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("\nYe have escapeth yon dungeon. Well done!\n"))])),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   CallExp(exit,[
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(0))]))]),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("\nYe cannot use that!\n"))]))))))))))))),
+  |   (go,[
+  |   | (arg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("north")))),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   | n)))),
+  |   |   |   |   | (NIL,
+  |   |   |   |   |   NilExp))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | n)),
+  |   |   |   |   |   |   | n)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("\nYe moveth to yonder ROOM.\n"))]))]),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("south")))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | s)))),
+  |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   NilExp))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   | s)),
+  |   |   |   |   |   |   |   | s)))))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\nYe moveth to yonder ROOM.\n"))]))]),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("east")))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   | e)))),
+  |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | e)),
+  |   |   |   |   |   |   |   |   | e)))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("\nYe moveth to yonder ROOM.\n"))]))]),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("west")))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | w)))),
+  |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   |   | w)),
+  |   |   |   |   |   |   |   |   |   | w)))))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("\nYe moveth to yonder ROOM.\n"))]))]),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("\nYe cannot do that!\n"))]))))))))))),
+  |   (handle_command,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   LetExp([
+  |   |   | VarDec(i,true,NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   |   (NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   |   | CallExp(get_input,[]))),
+  |   |   | VarDec(cmd,true,STRING,
+  |   |   |   (STRING,
+  |   |   |   | VarExp(
+  |   |   |   |   (STRING,
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   (NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   cmd))))),
+  |   |   | VarDec(arg,true,STRING,
+  |   |   |   (STRING,
+  |   |   |   | VarExp(
+  |   |   |   |   (STRING,
+  |   |   |   |   | FieldVar(
+  |   |   |   |   |   (NAME input = RECORD {cmd: STRING, arg: STRING},
+  |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   arg)))))],
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("look at ")))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(look,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(arg))))])),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("pick up ")))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(get,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(arg))))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("use ")))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(use,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(arg))))])),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("drop ")))),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   CallExp(drop,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(arg))))])),
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("go ")))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   CallExp(go,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(arg))))])),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("help")))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("\nYou can:\n- go <direction>\n- look at <object>\n- pick up <object>\n- use <object>\n- drop <object>\n"))])),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   StringExp("\nYe cannot ")),
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(cmd)))),
+  |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(arg)))),
+  |   |   |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   |   |   StringExp("!\n"))]))]))]))]))))))))))))))))),
+  |   (update,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   CallExp(handle_command,[])),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("\n> "))])),
+  |   |   | (VOID,
+  |   |   |   CallExp(flush,[])),
+  |   |   | (VOID,
+  |   |   |   CallExp(update,[]))])),
+  |   (setup_level,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(i,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(X)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(Y)))))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1)))),
+  |   |   | (VOID,
+  |   |   |   LetExp([
+  |   |   |   | VarDec(s,true,STRING,
+  |   |   |   |   (STRING,
+  |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   (STRING,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   | SimpleVar(layout)))),
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(i)))),
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(1))]))),
+  |   |   |   | VarDec(special,true,INT,
+  |   |   |   |   (INT,
+  |   |   |   |   | IntExp(0))),
+  |   |   |   | VarDec(items,true,NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   | RecordExp([
+  |   |   |   |   |   (map,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("M")))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(special)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1))]),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0))))),
+  |   |   |   |   |   (flask,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("F")))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(special)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1))]),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0))))),
+  |   |   |   |   |   (key,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("K")))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(special)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(1))]),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0))))),
+  |   |   |   |   |   (exit,
+  |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("E")))),
+  |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(special)),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   |   |   | (NAME exit = RECORD {locked: INT},
+  |   |   |   |   |   |   |   |   RecordExp([
+  |   |   |   |   |   |   |   |   | (locked,
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | IntExp(1)))]))]),
+  |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   NilExp))))])))],
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(map)),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(map)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(special)))),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("?")),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("S")))),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("O")),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(s))))))))])))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp(" ")))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   LetExp([
+  |   |   |   |   |   |   | VarDec(n,true,NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   |   |   (NAME dungeon = ARRAY of NAME room,
+  |   |   |   |   |   |   |   |   |   | SimpleVar(d)),
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(i)))),
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(X))))))))))),
+  |   |   |   |   |   |   | VarDec(w,true,NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   |   |   (NAME dungeon = ARRAY of NAME room,
+  |   |   |   |   |   |   |   |   |   | SimpleVar(d)),
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   |   | SimpleVar(i)))),
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | IntExp(1))))))))),
+  |   |   |   |   |   |   | VarDec(r,true,NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   | RecordExp([
+  |   |   |   |   |   |   |   |   (n,
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(n))))),
+  |   |   |   |   |   |   |   |   (e,
+  |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   NilExp)),
+  |   |   |   |   |   |   |   |   (s,
+  |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   NilExp)),
+  |   |   |   |   |   |   |   |   (w,
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(w))))),
+  |   |   |   |   |   |   |   |   (items,
+  |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME items = RECORD {map: INT, flask: INT, key: INT, exit: NAME exit},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(items)))))])))],
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(s)))),
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("S")))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(loc)),
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(r)))))))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(n)))),
+  |   |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(n)),
+  |   |   |   |   |   |   |   |   |   |   | s)),
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(r)))))))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(w)))),
+  |   |   |   |   |   |   |   |   |   | (NIL,
+  |   |   |   |   |   |   |   |   |   |   NilExp))),
+  |   |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(w)),
+  |   |   |   |   |   |   |   |   |   |   | e)),
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(r)))))))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   |   |   | (NAME dungeon = ARRAY of NAME room,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(d)),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(i)))))),
+  |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(r))))))])))))]))))))]],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(setup_level,[])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Ye find yeSELF in yon dungeon."))])),
+  |   | (VOID,
+  |   |   CallExp(print_room,[
+  |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   VarExp(
+  |   |   |   | (NAME room = RECORD {n: NAME room, e: NAME room, s: NAME room, w: NAME room, items: NAME items},
+  |   |   |   |   SimpleVar(loc))))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\nWhat wouldst thou deau?"))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\n> "))])),
+  |   | (VOID,
+  |   |   CallExp(flush,[])),
+  |   | (VOID,
+  |   |   CallExp(update,[]))])))

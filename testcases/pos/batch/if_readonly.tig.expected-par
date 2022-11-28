@@ -1,0 +1,12 @@
+ForExp(i,true,
+  IntExp(0),
+  IntExp(10),
+  SeqExp[
+  | IfExp(
+  |   VarExp(
+  |   | SimpleVar(i)),
+  |   VarExp(
+  |   | SimpleVar(i)),
+  |   VarExp(
+  |   | SimpleVar(i))),
+  | SeqExp[]])

@@ -1,0 +1,19 @@
+(VOID,
+  ForExp(i,true,
+  | (INT,
+  |   IntExp(0)),
+  | (INT,
+  |   IntExp(10)),
+  | (VOID,
+  |   LetExp([
+  |   | VarDec(x,true,INT,
+  |   |   (INT,
+  |   |   | VarExp(
+  |   |   |   (INT,
+  |   |   |   | SimpleVar(i)))))],
+  |   | (VOID,
+  |   |   AssignExp(
+  |   |   | (INT,
+  |   |   |   SimpleVar(x)),
+  |   |   | (INT,
+  |   |   |   IntExp(0))))))))

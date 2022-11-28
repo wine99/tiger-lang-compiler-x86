@@ -1,0 +1,16 @@
+(executable
+        (name tigerc)        
+        (libraries tigermain)
+        (modes native)
+        )
+
+
+
+(install 
+    (section bin)
+    
+    (files 
+           (tigerc.exe as tigerc)
+           ))
+
+(data_only_dirs lexer parser rescue)

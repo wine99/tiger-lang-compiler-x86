@@ -1,0 +1,5 @@
+OpExp(GeOp,
+  CallExp(ord,[
+  | StringExp("1")]),
+  CallExp(ord,[
+  | StringExp("0")]))

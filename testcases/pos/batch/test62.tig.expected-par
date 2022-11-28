@@ -1,0 +1,12 @@
+LetExp([
+  VarDec(s,true,NONE,
+  | StringExp("whatever")),
+  FunctionDec[
+  | (compare,[],
+  |   SOME(int),
+  |   OpExp(GtOp,
+  |   | VarExp(
+  |   |   SimpleVar(s)),
+  |   | StringExp("else")))]],
+  SeqExp[
+  | CallExp(compare,[])])

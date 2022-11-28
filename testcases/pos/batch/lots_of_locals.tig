@@ -1,0 +1,14 @@
+let
+    type rec = {v: int}
+    type arr = array of rec
+    var a: int := 0
+    var b: int := 1
+    var c: int := 2
+    var x: string := "Hello"
+    var y: string := "World"
+    var r: rec := rec {v = 123}
+    var ar: arr := arr[10] of r
+in
+    0
+end
+    

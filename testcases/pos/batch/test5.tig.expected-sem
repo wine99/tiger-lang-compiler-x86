@@ -1,0 +1,22 @@
+(NAME intlist = RECORD {hd: INT, tl: NAME intlist},
+  LetExp([
+  | TypeDec[
+  |   (intlist,
+  |   | NAME intlist = RECORD {hd: INT, tl: NAME intlist}),
+  |   (tree,
+  |   | NAME tree = RECORD {key: INT, children: NAME treelist}),
+  |   (treelist,
+  |   | NAME treelist = RECORD {hd: NAME tree, tl: NAME treelist})],
+  | VarDec(lis,true,NAME intlist = RECORD {hd: INT, tl: NAME intlist},
+  |   (NAME intlist = RECORD {hd: INT, tl: NAME intlist},
+  |   | RecordExp([
+  |   |   (hd,
+  |   |   | (INT,
+  |   |   |   IntExp(0))),
+  |   |   (tl,
+  |   |   | (NIL,
+  |   |   |   NilExp))])))],
+  | (NAME intlist = RECORD {hd: INT, tl: NAME intlist},
+  |   VarExp(
+  |   | (NAME intlist = RECORD {hd: INT, tl: NAME intlist},
+  |   |   SimpleVar(lis))))))

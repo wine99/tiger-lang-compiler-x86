@@ -1,0 +1,1046 @@
+(VOID,
+  LetExp([
+  | TypeDec[
+  |   (bool,
+  |   | NAME bool = INT)],
+  | VarDec(true,true,INT,
+  |   (INT,
+  |   | IntExp(1))),
+  | VarDec(false,true,INT,
+  |   (INT,
+  |   | IntExp(0))),
+  | FunctionDec[
+  |   (chk,[
+  |   | (a,true),
+  |   | (b,true),
+  |   | (msg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (NAME bool = INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   | (NAME bool = INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(b)))))),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SimpleVar(msg))))])),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("."))]))))),
+  |   (fill,[
+  |   | (first,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   ForExp(i,true,
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("a"))])),
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("z"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("a"))])),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(first))))])))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(first))))])),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("z"))])))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(chr,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(i))))]))])))))),
+  |   |   | (VOID,
+  |   |   |   ForExp(i,true,
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("0"))])),
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("9"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   StringExp("0"))])),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(first))))])))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(first))))])),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(i)))))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("9"))])))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(LeOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp("a"))])),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(first))))])))))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(chr,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(i))))]))]))))))])),
+  |   (newl,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   CallExp(chr,[
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(10))]))]))),
+  |   (TstBool,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   LetExp([
+  |   |   | VarDec(B1,true,NAME bool = INT,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(false))))),
+  |   |   | VarDec(B2,true,NAME bool = INT,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(false))))),
+  |   |   | VarDec(B3,true,NAME bool = INT,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(false))))),
+  |   |   | VarDec(a,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0))),
+  |   |   | VarDec(b,true,INT,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0))),
+  |   |   | FunctionDec[
+  |   |   |   (XT,[],
+  |   |   |   | NAME bool = INT,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(true))))),
+  |   |   |   (XF,[],
+  |   |   |   | NAME bool = INT,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(false))))),
+  |   |   |   (Q,[],
+  |   |   |   | NAME bool = INT,
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(b))))))),
+  |   |   |   (F,[
+  |   |   |   | (b1,true),
+  |   |   |   | (b2,true),
+  |   |   |   | (ch,true)],
+  |   |   |   | VOID,
+  |   |   |   | (VOID,
+  |   |   |   |   LetExp([
+  |   |   |   |   | VarDec(R1,true,NAME bool = INT,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(false))))),
+  |   |   |   |   | VarDec(bo1,true,NAME bool = INT,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(false))))),
+  |   |   |   |   | VarDec(bo2,true,NAME bool = INT,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | SimpleVar(false))))),
+  |   |   |   |   | FunctionDec[
+  |   |   |   |   |   (FF,[
+  |   |   |   |   |   | (b,true)],
+  |   |   |   |   |   | NAME bool = INT,
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(b)))))]],
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(R1)),
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   CallExp(FF,[
+  |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(b1))))])),
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   CallExp(FF,[
+  |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(b2))))])),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(bo1)),
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   CallExp(FF,[
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(b1))))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(bo2)),
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   CallExp(FF,[
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(b2))))])))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(chk,[
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   SimpleVar(R1)))),
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(bo1)))),
+  |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(bo2)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   SimpleVar(ch))))]))]))))]],
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B1)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B2)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("."))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("a"))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   SimpleVar(B2)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("b"))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("."))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B3)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B2)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   SimpleVar(B3)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("c"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B3)),
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B2)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   SimpleVar(B3)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("d"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B3)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   CallExp(not,[
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B2))))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   SimpleVar(B3)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("e"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("f"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("g"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("h"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("i"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("j"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("k"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B2)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("l"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("m"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(a)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(111)))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(b)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(222)))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   CallExp(not,[
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(b))))))])),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("n"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   CallExp(not,[
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(Q,[]))])),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("o"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   CallExp(not,[
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[]))])),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("p"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(F,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("q"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(F,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("r"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(F,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("s"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(F,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("t"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("u"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("v"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B1)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("w"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("x"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B1)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("y"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XF,[])),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   CallExp(XT,[])))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("z"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B1)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   SimpleVar(B2)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("0"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B2)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("1"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("2"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("3"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("4"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("5"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("6"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME bool = INT,
+  |   |   |   |   |   |   |   SimpleVar(B2)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("7"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(false)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("8"))])),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(chk,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("9"))]))]))))]],
+  | (VOID,
+  |   CallExp(TstBool,[]))))

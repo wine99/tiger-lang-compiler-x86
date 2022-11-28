@@ -1,0 +1,432 @@
+LetExp([
+  TypeDec[
+  | (intArray,
+  |   ArrayTy(int))],
+  VarDec(NOP,true,NONE,
+  | IntExp(0)),
+  VarDec(INC,true,NONE,
+  | IntExp(1)),
+  VarDec(DEC,true,NONE,
+  | IntExp(2)),
+  VarDec(NXT,true,NONE,
+  | IntExp(3)),
+  VarDec(PRV,true,NONE,
+  | IntExp(4)),
+  VarDec(PSH,true,NONE,
+  | IntExp(5)),
+  VarDec(POP,true,NONE,
+  | IntExp(6)),
+  VarDec(OUT,true,NONE,
+  | IntExp(7)),
+  VarDec(INP,true,NONE,
+  | IntExp(8)),
+  VarDec(compiledProgram,true,NONE,
+  | ArrayExp(intArray,
+  |   IntExp(30000),
+  |   IntExp(0))),
+  VarDec(data,true,NONE,
+  | ArrayExp(intArray,
+  |   IntExp(10000),
+  |   IntExp(0))),
+  VarDec(progStack,true,NONE,
+  | ArrayExp(intArray,
+  |   IntExp(10000),
+  |   IntExp(0))),
+  VarDec(progHead,true,NONE,
+  | IntExp(0)),
+  FunctionDec[
+  | (push,[
+  |   (pos,true,int)],
+  |   NONE,
+  |   LetExp([],
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | SubscriptVar(
+  |   |   |   SimpleVar(progStack),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(progHead))),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(pos))),
+  |   |   AssignExp(
+  |   |   | SimpleVar(progHead),
+  |   |   | OpExp(PlusOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(progHead)),
+  |   |   |   IntExp(1)))])),
+  | (pop,[],
+  |   SOME(int),
+  |   LetExp([],
+  |   | SeqExp[
+  |   |   AssignExp(
+  |   |   | SimpleVar(progHead),
+  |   |   | OpExp(MinusOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(progHead)),
+  |   |   |   IntExp(1))),
+  |   |   VarExp(
+  |   |   | SubscriptVar(
+  |   |   |   SimpleVar(progStack),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(progHead))))]))],
+  VarDec(program,true,NONE,
+  | StringExp(">++++++++[<+++++++++>-]<.>>+>+>++>[-]+<[>[->+<<++++>]<<]>.+++++++..+++.>>+++++++.<<<[[-]<[-]>]<+++++++++++++++.>>.+++.------.--------.>>+.>++++.")),
+  VarDec(pc,true,NONE,
+  | IntExp(0)),
+  VarDec(ptr,true,NONE,
+  | IntExp(0))],
+  SeqExp[
+  | ForExp(i,true,
+  |   IntExp(0),
+  |   OpExp(MinusOp,
+  |   | CallExp(size,[
+  |   |   VarExp(
+  |   |   | SimpleVar(program))]),
+  |   | IntExp(1)),
+  |   LetExp([
+  |   | VarDec(ii,true,NONE,
+  |   |   OpExp(TimesOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(i)),
+  |   |   | IntExp(2)))],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   CallExp(substring,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(program)),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(i)),
+  |   |   |   | IntExp(1)]),
+  |   |   |   StringExp("+")),
+  |   |   | AssignExp(
+  |   |   |   SubscriptVar(
+  |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(ii))),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(INC))),
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | CallExp(substring,[
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(program)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   IntExp(1)]),
+  |   |   |   | StringExp("-")),
+  |   |   |   AssignExp(
+  |   |   |   | SubscriptVar(
+  |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(ii))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(DEC))),
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   CallExp(substring,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(program)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   | IntExp(1)]),
+  |   |   |   |   StringExp(">")),
+  |   |   |   | AssignExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(ii))),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(NXT))),
+  |   |   |   | IfExp(
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(program)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   IntExp(1)]),
+  |   |   |   |   | StringExp("<")),
+  |   |   |   |   AssignExp(
+  |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(ii))),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(PRV))),
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   CallExp(substring,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(program)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   | IntExp(1)]),
+  |   |   |   |   |   StringExp(".")),
+  |   |   |   |   | AssignExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(ii))),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(OUT))),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(program)),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   |   IntExp(1)]),
+  |   |   |   |   |   | StringExp(",")),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(ii))),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(INP))),
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   |   CallExp(substring,[
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(program)),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(i)),
+  |   |   |   |   |   |   | IntExp(1)]),
+  |   |   |   |   |   |   StringExp("[")),
+  |   |   |   |   |   | LetExp([],
+  |   |   |   |   |   |   SeqExp[
+  |   |   |   |   |   |   | CallExp(push,[
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(ii))]),
+  |   |   |   |   |   |   | AssignExp(
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(ii))),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(PSH)))]),
+  |   |   |   |   |   | IfExp(
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(program)),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(i)),
+  |   |   |   |   |   |   |   IntExp(1)]),
+  |   |   |   |   |   |   | StringExp("]")),
+  |   |   |   |   |   |   LetExp([
+  |   |   |   |   |   |   | VarDec(jmpPos,true,NONE,
+  |   |   |   |   |   |   |   IntExp(0))],
+  |   |   |   |   |   |   | SeqExp[
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | SimpleVar(jmpPos),
+  |   |   |   |   |   |   |   | CallExp(pop,[])),
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | SimpleVar(ii))),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(POP))),
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   SimpleVar(ii)),
+  |   |   |   |   |   |   |   |   | IntExp(1))),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(jmpPos))),
+  |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   SimpleVar(jmpPos)),
+  |   |   |   |   |   |   |   |   | IntExp(1))),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(ii)))]),
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(ii))),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(NOP)))))))))))])),
+  | WhileExp(
+  |   OpExp(LtOp,
+  |   | VarExp(
+  |   |   SimpleVar(pc)),
+  |   | OpExp(TimesOp,
+  |   |   CallExp(size,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(program))]),
+  |   |   IntExp(2))),
+  |   SeqExp[
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   SubscriptVar(
+  |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(pc)))),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(INC))),
+  |   |   AssignExp(
+  |   |   | SubscriptVar(
+  |   |   |   SimpleVar(data),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(ptr))),
+  |   |   | OpExp(PlusOp,
+  |   |   |   VarExp(
+  |   |   |   | SubscriptVar(
+  |   |   |   |   SimpleVar(data),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(ptr)))),
+  |   |   |   IntExp(1))),
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SubscriptVar(
+  |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(pc)))),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(DEC))),
+  |   |   | AssignExp(
+  |   |   |   SubscriptVar(
+  |   |   |   | SimpleVar(data),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(ptr))),
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(data),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(ptr)))),
+  |   |   |   | IntExp(1))),
+  |   |   | IfExp(
+  |   |   |   OpExp(EqOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(pc)))),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(NXT))),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(ptr),
+  |   |   |   | OpExp(PlusOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(ptr)),
+  |   |   |   |   IntExp(1))),
+  |   |   |   IfExp(
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(pc)))),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(PRV))),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(ptr),
+  |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(ptr)),
+  |   |   |   |   | IntExp(1))),
+  |   |   |   | IfExp(
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(pc)))),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(OUT))),
+  |   |   |   |   CallExp(print,[
+  |   |   |   |   | CallExp(chr,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   SimpleVar(data),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(ptr))))])]),
+  |   |   |   |   IfExp(
+  |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(pc)))),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(INP))),
+  |   |   |   |   | AssignExp(
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | SimpleVar(data),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(ptr))),
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | CallExp(getchar,[])])),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(pc)))),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(PSH))),
+  |   |   |   |   |   | OpExp(EqOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   SimpleVar(data),
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(ptr)))),
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | SimpleVar(pc),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(pc)),
+  |   |   |   |   |   |   |   IntExp(1))))),
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | IfExp(
+  |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(pc)))),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(POP))),
+  |   |   |   |   |   |   OpExp(NeqOp,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | SimpleVar(data),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(ptr)))),
+  |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | AssignExp(
+  |   |   |   |   |   |   SimpleVar(pc),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   SimpleVar(compiledProgram),
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(pc)),
+  |   |   |   |   |   |   |   | IntExp(1))))))))))))),
+  |   | AssignExp(
+  |   |   SimpleVar(pc),
+  |   |   OpExp(PlusOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(pc)),
+  |   |   | IntExp(2)))]),
+  | CallExp(print,[
+  |   StringExp("\n")])])

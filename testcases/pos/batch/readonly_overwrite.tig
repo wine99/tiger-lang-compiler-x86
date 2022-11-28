@@ -1,0 +1,4 @@
+for i := 0 to 10 do
+    let var x := i
+    in x := 0
+    end

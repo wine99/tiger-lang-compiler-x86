@@ -1,0 +1,89 @@
+let
+  type state = int
+  type states = array of state
+  var dead : state := 0
+  var alive : state := 1
+  var N := 13
+  var Nmo := N - 1
+  
+  var board1 := states[ N * N ] of dead
+  var board2 := states[ N * N ] of dead
+
+  var currentBoard := board1
+  var nextBoard    := board2
+  
+  function switchBoards() =
+    let
+      var tmp := currentBoard
+    in
+      currentBoard := nextBoard ;
+      nextBoard    := tmp
+    end
+
+  var initial :=  "0000000000000\
+                  \0000000000000\
+                  \0000000000000\
+                  \0000000000000\
+                  \0000100000000\
+                  \0000001000000\
+                  \0001100111000\
+                  \0000000000000\
+                  \0000000000000\
+                  \0000000000000\
+                  \0000000000000\
+                  \0000000000000\
+                  \0000000000000"
+
+  function index(x : int, y : int) : int = x + y * N
+
+  function numChildren(x : int, y : int) : int = 
+    let
+      var acc : int := 0
+    in
+      if x <> 0   & currentBoard[ index( x - 1, y ) ] = alive then  acc := acc + 1 ;
+      if x <> Nmo & currentBoard[ index( x + 1, y ) ] = alive then  acc := acc + 1 ;
+      if y <> 0   & currentBoard[ index( x, y - 1 ) ] = alive then  acc := acc + 1 ;
+      if y <> Nmo & currentBoard[ index( x, y + 1 ) ] = alive then  acc := acc + 1 ;
+      if x <> 0 & y <> 0 & currentBoard[ index( x - 1, y - 1 ) ] = alive then acc := acc + 1 ;
+      if x <> Nmo & y <> 0 & currentBoard[ index( x + 1, y - 1 ) ] = alive then acc := acc + 1 ;
+      if x <> 0 & y <> Nmo & currentBoard[ index( x - 1, y + 1 ) ] = alive then acc := acc + 1 ;
+      if x <> Nmo & y <> Nmo & currentBoard[ index( x + 1, y + 1 ) ] = alive then acc := acc + 1 ;
+      acc
+    end
+
+  function simulateBoard() = 
+    for x := 0 to N - 1 do
+      for y := 0 to N - 1 do
+        let
+          var children := numChildren( x, y )
+        in
+          if currentBoard[ index( x, y ) ] = alive & children <> 2 & children <> 3 
+            then nextBoard[ index( x, y ) ] := dead
+          else if currentBoard[ index( x, y ) ] = dead & children = 3 
+            then nextBoard[ index( x, y ) ] := alive  
+          else nextBoard[ index( x, y ) ] := currentBoard[ index( x, y ) ]
+
+        end
+      
+  function printBoard() = 
+    for y := 0 to N - 1 do
+      ( for x := 0 to N - 1 do
+          if currentBoard[x + y * N] = alive then print("*")
+                                             else print(" ") ;
+        print("\n") )
+in
+  /* Load initial configuration */
+  for x := 0 to N - 1 do
+    for y := 0 to N - 1 do
+      if substring(initial, x + y * N, 1) <> "0" then
+        currentBoard[ x + y * N ] := alive ;
+  printBoard() ;
+  for i := 0 to 100 do
+    ( print("Press char for next state") ;
+      getchar() ;
+      print("Step\n") ;
+      simulateBoard() ;
+      switchBoards() ;
+      printBoard() ) ;
+  print("Done")
+end

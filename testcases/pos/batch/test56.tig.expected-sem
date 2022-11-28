@@ -1,0 +1,10 @@
+(INT,
+  OpExp(PlusOp,
+  | (INT,
+  |   OpExp(PlusOp,
+  |   | (INT,
+  |   |   IntExp(2)),
+  |   | (INT,
+  |   |   IntExp(3)))),
+  | (INT,
+  |   IntExp(4))))

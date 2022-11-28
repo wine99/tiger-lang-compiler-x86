@@ -1,0 +1,28 @@
+LetExp([
+  TypeDec[
+  | (rec,
+  |   RecordTy[
+  |   | (v,true,int)]),
+  | (arr,
+  |   ArrayTy(rec))],
+  VarDec(a,true,SOME(int),
+  | IntExp(0)),
+  VarDec(b,true,SOME(int),
+  | IntExp(1)),
+  VarDec(c,true,SOME(int),
+  | IntExp(2)),
+  VarDec(x,true,SOME(string),
+  | StringExp("Hello")),
+  VarDec(y,true,SOME(string),
+  | StringExp("World")),
+  VarDec(r,true,SOME(rec),
+  | RecordExp(rec,[
+  |   (v,
+  |   | IntExp(123))])),
+  VarDec(ar,true,SOME(arr),
+  | ArrayExp(arr,
+  |   IntExp(10),
+  |   VarExp(
+  |   | SimpleVar(r))))],
+  SeqExp[
+  | IntExp(0)])

@@ -1,0 +1,3 @@
+SeqExp[
+  IntExp(0),
+  CallExp(getchar,[])]

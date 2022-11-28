@@ -1,0 +1,3 @@
+2:1:STRING "whatever"
+2:12:NEQ
+2:15:STRING "whateverelse"

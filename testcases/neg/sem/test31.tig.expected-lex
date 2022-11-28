@@ -1,0 +1,10 @@
+2:1:LET
+3:2:VAR
+3:6:ID a
+3:7:COLON
+3:8:ID int
+3:12:ASSIGN
+3:15:STRING " "
+4:1:IN
+5:2:ID a
+6:1:END

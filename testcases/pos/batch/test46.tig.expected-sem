@@ -1,0 +1,26 @@
+(INT,
+  LetExp([
+  | TypeDec[
+  |   (rectype,
+  |   | NAME rectype = RECORD {name: STRING, id: INT})],
+  | VarDec(b,true,NAME rectype = RECORD {name: STRING, id: INT},
+  |   (NIL,
+  |   | NilExp))],
+  | (INT,
+  |   SeqExp[
+  |   | (INT,
+  |   |   OpExp(EqOp,
+  |   |   | (NAME rectype = RECORD {name: STRING, id: INT},
+  |   |   |   VarExp(
+  |   |   |   | (NAME rectype = RECORD {name: STRING, id: INT},
+  |   |   |   |   SimpleVar(b)))),
+  |   |   | (NIL,
+  |   |   |   NilExp))),
+  |   | (INT,
+  |   |   OpExp(NeqOp,
+  |   |   | (NAME rectype = RECORD {name: STRING, id: INT},
+  |   |   |   VarExp(
+  |   |   |   | (NAME rectype = RECORD {name: STRING, id: INT},
+  |   |   |   |   SimpleVar(b)))),
+  |   |   | (NIL,
+  |   |   |   NilExp)))])))

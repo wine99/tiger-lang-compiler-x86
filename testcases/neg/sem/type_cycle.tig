@@ -1,0 +1,7 @@
+/* cyclical type, VarDec of v checks actual type of a which causes infinite loop */
+let type x = a
+    type a = x
+in let var v : a := 0
+   in 0
+   end
+end

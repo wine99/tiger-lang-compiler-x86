@@ -1,0 +1,48 @@
+(VOID,
+  LetExp([
+  | FunctionDec[
+  |   (chk,[
+  |   | (a,true),
+  |   | (b,true),
+  |   | (msg,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(a)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(b)))))),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   SimpleVar(msg))))])),
+  |   |   | (VOID,
+  |   |   |   CallExp(print,[
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("."))])))))]],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(chk,[
+  |   |   | (INT,
+  |   |   |   IntExp(1)),
+  |   |   | (INT,
+  |   |   |   IntExp(1)),
+  |   |   | (STRING,
+  |   |   |   StringExp("OK"))])),
+  |   | (VOID,
+  |   |   CallExp(chk,[
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   IntExp(1)),
+  |   |   | (STRING,
+  |   |   |   StringExp("Not OK"))]))])))

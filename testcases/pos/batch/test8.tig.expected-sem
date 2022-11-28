@@ -1,0 +1,12 @@
+(INT,
+  IfExp(
+  | (INT,
+  |   OpExp(GtOp,
+  |   | (INT,
+  |   |   IntExp(10)),
+  |   | (INT,
+  |   |   IntExp(20)))),
+  | (INT,
+  |   IntExp(30)),
+  | (INT,
+  |   IntExp(40))))

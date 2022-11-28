@@ -1,0 +1,12 @@
+(INT,
+  LetExp([
+  | FunctionDec[
+  |   (f,[
+  |   | (n,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   IntExp(42)))]],
+  | (INT,
+  |   CallExp(f,[
+  |   | (INT,
+  |   |   IntExp(10))]))))

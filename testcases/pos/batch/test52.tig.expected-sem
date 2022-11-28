@@ -1,0 +1,16 @@
+(NAME arrtype = ARRAY of INT,
+  LetExp([
+  | TypeDec[
+  |   (arrtype,
+  |   | NAME arrtype = ARRAY of INT)],
+  | VarDec(arr1,true,NAME arrtype = ARRAY of INT,
+  |   (NAME arrtype = ARRAY of INT,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | IntExp(10)),
+  |   |   (INT,
+  |   |   | IntExp(1)))))],
+  | (NAME arrtype = ARRAY of INT,
+  |   VarExp(
+  |   | (NAME arrtype = ARRAY of INT,
+  |   |   SimpleVar(arr1))))))

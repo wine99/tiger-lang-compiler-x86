@@ -1,0 +1,22 @@
+(INT,
+  LetExp([
+  | TypeDec[
+  |   (a,
+  |   | NAME a = ARRAY of INT),
+  |   (b,
+  |   | NAME b = NAME a)],
+  | VarDec(arr1,true,NAME a = ARRAY of INT,
+  |   (NAME b = NAME a,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | IntExp(10)),
+  |   |   (INT,
+  |   |   | IntExp(0)))))],
+  | (INT,
+  |   VarExp(
+  |   | (INT,
+  |   |   SubscriptVar(
+  |   |   | (NAME a = ARRAY of INT,
+  |   |   |   SimpleVar(arr1)),
+  |   |   | (INT,
+  |   |   |   IntExp(2))))))))

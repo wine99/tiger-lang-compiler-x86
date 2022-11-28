@@ -1,0 +1,23 @@
+(INT,
+  LetExp([
+  | FunctionDec[
+  |   (g,[
+  |   | (a,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   VarExp(
+  |   |   | (INT,
+  |   |   |   SimpleVar(a)))))],
+  | TypeDec[
+  |   (t,
+  |   | NAME t = INT)],
+  | FunctionDec[
+  |   (g,[
+  |   | (a,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   VarExp(
+  |   |   | (INT,
+  |   |   |   SimpleVar(a)))))]],
+  | (INT,
+  |   IntExp(0))))

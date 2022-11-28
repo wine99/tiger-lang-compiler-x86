@@ -1,0 +1,735 @@
+LetExp([
+  TypeDec[
+  | (Color,
+  |   NameTy(int))],
+  VarDec(black,true,SOME(Color),
+  | IntExp(0)),
+  VarDec(white,true,SOME(Color),
+  | IntExp(1)),
+  TypeDec[
+  | (Piece,
+  |   NameTy(int))],
+  VarDec(pawn,true,SOME(Piece),
+  | IntExp(0)),
+  VarDec(knight,true,SOME(Piece),
+  | IntExp(1)),
+  VarDec(bishop,true,SOME(Piece),
+  | IntExp(2)),
+  VarDec(rook,true,SOME(Piece),
+  | IntExp(3)),
+  VarDec(queen,true,SOME(Piece),
+  | IntExp(4)),
+  VarDec(king,true,SOME(Piece),
+  | IntExp(5)),
+  VarDec(none,true,SOME(Piece),
+  | IntExp(6)),
+  TypeDec[
+  | (PieceFaces,
+  |   ArrayTy(string))],
+  VarDec(faces,true,SOME(PieceFaces),
+  | ArrayExp(PieceFaces,
+  |   IntExp(12),
+  |   StringExp(""))),
+  TypeDec[
+  | (ChessBoard,
+  |   ArrayTy(int))],
+  VarDec(chessboard,true,SOME(ChessBoard),
+  | ArrayExp(ChessBoard,
+  |   OpExp(TimesOp,
+  |   | OpExp(TimesOp,
+  |   |   IntExp(8),
+  |   |   IntExp(8)),
+  |   | IntExp(2)),
+  |   IntExp(6))),
+  VarDec(turn,true,SOME(Color),
+  | VarExp(
+  |   SimpleVar(white))),
+  FunctionDec[
+  | (getColorAt,[
+  |   (x,true,int),
+  |   (y,true,int)],
+  |   SOME(Color),
+  |   VarExp(
+  |   | SubscriptVar(
+  |   |   SimpleVar(chessboard),
+  |   |   OpExp(TimesOp,
+  |   |   | SeqExp[
+  |   |   |   OpExp(PlusOp,
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(x)),
+  |   |   |   | OpExp(TimesOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   IntExp(8)))],
+  |   |   | IntExp(2))))),
+  | (getPieceAt,[
+  |   (x,true,int),
+  |   (y,true,int)],
+  |   SOME(Piece),
+  |   VarExp(
+  |   | SubscriptVar(
+  |   |   SimpleVar(chessboard),
+  |   |   OpExp(PlusOp,
+  |   |   | OpExp(TimesOp,
+  |   |   |   SeqExp[
+  |   |   |   | OpExp(PlusOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   | IntExp(8)))],
+  |   |   |   IntExp(2)),
+  |   |   | IntExp(1))))),
+  | (setAt,[
+  |   (x,true,int),
+  |   (y,true,int),
+  |   (col,true,Color),
+  |   (p,true,Piece)],
+  |   NONE,
+  |   SeqExp[
+  |   | AssignExp(
+  |   |   SubscriptVar(
+  |   |   | SimpleVar(chessboard),
+  |   |   | OpExp(TimesOp,
+  |   |   |   SeqExp[
+  |   |   |   | OpExp(PlusOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   | IntExp(8)))],
+  |   |   |   IntExp(2))),
+  |   |   VarExp(
+  |   |   | SimpleVar(col))),
+  |   | AssignExp(
+  |   |   SubscriptVar(
+  |   |   | SimpleVar(chessboard),
+  |   |   | OpExp(PlusOp,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | SeqExp[
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   | OpExp(TimesOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(y)),
+  |   |   |   |   |   IntExp(8)))],
+  |   |   |   | IntExp(2)),
+  |   |   |   IntExp(1))),
+  |   |   VarExp(
+  |   |   | SimpleVar(p)))]),
+  | (movePiece,[
+  |   (x0,true,int),
+  |   (y0,true,int),
+  |   (x1,true,int),
+  |   (y1,true,int)],
+  |   NONE,
+  |   SeqExp[
+  |   | CallExp(setAt,[
+  |   |   VarExp(
+  |   |   | SimpleVar(x1)),
+  |   |   VarExp(
+  |   |   | SimpleVar(y1)),
+  |   |   CallExp(getColorAt,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x0)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(y0))]),
+  |   |   CallExp(getPieceAt,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(x0)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(y0))])]),
+  |   | CallExp(setAt,[
+  |   |   VarExp(
+  |   |   | SimpleVar(x0)),
+  |   |   VarExp(
+  |   |   | SimpleVar(y0)),
+  |   |   VarExp(
+  |   |   | SimpleVar(none)),
+  |   |   VarExp(
+  |   |   | SimpleVar(black))])]),
+  | (isEmpty,[
+  |   (x,true,int),
+  |   (y,true,int)],
+  |   SOME(int),
+  |   OpExp(EqOp,
+  |   | VarExp(
+  |   |   SubscriptVar(
+  |   |   | SimpleVar(chessboard),
+  |   |   | OpExp(TimesOp,
+  |   |   |   SeqExp[
+  |   |   |   | OpExp(PlusOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(y)),
+  |   |   |   |   | IntExp(8)))],
+  |   |   |   IntExp(2)))),
+  |   | IntExp(6))),
+  | (printBoard,[],
+  |   NONE,
+  |   LetExp([],
+  |   | SeqExp[
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(turn)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(white))),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("player \\/WHITE\\/ turn\n\n")]),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("player ^black^ turn\n\n")])),
+  |   |   CallExp(print,[
+  |   |   | StringExp("  ")]),
+  |   |   ForExp(x,true,
+  |   |   | IntExp(0),
+  |   |   | IntExp(7),
+  |   |   | LetExp([],
+  |   |   |   SeqExp[
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" ")]),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   CallExp(chr,[
+  |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | StringExp("a")]),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)))])])])),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\n")]),
+  |   |   ForExp(y,true,
+  |   |   | IntExp(0),
+  |   |   | IntExp(7),
+  |   |   | LetExp([],
+  |   |   |   SeqExp[
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" ")]),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   CallExp(chr,[
+  |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | StringExp("1")]),
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   IntExp(7),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(y)))])])]),
+  |   |   |   | ForExp(x,true,
+  |   |   |   |   IntExp(0),
+  |   |   |   |   IntExp(7),
+  |   |   |   |   IfExp(
+  |   |   |   |   | CallExp(isEmpty,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(y))]),
+  |   |   |   |   | CallExp(print,[
+  |   |   |   |   |   StringExp("  ")]),
+  |   |   |   |   | SeqExp[
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | StringExp(" ")]),
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   | SimpleVar(faces),
+  |   |   |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   |   |   CallExp(getPieceAt,[
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(y))]),
+  |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   | CallExp(getColorAt,[
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | SimpleVar(y))]),
+  |   |   |   |   |   |   |   | IntExp(6)))))])])),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" ")]),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   CallExp(chr,[
+  |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | StringExp("1")]),
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   IntExp(7),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(y)))])])]),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp("\n")])])),
+  |   |   CallExp(print,[
+  |   |   | StringExp("  ")]),
+  |   |   ForExp(x,true,
+  |   |   | IntExp(0),
+  |   |   | IntExp(7),
+  |   |   | LetExp([],
+  |   |   |   SeqExp[
+  |   |   |   | CallExp(print,[
+  |   |   |   |   StringExp(" ")]),
+  |   |   |   | CallExp(print,[
+  |   |   |   |   CallExp(chr,[
+  |   |   |   |   | OpExp(PlusOp,
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | StringExp("a")]),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(x)))])])])),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\n")])])),
+  | (initBoard,[],
+  |   NONE,
+  |   SeqExp[
+  |   | ForExp(x,true,
+  |   |   IntExp(0),
+  |   |   IntExp(7),
+  |   |   SeqExp[
+  |   |   | CallExp(setAt,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x)),
+  |   |   |   IntExp(1),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(black)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(pawn))]),
+  |   |   | CallExp(setAt,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x)),
+  |   |   |   IntExp(6),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(white)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(pawn))])]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(0),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(rook))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(7),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(rook))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(1),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(knight))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(6),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(knight))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(2),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(bishop))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(5),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(bishop))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(3),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(queen))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(4),
+  |   |   IntExp(0),
+  |   |   VarExp(
+  |   |   | SimpleVar(black)),
+  |   |   VarExp(
+  |   |   | SimpleVar(king))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(0),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(rook))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(7),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(rook))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(1),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(knight))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(6),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(knight))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(2),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(bishop))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(5),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(bishop))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(3),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(king))]),
+  |   | CallExp(setAt,[
+  |   |   IntExp(4),
+  |   |   IntExp(7),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)),
+  |   |   VarExp(
+  |   |   | SimpleVar(queen))]),
+  |   | AssignExp(
+  |   |   SimpleVar(turn),
+  |   |   VarExp(
+  |   |   | SimpleVar(white)))])],
+  VarDec(command,true,NONE,
+  | StringExp("")),
+  FunctionDec[
+  | (readCommand,[],
+  |   SOME(string),
+  |   LetExp([
+  |   | VarDec(buff,true,NONE,
+  |   |   CallExp(getchar,[])),
+  |   | VarDec(out,true,NONE,
+  |   |   StringExp(""))],
+  |   | SeqExp[
+  |   |   WhileExp(
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(buff)),
+  |   |   |   StringExp("\n")),
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(out),
+  |   |   |   | CallExp(concat,[
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(out)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(buff))])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(buff),
+  |   |   |   | CallExp(getchar,[]))]),
+  |   |   VarExp(
+  |   |   | SimpleVar(out))])),
+  | (printHelp,[],
+  |   NONE,
+  |   LetExp([],
+  |   | SeqExp[
+  |   |   CallExp(print,[
+  |   |   | StringExp("Available commands:\n")]),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\thelp -- shows this text\n")]),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\treset -- resets the board\n")]),
+  |   |   CallExp(print,[
+  |   |   | StringExp("\t[a-h][1-8][a-h][1-8] -- moves the piece at the first position, to the second position\n")])])),
+  | (isValidMove,[
+  |   (x0,true,int),
+  |   (y0,true,int),
+  |   (x1,true,int),
+  |   (y1,true,int)],
+  |   SOME(int),
+  |   IfExp(
+  |   | CallExp(isEmpty,[
+  |   |   VarExp(
+  |   |   | SimpleVar(x0)),
+  |   |   VarExp(
+  |   |   | SimpleVar(y0))]),
+  |   | SeqExp[
+  |   |   CallExp(print,[
+  |   |   | StringExp("Invalid move! there is no piece here..")]),
+  |   |   IntExp(0)],
+  |   | IfExp(
+  |   |   OpExp(NeqOp,
+  |   |   | CallExp(getColorAt,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(x0)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(y0))]),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(turn))),
+  |   |   SeqExp[
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("Invalid move! This is not your piece..")]),
+  |   |   | IntExp(0)],
+  |   |   IntExp(1)))),
+  | (evalCommand,[
+  |   (command,true,string)],
+  |   NONE,
+  |   IfExp(
+  |   | OpExp(EqOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(command)),
+  |   |   StringExp("help")),
+  |   | CallExp(printHelp,[]),
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   SimpleVar(command)),
+  |   |   | StringExp("reset")),
+  |   |   SeqExp[
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("\n...Resetting board...\n\n")]),
+  |   |   | CallExp(initBoard,[]),
+  |   |   | CallExp(printBoard,[])],
+  |   |   IfExp(
+  |   |   | OpExp(EqOp,
+  |   |   |   CallExp(size,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(command))]),
+  |   |   |   IntExp(4)),
+  |   |   | LetExp([
+  |   |   |   VarDec(x0,true,NONE,
+  |   |   |   | OpExp(MinusOp,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(command)),
+  |   |   |   |   |   IntExp(0),
+  |   |   |   |   |   IntExp(1)])]),
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | StringExp("a")]))),
+  |   |   |   VarDec(y0,true,NONE,
+  |   |   |   | OpExp(MinusOp,
+  |   |   |   |   IntExp(7),
+  |   |   |   |   SeqExp[
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(command)),
+  |   |   |   |   |   |   IntExp(1),
+  |   |   |   |   |   |   IntExp(1)])]),
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | StringExp("1")]))])),
+  |   |   |   VarDec(x1,true,NONE,
+  |   |   |   | OpExp(MinusOp,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(command)),
+  |   |   |   |   |   IntExp(2),
+  |   |   |   |   |   IntExp(1)])]),
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | StringExp("a")]))),
+  |   |   |   VarDec(y1,true,NONE,
+  |   |   |   | OpExp(MinusOp,
+  |   |   |   |   IntExp(7),
+  |   |   |   |   SeqExp[
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | CallExp(substring,[
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(command)),
+  |   |   |   |   |   |   IntExp(3),
+  |   |   |   |   |   |   IntExp(1)])]),
+  |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   | StringExp("1")]))]))],
+  |   |   |   SeqExp[
+  |   |   |   | IfExp(
+  |   |   |   |   IfExp(
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   IfExp(
+  |   |   |   |   |   | IfExp(
+  |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   | IfExp(
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | OpExp(GeOp,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | SimpleVar(x0)),
+  |   |   |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   |   |   | OpExp(LeOp,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | SimpleVar(x0)),
+  |   |   |   |   |   |   |   |   IntExp(7)),
+  |   |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   |   OpExp(GeOp,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   SimpleVar(x1)),
+  |   |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   |   | OpExp(LeOp,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(x1)),
+  |   |   |   |   |   |   |   IntExp(7)),
+  |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   OpExp(GeOp,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(y0)),
+  |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | OpExp(LeOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(y0)),
+  |   |   |   |   |   |   IntExp(7)),
+  |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   OpExp(GeOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y1)),
+  |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | OpExp(LeOp,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(y1)),
+  |   |   |   |   |   IntExp(7)),
+  |   |   |   |   | IntExp(0)),
+  |   |   |   |   IfExp(
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x0)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x1))),
+  |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y0)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y1))),
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | CallExp(print,[
+  |   |   |   |   |   StringExp("Invalid move! Cannot move piece onto same location.\n")]),
+  |   |   |   |   | IfExp(
+  |   |   |   |   |   CallExp(isValidMove,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x0)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y0)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(x1)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(y1))]),
+  |   |   |   |   |   LetExp([],
+  |   |   |   |   |   | SeqExp[
+  |   |   |   |   |   |   CallExp(movePiece,[
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(x0)),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(y0)),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(x1)),
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   SimpleVar(y1))]),
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | SimpleVar(turn),
+  |   |   |   |   |   |   | CallExp(not,[
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | SimpleVar(turn))]))]),
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | StringExp("Invalid move! Out of bounds!\n")])))),
+  |   |   |   | CallExp(printBoard,[])]),
+  |   |   | CallExp(print,[
+  |   |   |   StringExp("Command not recognized..")])))))]],
+  SeqExp[
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(0)),
+  |   StringExp("p")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(1)),
+  |   StringExp("k")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(2)),
+  |   StringExp("b")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(3)),
+  |   StringExp("r")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(4)),
+  |   StringExp("q")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(5)),
+  |   StringExp("w")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(6)),
+  |   StringExp("P")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(7)),
+  |   StringExp("K")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(8)),
+  |   StringExp("B")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(9)),
+  |   StringExp("R")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(10)),
+  |   StringExp("Q")),
+  | AssignExp(
+  |   SubscriptVar(
+  |   | SimpleVar(faces),
+  |   | IntExp(11)),
+  |   StringExp("W")),
+  | CallExp(initBoard,[]),
+  | CallExp(printHelp,[]),
+  | CallExp(print,[
+  |   StringExp("Press any key to continue..\n")]),
+  | CallExp(getchar,[]),
+  | CallExp(printBoard,[]),
+  | WhileExp(
+  |   IntExp(1),
+  |   LetExp([],
+  |   | SeqExp[
+  |   |   CallExp(print,[
+  |   |   | StringExp("\nTell me what to do: ")]),
+  |   |   CallExp(evalCommand,[
+  |   |   | CallExp(readCommand,[])])]))])

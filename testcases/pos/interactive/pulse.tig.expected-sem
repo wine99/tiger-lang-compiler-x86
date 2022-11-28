@@ -1,0 +1,494 @@
+(VOID,
+  LetExp([
+  | VarDec(PAD,true,INT,
+  |   (INT,
+  |   | IntExp(5))),
+  | VarDec(SCREEN_X,true,INT,
+  |   (INT,
+  |   | IntExp(50))),
+  | VarDec(NO_PARTICLES,true,INT,
+  |   (INT,
+  |   | IntExp(2))),
+  | VarDec(SCALE,true,INT,
+  |   (INT,
+  |   | IntExp(20))),
+  | VarDec(MAX_VEL,true,INT,
+  |   (INT,
+  |   | IntExp(30))),
+  | VarDec(COL_MIN,true,INT,
+  |   (INT,
+  |   | IntExp(31))),
+  | VarDec(COL_MAX,true,INT,
+  |   (INT,
+  |   | IntExp(37))),
+  | VarDec(col,true,INT,
+  |   (INT,
+  |   | VarExp(
+  |   |   (INT,
+  |   |   | SimpleVar(COL_MIN))))),
+  | TypeDec[
+  |   (particle,
+  |   | NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT}),
+  |   (system,
+  |   | NAME system = ARRAY of NAME particle)],
+  | VarDec(sys,true,NAME system = ARRAY of NAME particle,
+  |   (NAME system = ARRAY of NAME particle,
+  |   | ArrayExp(
+  |   |   (INT,
+  |   |   | VarExp(
+  |   |   |   (INT,
+  |   |   |   | SimpleVar(NO_PARTICLES)))),
+  |   |   (NIL,
+  |   |   | NilExp)))),
+  | VarDec(GRAPHIC,true,STRING,
+  |   (STRING,
+  |   | StringExp("dOvs"))),
+  | FunctionDec[
+  |   (setup,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | (NAME system = ARRAY of NAME particle,
+  |   |   |   |   |   SimpleVar(sys)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   RecordExp([
+  |   |   |   |   | (char,
+  |   |   |   |   |   (STRING,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   | SimpleVar(GRAPHIC))))),
+  |   |   |   |   | (pos,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | OpExp(TimesOp,
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | SimpleVar(PAD)))),
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | SimpleVar(SCALE))))))),
+  |   |   |   |   | (vel,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(0))),
+  |   |   |   |   | (acc,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(1)))])))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | (NAME system = ARRAY of NAME particle,
+  |   |   |   |   |   SimpleVar(sys)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)))),
+  |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   RecordExp([
+  |   |   |   |   | (char,
+  |   |   |   |   |   (STRING,
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   (STRING,
+  |   |   |   |   |   |   | SimpleVar(GRAPHIC))))),
+  |   |   |   |   | (pos,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | OpExp(TimesOp,
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | SimpleVar(SCREEN_X)))),
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | SimpleVar(SCALE))))))),
+  |   |   |   |   | (vel,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | IntExp(0))),
+  |   |   |   |   | (acc,
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | IntExp(0)),
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | IntExp(1)))))]))))])),
+  |   (i2s,[
+  |   | (i,true)],
+  |   | STRING,
+  |   | (STRING,
+  |   |   LetExp([
+  |   |   | FunctionDec[
+  |   |   |   (f,[
+  |   |   |   | (i,true)],
+  |   |   |   | STRING,
+  |   |   |   | (STRING,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(GtOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)))),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(f,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(10))))])),
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(chr,[
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   IntExp(10)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   IntExp(10)))))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   CallExp(ord,[
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   StringExp("0"))]))))]))])),
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("")))))]],
+  |   |   | (STRING,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(i)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)))),
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("0")),
+  |   |   |   | (STRING,
+  |   |   |   |   CallExp(f,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(i))))]))))))),
+  |   (print_particles,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(i,true,
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(PAD)))))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(SCREEN_X)))),
+  |   |   | (VOID,
+  |   |   |   LetExp([
+  |   |   |   | VarDec(c,true,STRING,
+  |   |   |   |   (STRING,
+  |   |   |   |   | StringExp(" ")))],
+  |   |   |   | (VOID,
+  |   |   |   |   SeqExp[
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   ForExp(j,true,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   SimpleVar(NO_PARTICLES)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   LetExp([
+  |   |   |   |   |   |   | VarDec(p,true,NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   |   | SubscriptVar(
+  |   |   |   |   |   |   |   |   |   (NAME system = ARRAY of NAME particle,
+  |   |   |   |   |   |   |   |   |   | SimpleVar(sys)),
+  |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   |   |   | SimpleVar(j)))))))))],
+  |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   IfExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   OpExp(EqOp,
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   OpExp(DivideOp,
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   |   |   |   |   |   | pos)))),
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(SCALE)))))),
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(i)))))),
+  |   |   |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   SimpleVar(c)),
+  |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   |   |   |   |   | char)))))))))))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   StringExp("\027[")),
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   CallExp(concat,[
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   CallExp(i2s,[
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(col))))])),
+  |   |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   |   StringExp(";1m"))]))]))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   |   SimpleVar(c))))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(print,[
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   StringExp("\027[0m"))])),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(flush,[]))])))))),
+  |   (update,[
+  |   | (p,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(GeOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   |   | vel)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(MAX_VEL)))))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(GeOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   |   |   | vel)))))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(MAX_VEL)))))))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   | acc)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(0)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   |   | acc)))))))))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (INT,
+  |   |   |   |   FieldVar(
+  |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   | vel)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   | vel)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   | acc)))))))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (INT,
+  |   |   |   |   FieldVar(
+  |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   | pos)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   | pos)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   SimpleVar(p)),
+  |   |   |   |   |   |   | vel))))))))])),
+  |   (loop,[],
+  |   | VOID,
+  |   | (VOID,
+  |   |   WhileExp(
+  |   |   | (INT,
+  |   |   |   OpExp(NeqOp,
+  |   |   |   | (STRING,
+  |   |   |   |   CallExp(getchar,[])),
+  |   |   |   | (STRING,
+  |   |   |   |   StringExp("q")))),
+  |   |   | (VOID,
+  |   |   |   SeqExp[
+  |   |   |   | (VOID,
+  |   |   |   |   ForExp(i,true,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(0)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(NO_PARTICLES)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   CallExp(update,[
+  |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME particle = RECORD {char: STRING, pos: INT, vel: INT, acc: INT},
+  |   |   |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   |   |   | (NAME system = ARRAY of NAME particle,
+  |   |   |   |   |   |   |   |   SimpleVar(sys)),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   SimpleVar(i))))))))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(print_particles,[])),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(col)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(col)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(GtOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(col)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(COL_MAX)))))),
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   AssignExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(col)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(COL_MIN))))))))]))))]],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Press and hold Enter to play...\n"))])),
+  |   | (VOID,
+  |   |   CallExp(flush,[])),
+  |   | (VOID,
+  |   |   CallExp(setup,[])),
+  |   | (VOID,
+  |   |   CallExp(loop,[]))])))

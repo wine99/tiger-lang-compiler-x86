@@ -1,0 +1,163 @@
+async function main () {
+  try {
+    let v = await tigermain ();
+    flush();
+    if (v == undefined)
+      __terminal.write ("\ntiger-js> program exited with no value\n");
+    else
+      __terminal.write ("\ntiger-js> program exited with value '\x1b[32m" + v + "\x1b[0m'")
+  } catch (e) {
+    if (e instanceof TigerExit) {
+      let ec = e.code;
+      var col = "\x1b[32m";
+      if (ec != 0)
+        col = "\x1b[33m";
+      __terminal.write ("\ntiger-js> program exited with code '" + col + ec + "\x1b[0m'")
+    } else if (e instanceof TigerSubstringIndexOutOfRange) {
+      __terminal.write ("\ntiger-js> program exited with exception '\x1b[31m" + "substring index out of range" + "\x1b[0m'")
+    } else if (e instanceof TigerIndexOutOfRange) {
+      __terminal.write ("\ntiger-js> program exited with exception '\x1b[31m" + "array index out of range" + "\x1b[0m'")
+    } else if (e instanceof TigerNilLookup) {
+      console.log (e.pos);
+      __terminal.write ("\ntiger-js> program exited with exception '\x1b[31m" + "record field lookup applied to nil" + "\x1b[0m'")
+      console.log (e.stack);
+    } else {
+      console.error(e);
+    }
+  }
+} 
+
+
+</script>      
+  </head>
+  <body><div></div></body>
+  <script>
+      let term_options =
+        { convertEol:true
+        , cursorBlink:true
+        , fontSize: 16
+        , fontWeight: '700'
+        , theme:
+          {
+            foreground: '#4E9A05'
+          , background: '#000b00'
+          , cursor: '#4E9A05'
+          
+          }
+        }
+
+      let term = new xterm.Terminal(term_options) //{fontFamily: "Courier", fontSize: 24});
+
+      let line_buffer = []
+      let cursor_pos = 0
+      let eol = 0
+
+      function handlePrintable(c) {
+        term.write(c);
+        // Save cursor pos
+        term.write('\x1b[s');
+        line_buffer.splice(cursor_pos,0,c);
+        cursor_pos++;
+        eol++;
+        // Delete right
+        term.write('\x1b[K');
+        // Fill right
+        for (i=cursor_pos;i<line_buffer.length;i++)
+          term.write(line_buffer[i]);
+        // Restore cursor pos
+        term.write('\x1b[u');
+      }
+
+      function deleteAtCursor() {
+        // Save cursor pos
+        term.write('\x1b[s');
+        // Delete right
+        term.write('\x1b[K');
+        // Fill right
+        for (i=cursor_pos;i<line_buffer.length;i++)
+          term.write(line_buffer[i]);
+        // Restore cursor pos
+        term.write('\x1b[u');
+      }
+
+      function handleNonprintable(code,key) {
+        switch(code) {
+          case 13: // Enter
+            term.write('\n');
+            line_buffer.push('\n');
+              
+            if (__getcharCb != null)
+              __getcharCb(line_buffer.reverse());
+
+            line_buffer = [];
+            cursor_pos = 0;
+            eol=0;
+            break;
+
+          case 35: // End
+            term.write('\x1b[' + (eol - cursor_pos) + 'C');
+            cursor_pos = eol;
+            break;
+
+          case 36: // Home           
+            term.write('\x1b[' + cursor_pos + 'D');
+            cursor_pos = 0;
+            break;
+
+          case 37: // Left arrow
+            if (cursor_pos > 0) {
+              term.write(key);
+              cursor_pos--;
+            }
+            break;
+
+          case 39: // Right arrow
+            if (cursor_pos < eol) {
+              term.write(key);
+              cursor_pos++;
+            }
+            break;
+
+          case 8: // Backspace
+            if (cursor_pos > 0) {
+              cursor_pos--;
+              eol--;
+              line_buffer.splice(cursor_pos,1);
+
+              // Backspace in terminal
+              term.write('\b \b');
+              
+              deleteAtCursor();
+            }
+            break;
+          
+          case 46: // Delete
+            if (cursor_pos < eol) {
+              eol--;
+              line_buffer.splice(cursor_pos,1);
+
+              deleteAtCursor();
+            }
+            break;
+
+          default:
+        }
+      }
+
+      term.on('key',(key,e)=> {
+        // console.log("KeyCode:" + e.keyCode + ", CharCode: " + e.charCode);
+          if (e.charCode != 0)
+            handlePrintable(key);
+          else
+            handleNonprintable(e.keyCode,key);
+      })
+
+      term.open(document.getElementById('div'));
+      term.fit();
+      window.addEventListener('resize', function() { term.fit(); });    
+
+      __terminal = term;
+      main ()
+      
+  </script>
+</html>

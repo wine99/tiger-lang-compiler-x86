@@ -1,0 +1,2 @@
+/* error: type of NilExp cannot be infered */
+(1;2;nil;4)

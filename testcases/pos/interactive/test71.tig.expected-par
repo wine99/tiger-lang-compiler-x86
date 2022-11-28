@@ -1,0 +1,7 @@
+LetExp([
+  VarDec(x,true,NONE,
+  | SeqExp[
+  |   IntExp(0),
+  |   CallExp(getchar,[])])],
+  SeqExp[
+  | IntExp(0)])

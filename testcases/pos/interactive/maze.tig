@@ -1,0 +1,205 @@
+let type input = {cmd: string, arg: string}
+    type exit = {locked: int}
+    type items = {map:int, flask:int, key:int, exit:exit}
+    type room = {n: room, e: room, s: room, w: room, items: items}
+    type dungeon = array of room
+    var X := 9
+    var Y := 9
+    var d := dungeon[X*Y] of nil
+    var inventory := items{map=0, flask=0, key=0, exit=nil}
+
+    var loc: room := nil
+
+    var layout :=
+      "         \
+      \ F-S-O-E \
+      \ |   |   \
+      \ F-O-M-F \
+      \ |   | | \
+      \ O-F-O-O \
+      \   |   | \
+      \ F-O-O-K \
+      \         "
+    
+    var map := ""
+
+    function get_input(): input =
+        let var parse := 1
+            var cmd := ""
+            var arg := ""
+            var c := getchar()
+        in 
+          while c <> "\n" do (
+            if parse = 1
+            then cmd := concat(cmd,c)
+            else arg := concat(arg,c);
+
+            if parse = 1
+            then (
+              if cmd = "look at "
+              then parse:=0
+              else if cmd = "go "
+              then parse:=0
+              else if cmd = "pick up "
+              then parse:=0
+              else if cmd = "use "
+              then parse:=0
+              else if cmd = "drop "
+              then parse:=0
+            );
+            c := getchar()
+          );
+          input{cmd=cmd,arg=arg}
+        end
+    
+    function print_map() =
+      for i := 0 to Y-2 do
+        print(concat(substring(map,i*X,X),"\n"))
+
+    function print_room(r:room) =
+      let var i := 0
+      in
+        print("\nYe see");
+        print_items(loc.items);
+        print(" in the ROOM.\n");
+        print("Obvious exits are");
+        if (r.n <> nil) then (i := 1; print(" NORTH"));
+        if (r.e <> nil) then (if i = 1 then print(" and"); i := 1; print(" EAST"));
+        if (r.s <> nil) then (if i = 1 then print(" and"); i := 1; print(" SOUTH"));
+        if (r.w <> nil) then (if i = 1 then print(" and"); i := 1; print(" WEST"));
+        print(".\n")
+      end
+    
+    function print_items(items:items) =
+      let var i := 0
+      in
+        if items.map then (i := 1; print(" a MAP"));
+        if items.flask then (if i = 1 then print(" and"); i := 1; print(" a FLASK"));
+        if items.key then (if i = 1 then print(" and"); i := 1; print(" a KEY"));
+        if items.exit <> nil then (if i = 1 then print(" and"); i := 1; print(" a DOOR"));
+        if i = 0 then print(" nothing of interest")
+      end
+
+    function look(arg:string) =
+      if arg = "self"
+      then (print("\nYe holdeth"); print_items(inventory))
+      else if arg = "room"
+      then print_room(loc)
+      else if arg = "map" & (inventory.map | loc.items.map)
+      then print_map()
+      else if arg = "flask" & loc.items.flask
+      then print("\n'Tis an ordinary flask.\n")
+      else if arg = "door" & loc.items.exit <> nil & loc.items.exit.locked
+      then print("\nThe door is locked.\n")
+      else if arg = "door" & loc.items.exit <> nil & not(loc.items.exit.locked)
+      then print("\nThe door is unlocked.\n")
+      else if arg = "key" & (inventory.key | loc.items.key)
+      then print("\n'Tis an ornate key.\n")
+      else if arg = "room"
+      then (print("\n");print_room(loc))
+      else print(concat("\nYe do not see any ", concat(arg, "!\n")))
+    
+    function get(arg:string) =
+      if arg = "map" & loc.items.map
+      then (inventory.map := 1; loc.items.map := 0; print("\nYe picketh up the MAP.\n"))
+      else if arg = "flask" & loc.items.flask
+      then print("\nYou cannot get ye flask.\n")
+      else if arg = "door" & loc.items.exit <> nil
+      then print("\nThe door will not budge.\n")
+      else if arg = "key" & loc.items.key
+      then (inventory.key := 1; loc.items.key := 0; print("\nYe picketh up the KEY.\n"))
+      else print("\nYe cannot pick that up!\n")
+
+    function drop(arg:string) =
+      if arg = "map" & inventory.map
+      then (loc.items.map := 1; inventory.map := 0; print("\nYe droppeth the MAP.\n"))
+      else if arg = "key" & inventory.key
+      then (loc.items.key := 1; inventory.key := 0; print("\nYe droppeth the KEY.\n"))
+      else print("\nYe cannot drop that!\n")
+
+    function use(arg:string) =
+      if arg = "key" & inventory.key & loc.items.exit <> nil & loc.items.exit.locked
+      then (loc.items.exit.locked:=0; print("\nYe unlocketh the DOOR.\n"))
+      else if arg = "key" & inventory.key & loc.items.exit <> nil
+      then (loc.items.exit.locked:=1; print("\nYe locketh the DOOR.\n"))
+      else if arg = "key" & (loc.items.key | inventory.key)
+      then print("\nThe KEY does nothing on its own.\n")
+      else if arg = "door" & loc.items.exit <> nil & loc.items.exit.locked
+      then print("\nThe DOOR is locked.\n")
+      else if arg = "door" & loc.items.exit <> nil & not(loc.items.exit.locked)
+      then (print("\nYe have escapeth yon dungeon. Well done!\n");exit(0))
+      else print("\nYe cannot use that!\n")
+
+    function go(arg:string) =
+      if arg = "north" & loc.n <> nil
+      then (loc := loc.n.n; print("\nYe moveth to yonder ROOM.\n"))
+      else if arg = "south" & loc.s <> nil
+      then (loc := loc.s.s; print("\nYe moveth to yonder ROOM.\n"))
+      else if arg = "east" & loc.e <> nil
+      then (loc := loc.e.e; print("\nYe moveth to yonder ROOM.\n"))
+      else if arg = "west" & loc.w <> nil
+      then (loc := loc.w.w; print("\nYe moveth to yonder ROOM.\n"))
+      else print("\nYe cannot do that!\n")
+
+    function handle_command() =
+      let var i: input := get_input()
+          var cmd := i.cmd
+          var arg := i.arg
+      in
+        if cmd = "look at " then look(arg)
+        else if cmd = "pick up " then get(arg)
+        else if cmd = "use " then use(arg)
+        else if cmd = "drop " then drop(arg)
+        else if cmd = "go " then go(arg)
+        else if cmd = "help"
+        then print("\nYou can:\n\
+          \- go <direction>\n\
+          \- look at <object>\n\
+          \- pick up <object>\n\
+          \- use <object>\n\
+          \- drop <object>\n")
+        else print(concat("\nYe cannot ", concat(cmd, concat(arg, "!\n"))))
+      end
+    
+
+    function update() =
+      (handle_command(); 
+      print("\n> ");
+      flush();
+      update())
+
+    function setup_level() =
+      (for i := 0 to X*Y-1 do
+        let var s := substring(layout,i,1)
+            var special := 0
+            var items :=
+              items{
+                map = if s="M" then (special:=1;1) else 0,
+                flask = if s="F" then (special:=1;1) else 0,
+                key = if s="K" then (special:=1;1) else 0,
+                exit = if s="E" then (special:=1;exit{locked=1}) else nil
+              }
+        in
+          map := concat(map,if special then "?" else if s="S" then "O" else s);
+          if s <> " "
+          then
+            let var n := d[i-X]
+                var w := d[i-1]
+                
+                var r := room{n=n, e=nil, s=nil, w=w, items=items}
+            in
+              if s = "S" then loc := r;
+              if n <> nil then n.s := r;
+              if w <> nil then w.e := r;
+              d[i] := r
+            end
+        end)
+in  
+    setup_level();
+    print("Ye find yeSELF in yon dungeon.");
+    print_room(loc);
+    print("\nWhat wouldst thou deau?");
+    print("\n> ");
+    flush();
+    update()
+end

@@ -1,0 +1,398 @@
+(VOID,
+  LetExp([
+  | TypeDec[
+  |   (Root,
+  |   | NAME Root = RECORD {tree: NAME Tree}),
+  |   (Tree,
+  |   | NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree}),
+  |   (Bool,
+  |   | NAME Bool = INT)],
+  | VarDec(false,true,NAME Bool = INT,
+  |   (INT,
+  |   | IntExp(0))),
+  | VarDec(true,true,NAME Bool = INT,
+  |   (INT,
+  |   | IntExp(1))),
+  | FunctionDec[
+  |   (boolToString,[
+  |   | (value,true)],
+  |   | STRING,
+  |   | (STRING,
+  |   |   IfExp(
+  |   |   | (NAME Bool = INT,
+  |   |   |   VarExp(
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   SimpleVar(value)))),
+  |   |   | (STRING,
+  |   |   |   StringExp("true")),
+  |   |   | (STRING,
+  |   |   |   StringExp("false"))))),
+  |   (node,[
+  |   | (left,true),
+  |   | (value,true),
+  |   | (right,true)],
+  |   | NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   RecordExp([
+  |   |   | (left,
+  |   |   |   (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   | VarExp(
+  |   |   |   |   (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   | SimpleVar(left))))),
+  |   |   | (value,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(value))))),
+  |   |   | (right,
+  |   |   |   (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   | VarExp(
+  |   |   |   |   (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   | SimpleVar(right)))))]))),
+  |   (leaf,[
+  |   | (value,true)],
+  |   | NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   RecordExp([
+  |   |   | (left,
+  |   |   |   (NIL,
+  |   |   |   | NilExp)),
+  |   |   | (value,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(value))))),
+  |   |   | (right,
+  |   |   |   (NIL,
+  |   |   |   | NilExp))]))),
+  |   (tree,[],
+  |   | NAME Root = RECORD {tree: NAME Tree},
+  |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   RecordExp([
+  |   |   | (tree,
+  |   |   |   (NIL,
+  |   |   |   | NilExp))]))),
+  |   (insert,[
+  |   | (root,true),
+  |   | (value,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(root)),
+  |   |   |   |   |   | tree)))),
+  |   |   |   | (NIL,
+  |   |   |   |   NilExp))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   FieldVar(
+  |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   SimpleVar(root)),
+  |   |   |   |   | tree)),
+  |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   CallExp(leaf,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(value))))])))),
+  |   |   | (VOID,
+  |   |   |   CallExp(insertTree,[
+  |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(root)),
+  |   |   |   |   |   | tree)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(value))))]))))),
+  |   (insertTree,[
+  |   | (tree,true),
+  |   | (value,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(LtOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   | value)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(value)))))),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   | left)))),
+  |   |   |   |   | (NIL,
+  |   |   |   |   |   NilExp))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   | left)),
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   CallExp(leaf,[
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(value))))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(insertTree,[
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   | left)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(value))))])))),
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   | right)))),
+  |   |   |   |   | (NIL,
+  |   |   |   |   |   NilExp))),
+  |   |   |   | (VOID,
+  |   |   |   |   AssignExp(
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   | right)),
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   CallExp(leaf,[
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(value))))])))),
+  |   |   |   | (VOID,
+  |   |   |   |   CallExp(insertTree,[
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   | right)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(value))))]))))))),
+  |   (contains,[
+  |   | (root,true),
+  |   | (value,true)],
+  |   | NAME Bool = INT,
+  |   | (NAME Bool = INT,
+  |   |   CallExp(containsTree,[
+  |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   VarExp(
+  |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   FieldVar(
+  |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   SimpleVar(root)),
+  |   |   |   |   | tree)))),
+  |   |   | (INT,
+  |   |   |   VarExp(
+  |   |   |   | (INT,
+  |   |   |   |   SimpleVar(value))))]))),
+  |   (containsTree,[
+  |   | (tree,true),
+  |   | (value,true)],
+  |   | NAME Bool = INT,
+  |   | (NAME Bool = INT,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   SimpleVar(tree)))),
+  |   |   |   | (NIL,
+  |   |   |   |   NilExp))),
+  |   |   | (NAME Bool = INT,
+  |   |   |   VarExp(
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   SimpleVar(false)))),
+  |   |   | (NAME Bool = INT,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(EqOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   | value)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(value)))))),
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME Bool = INT,
+  |   |   |   |   |   SimpleVar(true)))),
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   IfExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(LtOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   |   | value)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(value)))))),
+  |   |   |   |   | (NAME Bool = INT,
+  |   |   |   |   |   CallExp(containsTree,[
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   |   | left)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(value))))])),
+  |   |   |   |   | (NAME Bool = INT,
+  |   |   |   |   |   CallExp(containsTree,[
+  |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME Tree = RECORD {left: NAME Tree, value: INT, right: NAME Tree},
+  |   |   |   |   |   |   |   |   SimpleVar(tree)),
+  |   |   |   |   |   |   |   | right)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(value))))])))))))))],
+  | VarDec(set,true,NAME Root = RECORD {tree: NAME Tree},
+  |   (NAME Root = RECORD {tree: NAME Tree},
+  |   | CallExp(tree,[])))],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("inserting the value 2\n"))])),
+  |   | (VOID,
+  |   |   CallExp(insert,[
+  |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   VarExp(
+  |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   SimpleVar(set)))),
+  |   |   | (INT,
+  |   |   |   IntExp(2))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("inserting the value 15\n"))])),
+  |   | (VOID,
+  |   |   CallExp(insert,[
+  |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   VarExp(
+  |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   SimpleVar(set)))),
+  |   |   | (INT,
+  |   |   |   IntExp(15))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Does set contain the value 1?: "))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   CallExp(boolToString,[
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   CallExp(contains,[
+  |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(set)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1))]))]))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\n"))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Does set contain the value 2?: "))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   CallExp(boolToString,[
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   CallExp(contains,[
+  |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(set)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(2))]))]))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\n"))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Does set contain the value 10?: "))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   CallExp(boolToString,[
+  |   |   |   | (NAME Bool = INT,
+  |   |   |   |   CallExp(contains,[
+  |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (NAME Root = RECORD {tree: NAME Tree},
+  |   |   |   |   |   |   SimpleVar(set)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(10))]))]))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\n"))]))])))

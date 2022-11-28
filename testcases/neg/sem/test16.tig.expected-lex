@@ -1,0 +1,20 @@
+2:1:LET
+4:1:TYPE
+4:6:ID a
+4:7:EQ
+4:8:ID c
+5:1:TYPE
+5:6:ID b
+5:7:EQ
+5:8:ID a
+6:1:TYPE
+6:6:ID c
+6:7:EQ
+6:8:ID d
+7:1:TYPE
+7:6:ID d
+7:7:EQ
+7:8:ID a
+9:1:IN
+10:2:STRING ""
+11:1:END

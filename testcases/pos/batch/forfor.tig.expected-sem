@@ -1,0 +1,16 @@
+(VOID,
+  ForExp(i,true,
+  | (INT,
+  |   IntExp(1)),
+  | (INT,
+  |   IntExp(2)),
+  | (VOID,
+  |   ForExp(j,true,
+  |   | (INT,
+  |   |   IntExp(1)),
+  |   | (INT,
+  |   |   IntExp(6)),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("."))]))))))

@@ -1,0 +1,38 @@
+(INT,
+  LetExp([
+  | FunctionDec[
+  |   (nfactor,[
+  |   | (n,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(EqOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(n)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(0)))),
+  |   |   | (INT,
+  |   |   |   IntExp(1)),
+  |   |   | (INT,
+  |   |   |   OpExp(TimesOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(n)))),
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(nfactor,[
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(MinusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(n)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1))))])))))))]],
+  | (INT,
+  |   CallExp(nfactor,[
+  |   | (INT,
+  |   |   IntExp(10))]))))

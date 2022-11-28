@@ -1,0 +1,163 @@
+let
+  type Color = int
+  var black : Color := 0
+  var white : Color := 1
+
+  type Piece = int
+  var pawn   : Piece := 0
+  var knight : Piece := 1
+  var bishop : Piece := 2
+  var rook   : Piece := 3
+  var queen  : Piece := 4
+  var king   : Piece := 5
+  var none   : Piece := 6
+  
+  type PieceFaces = array of string
+  var faces : PieceFaces := PieceFaces[12] of ""
+
+  type ChessBoard = array of int
+  var chessboard : ChessBoard := ChessBoard[8 * 8 * 2] of 6
+  var turn : Color := white
+
+  function getColorAt( x : int, y : int ) : Color = 
+    chessboard[ ( x + y * 8 ) * 2 ]
+  function getPieceAt( x : int, y : int ) : Piece = 
+    chessboard[ ( x + y * 8 ) * 2 + 1 ]
+
+  function setAt( x : int, y : int, col : Color, p : Piece ) = 
+    ( chessboard[ ( x + y * 8 ) * 2 ] := col ; 
+      chessboard[ ( x + y * 8 ) * 2 + 1 ] := p )
+
+  function movePiece( x0 : int, y0 : int, x1 : int, y1 : int ) = 
+    ( setAt(x1, y1, getColorAt(x0, y0), getPieceAt(x0, y0) ) ; 
+      setAt(x0, y0, none, black) ) 
+
+
+
+  function isEmpty(x : int, y : int ) : int =
+      chessboard[ ( x + y * 8 ) * 2 ] = 6
+
+  function printBoard( ) = 
+    let in
+    if turn = white 
+      then print("player \\/WHITE\\/ turn\n\n")
+      else print("player ^black^ turn\n\n");
+    print("  ") ;
+    for x := 0 to 7 do let in
+      print(" ") ;
+      print(chr(ord("a") + x) )
+      end ;
+    print("\n") ;
+    for y := 0 to 7 do
+      let in
+        print(" ");
+        print(chr(ord("1") + (7 - y))) ; 
+        for x := 0 to 7 do
+          if isEmpty(x, y) then print("  ")
+          else ( print(" ") ; print( faces[ getPieceAt(x, y) + getColorAt(x, y) * 6 ] ) ) ;
+        print(" ");
+        print(chr(ord("1") + (7 - y))) ;
+        print("\n")
+      end ;
+    print("  ") ;
+    for x := 0 to 7 do let in
+      print(" ") ;
+      print(chr(ord("a") + x))
+      end;
+    print("\n")
+    end
+
+  function initBoard() = 
+    (for x := 0 to 7 do
+      ( setAt( x, 1, black, pawn ) ;
+        setAt( x, 6, white, pawn ) );
+    setAt(0, 0, black, rook) ;
+    setAt(7, 0, black, rook) ;
+    setAt(1, 0, black, knight) ;
+    setAt(6, 0, black, knight) ;
+    setAt(2, 0, black, bishop) ;
+    setAt(5, 0, black, bishop) ;
+    setAt(3, 0, black, queen) ;
+    setAt(4, 0, black, king) ;
+    setAt(0, 7, white, rook) ;
+    setAt(7, 7, white, rook) ;
+    setAt(1, 7, white, knight) ;
+    setAt(6, 7, white, knight) ;
+    setAt(2, 7, white, bishop) ;
+    setAt(5, 7, white, bishop) ;
+    setAt(3, 7, white, king) ;
+    setAt(4, 7, white, queen) ; 
+    turn := white)
+
+  var command := ""
+  
+  function readCommand() : string = 
+    let
+      var buff := getchar()
+      var out := ""
+    in
+      while buff <> "\n" do
+        ( out  := concat( out, buff ) ;
+          buff := getchar() ) ;
+      out
+    end
+
+  function printHelp() = 
+    let in
+      print("Available commands:\n") ; 
+      print("\thelp -- shows this text\n") ;
+      print("\treset -- resets the board\n") ;
+      print("\t[a-h][1-8][a-h][1-8] -- moves the piece at the first position, to the second position\n") 
+    end
+
+  function isValidMove(x0 : int, y0 : int, x1 : int, y1 : int) : int = 
+    if isEmpty(x0, y0) then ( print("Invalid move! there is no piece here..") ; 0)
+    else if getColorAt(x0, y0) <> turn then ( print("Invalid move! This is not your piece..") ; 0)
+    else 1
+
+  function evalCommand(command : string) = 
+    if command = "help" then printHelp()
+    else if command = "reset" then ( print("\n...Resetting board...\n\n") ; 
+                                     initBoard() ; 
+                                     printBoard() )
+    else if size(command) = 4 then 
+      let
+        var x0 := ord(substring(command,0,1)) - ord("a")
+        var y0 := 7 - ( ord(substring(command,1,1)) - ord("1") )
+        var x1 := ord(substring(command,2,1)) - ord("a")
+        var y1 := 7 - ( ord(substring(command,3,1)) - ord("1") )
+      in
+        if x0 >= 0 & x0 <= 7 &
+           x1 >= 0 & x1 <= 7 &
+           y0 >= 0 & y0 <= 7 &
+           y1 >= 0 & y1 <= 7 then
+              if x0 = x1 & y0 = y1 then
+                print( "Invalid move! Cannot move piece onto same location.\n" )
+              else if isValidMove(x0, y0, x1, y1 ) then 
+                  let in 
+                    movePiece(x0, y0, x1, y1) ;
+                    turn := not(turn)
+                  end
+        else print("Invalid move! Out of bounds!\n") ;
+        printBoard()
+      end
+
+    else print("Command not recognized..")
+in
+  faces[0] := "p" ; faces[1] := "k" ; faces[2] := "b" ; faces[3] := "r" ; 
+  faces[4] := "q" ;  faces[5] := "w" ;  
+  faces[6] := "P" ;  faces[7] := "K" ; faces[8] := "B" ; faces[9] := "R" ; 
+  faces[10] := "Q" ; faces[11] := "W" ;
+  
+  /* Initial board */
+  initBoard() ;
+  
+  printHelp() ;
+  print("Press any key to continue..\n") ;
+  getchar() ;
+  printBoard() ; 
+  while 1 do let in
+      print("\nTell me what to do: ") ;
+      evalCommand( readCommand() )
+    end
+end

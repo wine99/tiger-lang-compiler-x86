@@ -1,0 +1,5 @@
+OpExp(PlusOp,
+  OpExp(PlusOp,
+  | StringExp("Hello"),
+  | IntExp(12)),
+  StringExp("42"))

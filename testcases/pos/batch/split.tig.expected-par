@@ -1,0 +1,166 @@
+LetExp([
+  TypeDec[
+  | (stringlist,
+  |   RecordTy[
+  |   | (head,true,string),
+  |   | (tail,true,stringlist)])],
+  FunctionDec[
+  | (rev,[
+  |   (l,true,stringlist)],
+  |   SOME(stringlist),
+  |   LetExp([
+  |   | VarDec(out,true,SOME(stringlist),
+  |   |   NilExp)],
+  |   | SeqExp[
+  |   |   WhileExp(
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(l)),
+  |   |   |   NilExp),
+  |   |   | SeqExp[
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(out),
+  |   |   |   | RecordExp(stringlist,[
+  |   |   |   |   (head,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | SimpleVar(l),
+  |   |   |   |   |   | head))),
+  |   |   |   |   (tail,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(out)))])),
+  |   |   |   AssignExp(
+  |   |   |   | SimpleVar(l),
+  |   |   |   | VarExp(
+  |   |   |   |   FieldVar(
+  |   |   |   |   | SimpleVar(l),
+  |   |   |   |   | tail)))]),
+  |   |   VarExp(
+  |   |   | SimpleVar(out))])),
+  | (split,[
+  |   (inp,true,string),
+  |   (spl,true,string)],
+  |   SOME(stringlist),
+  |   LetExp([
+  |   | VarDec(out,true,SOME(stringlist),
+  |   |   NilExp),
+  |   | VarDec(si,true,NONE,
+  |   |   CallExp(size,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(spl))])),
+  |   | VarDec(from,true,NONE,
+  |   |   IntExp(0))],
+  |   | SeqExp[
+  |   |   ForExp(x,true,
+  |   |   | IntExp(0),
+  |   |   | OpExp(MinusOp,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | CallExp(size,[
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(inp))]),
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(si))),
+  |   |   |   IntExp(1)),
+  |   |   | IfExp(
+  |   |   |   IfExp(
+  |   |   |   | OpExp(LtOp,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(from)),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(x))),
+  |   |   |   | OpExp(EqOp,
+  |   |   |   |   CallExp(substring,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(inp)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(si))]),
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(spl))),
+  |   |   |   | IntExp(0)),
+  |   |   |   SeqExp[
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(out),
+  |   |   |   |   RecordExp(stringlist,[
+  |   |   |   |   | (head,
+  |   |   |   |   |   CallExp(substring,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(inp)),
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(from)),
+  |   |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(x)),
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | SimpleVar(from)))])),
+  |   |   |   |   | (tail,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(out)))])),
+  |   |   |   | AssignExp(
+  |   |   |   |   SimpleVar(from),
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(x)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(si))))])),
+  |   |   IfExp(
+  |   |   | OpExp(NeqOp,
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(from)),
+  |   |   |   CallExp(size,[
+  |   |   |   | VarExp(
+  |   |   |   |   SimpleVar(inp))])),
+  |   |   | AssignExp(
+  |   |   |   SimpleVar(out),
+  |   |   |   RecordExp(stringlist,[
+  |   |   |   | (head,
+  |   |   |   |   CallExp(substring,[
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(inp)),
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   SimpleVar(from)),
+  |   |   |   |   | OpExp(MinusOp,
+  |   |   |   |   |   CallExp(size,[
+  |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   SimpleVar(inp))]),
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | SimpleVar(from)))])),
+  |   |   |   | (tail,
+  |   |   |   |   VarExp(
+  |   |   |   |   | SimpleVar(out)))]))),
+  |   |   CallExp(rev,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(out))])]))],
+  VarDec(str,true,NONE,
+  | StringExp("This string will be a list of tokens")),
+  VarDec(toks,true,NONE,
+  | CallExp(split,[
+  |   VarExp(
+  |   | SimpleVar(str)),
+  |   StringExp(" ")]))],
+  SeqExp[
+  | CallExp(print,[
+  |   VarExp(
+  |   | SimpleVar(str))]),
+  | CallExp(print,[
+  |   StringExp("\n")]),
+  | WhileExp(
+  |   OpExp(NeqOp,
+  |   | VarExp(
+  |   |   SimpleVar(toks)),
+  |   | NilExp),
+  |   SeqExp[
+  |   | CallExp(print,[
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(toks),
+  |   |   |   head))]),
+  |   | CallExp(print,[
+  |   |   StringExp("*")]),
+  |   | AssignExp(
+  |   |   SimpleVar(toks),
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(toks),
+  |   |   |   tail)))])])

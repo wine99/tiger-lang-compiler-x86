@@ -1,0 +1,18 @@
+LetExp([
+  VarDec(blue,true,NONE,
+  | StringExp("\027[44m")),
+  VarDec(reset,true,NONE,
+  | StringExp("\027[0m"))],
+  SeqExp[
+  | CallExp(print,[
+  |   VarExp(
+  |   | SimpleVar(blue))]),
+  | CallExp(print,[
+  |   StringExp("Hello")]),
+  | CallExp(print,[
+  |   VarExp(
+  |   | SimpleVar(reset))]),
+  | CallExp(print,[
+  |   StringExp("\nBye\n")]),
+  | CallExp(print,[
+  |   StringExp("\027[34mHello\027[0m")])])

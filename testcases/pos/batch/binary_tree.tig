@@ -1,0 +1,56 @@
+let
+  type Root = { tree : Tree }
+  type Tree = { left : Tree, value : int, right : Tree }
+  type Bool = int
+  var false : Bool := 0
+  var true : Bool := 1
+
+  function boolToString( value : Bool ) : string = 
+    if value then "true"
+             else "false"
+
+  function node(left : Tree, value : int, right:Tree ) : Tree = 
+    Tree {left = left, value = value, right = right}
+
+  function leaf(value : int) : Tree =
+     Tree { left = nil, value = value, right = nil }
+
+  function tree( ) : Root = Root{ tree = nil }
+
+  function insert( root : Root, value : int ) = 
+    if root.tree = nil then root.tree := leaf( value )
+    else insertTree( root.tree, value )
+
+  function insertTree( tree : Tree, value : int ) = 
+    if tree.value < value then
+      if tree.left = nil then tree.left := leaf( value )
+      else insertTree( tree.left, value )
+    else
+        if tree.right = nil then tree.right := leaf( value )
+        else insertTree( tree.right, value )
+  
+  function contains( root : Root, value : int ) : Bool = 
+    containsTree( root.tree, value )
+
+  function containsTree( tree : Tree, value : int ) : Bool = 
+    if tree = nil then false
+    else if tree.value = value then true
+    else if tree.value < value then containsTree( tree.left, value )
+                               else containsTree( tree.right, value )
+
+  var set := tree( )
+in
+  print( "inserting the value 2\n" );
+  insert( set, 2 ) ;
+  print( "inserting the value 15\n" );
+  insert( set, 15 ) ;
+  print( "Does set contain the value 1?: " ) ;
+  print( boolToString( contains( set, 1 ) ) ) ;
+  print("\n") ;
+  print( "Does set contain the value 2?: " ) ;
+  print( boolToString( contains( set, 2 ) ) ) ;
+  print("\n") ;
+  print( "Does set contain the value 10?: " ) ;
+  print( boolToString( contains( set, 10 ) ) ) ;
+  print("\n")
+end

@@ -1,0 +1,33 @@
+let
+  type IntArr = array of int
+  type IntArrayList = { head : int, size : int, data : IntArr }
+
+  function copy(src : IntArr, dst : IntArr, size : int ) = 
+    for ptr := 0 to size-1 do
+      src[ ptr ] := dst[ ptr ]
+
+  function createIntArrayList(size : int) : IntArrayList =
+    IntArrayList{head = 0, size = size, data = IntArr[size] of 0}
+
+
+  function get( src : IntArrayList, index : int ) : int = 
+    src.data[ index ]
+  
+  function push( src : IntArrayList, num : int ) = 
+    ( if src.head + 1 >= src.size then
+        let
+          var outDat := IntArr[ src.size * 2] of 0
+        in
+          copy( outDat, src.data, src.size ) ;
+          src.data := outDat ;
+          src.size := src.size * 2
+        end ;
+      src.data[ src.head ] := num ;
+      src.head := src.head + 1 )
+
+  var arr := createIntArrayList( 2 )
+in
+  for x := 0 to 40 do
+    push( arr, x ) ;
+  get( arr, 39 )
+end

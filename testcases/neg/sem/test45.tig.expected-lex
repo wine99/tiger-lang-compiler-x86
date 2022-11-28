@@ -1,0 +1,20 @@
+2:1:LET
+3:2:TYPE
+3:7:ID rectype
+3:15:EQ
+3:17:LBRACE
+3:18:ID name
+3:22:COLON
+3:23:ID string
+3:29:COMMA
+3:31:ID id
+3:33:COLON
+3:34:ID int
+3:37:RBRACE
+5:2:VAR
+5:6:ID a
+5:7:ASSIGN
+5:10:NIL
+6:1:IN
+7:2:ID a
+8:1:END

@@ -1,0 +1,38 @@
+(INT,
+  LetExp([
+  | VarDec(buffer,true,STRING,
+  |   (STRING,
+  |   | StringExp("5"))),
+  | FunctionDec[
+  |   (isdigit,[],
+  |   | INT,
+  |   | (INT,
+  |   |   IfExp(
+  |   |   | (INT,
+  |   |   |   OpExp(GeOp,
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(buffer))))])),
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("0"))])))),
+  |   |   | (INT,
+  |   |   |   OpExp(LeOp,
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (STRING,
+  |   |   |   |   |   |   SimpleVar(buffer))))])),
+  |   |   |   | (INT,
+  |   |   |   |   CallExp(ord,[
+  |   |   |   |   | (STRING,
+  |   |   |   |   |   StringExp("9"))])))),
+  |   |   | (INT,
+  |   |   |   IntExp(0)))))]],
+  | (INT,
+  |   CallExp(isdigit,[]))))

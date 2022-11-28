@@ -1,0 +1,5 @@
+OpExp(PlusOp,
+  IntExp(2),
+  OpExp(TimesOp,
+  | IntExp(2),
+  | IntExp(2)))

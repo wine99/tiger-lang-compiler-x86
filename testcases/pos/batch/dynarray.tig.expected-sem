@@ -1,0 +1,250 @@
+(INT,
+  LetExp([
+  | TypeDec[
+  |   (IntArr,
+  |   | NAME IntArr = ARRAY of INT),
+  |   (IntArrayList,
+  |   | NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr})],
+  | FunctionDec[
+  |   (copy,[
+  |   | (src,true),
+  |   | (dst,true),
+  |   | (size,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   ForExp(ptr,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   OpExp(MinusOp,
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(size)))),
+  |   |   |   | (INT,
+  |   |   |   |   IntExp(1)))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (INT,
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   SimpleVar(ptr)))))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SubscriptVar(
+  |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   SimpleVar(dst)),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   SimpleVar(ptr))))))))))))),
+  |   (createIntArrayList,[
+  |   | (size,true)],
+  |   | NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   RecordExp([
+  |   |   | (head,
+  |   |   |   (INT,
+  |   |   |   | IntExp(0))),
+  |   |   | (size,
+  |   |   |   (INT,
+  |   |   |   | VarExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | SimpleVar(size))))),
+  |   |   | (data,
+  |   |   |   (NAME IntArr = ARRAY of INT,
+  |   |   |   | ArrayExp(
+  |   |   |   |   (INT,
+  |   |   |   |   | VarExp(
+  |   |   |   |   |   (INT,
+  |   |   |   |   |   | SimpleVar(size)))),
+  |   |   |   |   (INT,
+  |   |   |   |   | IntExp(0)))))]))),
+  |   (get,[
+  |   | (src,true),
+  |   | (index,true)],
+  |   | INT,
+  |   | (INT,
+  |   |   VarExp(
+  |   |   | (INT,
+  |   |   |   SubscriptVar(
+  |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   FieldVar(
+  |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   | data)),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(index))))))))),
+  |   (push,[
+  |   | (src,true),
+  |   | (num,true)],
+  |   | VOID,
+  |   | (VOID,
+  |   |   SeqExp[
+  |   |   | (VOID,
+  |   |   |   IfExp(
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(GeOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   |   | head)))),
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   IntExp(1)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   | size)))))),
+  |   |   |   | (VOID,
+  |   |   |   |   LetExp([
+  |   |   |   |   | VarDec(outDat,true,NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   | ArrayExp(
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | OpExp(TimesOp,
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | VarExp(
+  |   |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   |   | FieldVar(
+  |   |   |   |   |   |   |   |   |   (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   |   | SimpleVar(src)),
+  |   |   |   |   |   |   |   |   |   size)))),
+  |   |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   |   | IntExp(2)))),
+  |   |   |   |   |   |   (INT,
+  |   |   |   |   |   |   | IntExp(0)))))],
+  |   |   |   |   | (VOID,
+  |   |   |   |   |   SeqExp[
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   CallExp(copy,[
+  |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   SimpleVar(outDat)))),
+  |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   |   |   | data)))),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   |   |   | size))))])),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   |   | data)),
+  |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   |   |   |   SimpleVar(outDat)))))),
+  |   |   |   |   |   | (VOID,
+  |   |   |   |   |   |   AssignExp(
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   |   | size)),
+  |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   OpExp(TimesOp,
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   VarExp(
+  |   |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   |   |   |   | size)))),
+  |   |   |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   |   |   IntExp(2))))))]))))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (INT,
+  |   |   |   |   SubscriptVar(
+  |   |   |   |   | (NAME IntArr = ARRAY of INT,
+  |   |   |   |   |   FieldVar(
+  |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   | data)),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   | head)))))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(num)))))),
+  |   |   | (VOID,
+  |   |   |   AssignExp(
+  |   |   |   | (INT,
+  |   |   |   |   FieldVar(
+  |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   | head)),
+  |   |   |   | (INT,
+  |   |   |   |   OpExp(PlusOp,
+  |   |   |   |   | (INT,
+  |   |   |   |   |   VarExp(
+  |   |   |   |   |   | (INT,
+  |   |   |   |   |   |   FieldVar(
+  |   |   |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   |   |   SimpleVar(src)),
+  |   |   |   |   |   |   | head)))),
+  |   |   |   |   | (INT,
+  |   |   |   |   |   IntExp(1))))))]))],
+  | VarDec(arr,true,NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   | CallExp(createIntArrayList,[
+  |   |   (INT,
+  |   |   | IntExp(2))])))],
+  | (INT,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   ForExp(x,true,
+  |   |   | (INT,
+  |   |   |   IntExp(0)),
+  |   |   | (INT,
+  |   |   |   IntExp(40)),
+  |   |   | (VOID,
+  |   |   |   CallExp(push,[
+  |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   VarExp(
+  |   |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   |   SimpleVar(arr)))),
+  |   |   |   | (INT,
+  |   |   |   |   VarExp(
+  |   |   |   |   | (INT,
+  |   |   |   |   |   SimpleVar(x))))])))),
+  |   | (INT,
+  |   |   CallExp(get,[
+  |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   VarExp(
+  |   |   |   | (NAME IntArrayList = RECORD {head: INT, size: INT, data: NAME IntArr},
+  |   |   |   |   SimpleVar(arr)))),
+  |   |   | (INT,
+  |   |   |   IntExp(39))]))])))

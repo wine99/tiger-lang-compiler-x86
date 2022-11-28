@@ -1,0 +1,87 @@
+let
+  type intArray = array of int
+  var NOP := 0
+  var INC := 1
+  var DEC := 2
+  var NXT := 3
+  var PRV := 4
+  var PSH := 5
+  var POP := 6
+  var OUT := 7
+  var INP := 8
+  
+  var compiledProgram := intArray[30000] of 0
+
+  var data := intArray[10000] of 0
+  
+  var progStack := intArray[10000] of 0
+  var progHead := 0
+  function push( pos : int ) =
+    let in 
+      progStack[ progHead ] := pos ;
+      progHead := progHead + 1
+    end
+
+  function pop( ) : int =
+    let in 
+      progHead := progHead - 1 ;
+      progStack[ progHead ]
+    end
+
+  /* Hello world */
+  var program := ">++++++++[<+++++++++>-]<.>>+>+>++>[-]+<[>[->+<<++++>]<<]>.+++++++..+++.>>+++++++.<<<[[-]<[-]>]<+++++++++++++++.>>.+++.------.--------.>>+.>++++."
+  var pc := 0   /* program counter */
+  var ptr := 0  /* data pointer */
+in
+  for i := 0 to size( program )-1 do
+    let
+      var ii := i * 2
+    in
+      if substring( program, i, 1 )      = "+" then compiledProgram[ ii ] := INC
+      else if substring( program, i, 1 ) = "-" then compiledProgram[ ii ] := DEC
+      else if substring( program, i, 1 ) = ">" then compiledProgram[ ii ] := NXT
+      else if substring( program, i, 1 ) = "<" then compiledProgram[ ii ] := PRV
+      else if substring( program, i, 1 ) = "." then compiledProgram[ ii ] := OUT
+      else if substring( program, i, 1 ) = "," then compiledProgram[ ii ] := INP
+      else if substring( program, i, 1 ) = "[" then 
+        let in
+          push( ii ) ;
+          compiledProgram[ ii ] := PSH
+        end
+      else if substring( program, i, 1 ) = "]" then 
+        let var jmpPos := 0 in
+          jmpPos                        := pop( ) ;
+          compiledProgram[ ii ]         := POP ;
+          compiledProgram[ ii + 1 ]     := jmpPos ;
+          compiledProgram[ jmpPos + 1 ] := ii
+        end
+      else compiledProgram[ ii ] := NOP
+    end ;
+    
+  while pc < size( program ) * 2 do (
+    if compiledProgram[ pc ] = INC
+      then data[ ptr ] := data[ ptr ] + 1
+
+    else if compiledProgram[ pc ] = DEC 
+      then data[ ptr ] := data[ ptr ] - 1
+    
+    else if compiledProgram[ pc ] = NXT 
+      then ptr := ptr + 1
+    
+    else if compiledProgram[ pc ] = PRV 
+      then ptr := ptr - 1
+    
+    else if compiledProgram[ pc ] = OUT 
+      then print( chr( data [ ptr ] ) )
+    
+    else if compiledProgram[ pc ] = INP 
+      then data[ ptr ] := ord( getchar() )
+    
+    else if compiledProgram[ pc ] = PSH & data [ ptr ] = 0
+      then pc := compiledProgram[ pc + 1 ]
+
+    else if compiledProgram[ pc ] = POP & data [ ptr ] <> 0
+      then pc := compiledProgram[ pc + 1 ] ;
+    pc := pc + 2 ) ;
+  print("\n")
+end

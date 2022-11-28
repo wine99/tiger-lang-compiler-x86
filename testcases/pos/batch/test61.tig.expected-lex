@@ -1,0 +1,10 @@
+2:1:LET
+3:5:VAR
+3:9:ID s
+3:11:ASSIGN
+3:14:STRING "whatever"
+4:1:IN
+5:5:ID s
+5:7:GT
+5:9:STRING "else"
+6:1:END

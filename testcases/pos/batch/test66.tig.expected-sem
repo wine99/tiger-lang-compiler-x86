@@ -1,0 +1,6 @@
+(INT,
+  OpExp(GeOp,
+  | (INT,
+  |   IntExp(1)),
+  | (INT,
+  |   IntExp(0))))

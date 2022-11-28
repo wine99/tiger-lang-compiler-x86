@@ -1,0 +1,10 @@
+(INT,
+  LetExp([
+  | VarDec(a,true,INT,
+  |   (INT,
+  |   | IntExp(0))),
+  | VarDec(a,true,STRING,
+  |   (STRING,
+  |   | StringExp(" ")))],
+  | (INT,
+  |   IntExp(0))))

@@ -1,0 +1,8 @@
+LetExp([
+  VarDec(s,true,NONE,
+  | StringExp("whatever"))],
+  SeqExp[
+  | OpExp(GtOp,
+  |   VarExp(
+  |   | SimpleVar(s)),
+  |   StringExp("else"))])

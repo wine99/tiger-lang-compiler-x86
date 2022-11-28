@@ -1,0 +1,13 @@
+IfExp(
+  IfExp(
+  | OpExp(EqOp,
+  |   StringExp("\n"),
+  |   StringExp("\n")),
+  | OpExp(EqOp,
+  |   StringExp("\n"),
+  |   StringExp("\n")),
+  | IntExp(0)),
+  OpExp(EqOp,
+  | StringExp("M"),
+  | StringExp("M")),
+  IntExp(0))

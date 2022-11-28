@@ -1,0 +1,54 @@
+let
+  
+  function base ( v : int ) : int = 
+    let var acc := 1 in
+      while ( v := v / 10 ; v >= 1 ) do
+        acc := acc * 10 ;
+      acc
+    end
+
+  function toString ( v : int ) : string = 
+    let
+      var out := if v < 0 then "-" else ""
+      var val := if v < 0 then -v else v
+      var b   := base(val)
+      var off := ord( "0" )
+    in
+      while b <> 0 do
+        let
+          var d := val / b
+        in
+          val := val - b * d ;
+          b   := b / 10 ;
+          out := concat( out, chr( off + d ) )
+        end ;
+      out
+    end
+
+  type DoorState = int
+  type DoorArray = array of DoorState
+  var CLOSED := 0
+  var OPEN := 1
+  function toggle( state : DoorState ) : DoorState = 
+    if state = OPEN then CLOSED
+                    else OPEN
+
+  function mod( a : int, b : int ) : int = a - b * ( a / b )
+
+  var doors := DoorArray[100] of CLOSED
+
+
+in
+  print( "Calculating: ") ;
+
+  for pass := 0 to 99 do
+    for door := 0 to 99 do
+      if mod( door+1, pass+1 ) = 0 then
+        doors[door] := toggle( doors[ door ] ) ; 
+  
+  print( "Door states: ") ;
+
+  for door := 0 to 99 do
+    if doors[ door ] = OPEN then
+      ( print("Door number ") ; print( toString( door + 1 ) ) ; print(" is open.\n") )
+end

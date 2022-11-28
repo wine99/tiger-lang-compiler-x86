@@ -1,0 +1,4 @@
+(VOID,
+  CallExp(print,[
+  | (STRING,
+  |   StringExp("."))]))

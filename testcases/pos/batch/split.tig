@@ -1,0 +1,44 @@
+let
+  type stringlist = { head : string, tail : stringlist }
+
+  function rev( l : stringlist ) : stringlist =
+    let
+      var out : stringlist := nil
+    in
+      while l <> nil do
+        ( out := stringlist{
+            head = l.head, 
+            tail = out 
+          } ;
+          l := l.tail ) ;
+      out
+    end
+
+  function split(inp : string, spl : string) : stringlist = 
+    let
+      var out : stringlist := nil
+      var si := size(spl)
+      var from := 0
+    in
+      for x := 0 to size(inp) - si - 1 do
+        if from < x & substring(inp, x, si) = spl then
+          ( out := stringlist{ head = substring(inp, from, x - from),
+                               tail = out } ;
+            from := x + si ) ;
+      if from <> size(inp) then
+        out := stringlist{ head = substring(inp, from, size(inp) - from),
+                           tail = out } ;
+        
+      rev( out )
+    end
+
+  var str := "This string will be a list of tokens"
+  var toks := split(str, " ")
+in
+  print(str) ;
+  print("\n") ; 
+  while toks <> nil do
+    ( print(toks.head) ; 
+      print("*") ;
+      toks := toks.tail )
+end

@@ -1,0 +1,8 @@
+ForExp(i,true,
+  IntExp(0),
+  IntExp(100),
+  SeqExp[
+  | AssignExp(
+  |   SimpleVar(i),
+  |   IntExp(1)),
+  | SeqExp[]])

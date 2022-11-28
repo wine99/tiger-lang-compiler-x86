@@ -1,0 +1,10 @@
+2:1:LET
+3:2:VAR
+3:6:ID d
+3:7:ASSIGN
+3:9:INT 0
+4:1:IN
+5:2:ID d
+5:3:DOT
+5:4:ID f
+6:1:END

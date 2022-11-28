@@ -1,0 +1,234 @@
+LetExp([
+  TypeDec[
+  | (Root,
+  |   RecordTy[
+  |   | (tree,true,Tree)]),
+  | (Tree,
+  |   RecordTy[
+  |   | (left,true,Tree),
+  |   | (value,true,int),
+  |   | (right,true,Tree)]),
+  | (Bool,
+  |   NameTy(int))],
+  VarDec(false,true,SOME(Bool),
+  | IntExp(0)),
+  VarDec(true,true,SOME(Bool),
+  | IntExp(1)),
+  FunctionDec[
+  | (boolToString,[
+  |   (value,true,Bool)],
+  |   SOME(string),
+  |   IfExp(
+  |   | VarExp(
+  |   |   SimpleVar(value)),
+  |   | StringExp("true"),
+  |   | StringExp("false"))),
+  | (node,[
+  |   (left,true,Tree),
+  |   (value,true,int),
+  |   (right,true,Tree)],
+  |   SOME(Tree),
+  |   RecordExp(Tree,[
+  |   | (left,
+  |   |   VarExp(
+  |   |   | SimpleVar(left))),
+  |   | (value,
+  |   |   VarExp(
+  |   |   | SimpleVar(value))),
+  |   | (right,
+  |   |   VarExp(
+  |   |   | SimpleVar(right)))])),
+  | (leaf,[
+  |   (value,true,int)],
+  |   SOME(Tree),
+  |   RecordExp(Tree,[
+  |   | (left,
+  |   |   NilExp),
+  |   | (value,
+  |   |   VarExp(
+  |   |   | SimpleVar(value))),
+  |   | (right,
+  |   |   NilExp)])),
+  | (tree,[],
+  |   SOME(Root),
+  |   RecordExp(Root,[
+  |   | (tree,
+  |   |   NilExp)])),
+  | (insert,[
+  |   (root,true,Root),
+  |   (value,true,int)],
+  |   NONE,
+  |   IfExp(
+  |   | OpExp(EqOp,
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(root),
+  |   |   |   tree)),
+  |   |   NilExp),
+  |   | AssignExp(
+  |   |   FieldVar(
+  |   |   | SimpleVar(root),
+  |   |   | tree),
+  |   |   CallExp(leaf,[
+  |   |   | VarExp(
+  |   |   |   SimpleVar(value))])),
+  |   | CallExp(insertTree,[
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(root),
+  |   |   |   tree)),
+  |   |   VarExp(
+  |   |   | SimpleVar(value))]))),
+  | (insertTree,[
+  |   (tree,true,Tree),
+  |   (value,true,int)],
+  |   NONE,
+  |   IfExp(
+  |   | OpExp(LtOp,
+  |   |   VarExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(tree),
+  |   |   |   value)),
+  |   |   VarExp(
+  |   |   | SimpleVar(value))),
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(tree),
+  |   |   |   | left)),
+  |   |   | NilExp),
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(tree),
+  |   |   |   left),
+  |   |   | CallExp(leaf,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(value))])),
+  |   |   CallExp(insertTree,[
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(tree),
+  |   |   |   | left)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(value))])),
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(tree),
+  |   |   |   | right)),
+  |   |   | NilExp),
+  |   |   AssignExp(
+  |   |   | FieldVar(
+  |   |   |   SimpleVar(tree),
+  |   |   |   right),
+  |   |   | CallExp(leaf,[
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(value))])),
+  |   |   CallExp(insertTree,[
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(tree),
+  |   |   |   | right)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(value))])))),
+  | (contains,[
+  |   (root,true,Root),
+  |   (value,true,int)],
+  |   SOME(Bool),
+  |   CallExp(containsTree,[
+  |   | VarExp(
+  |   |   FieldVar(
+  |   |   | SimpleVar(root),
+  |   |   | tree)),
+  |   | VarExp(
+  |   |   SimpleVar(value))])),
+  | (containsTree,[
+  |   (tree,true,Tree),
+  |   (value,true,int)],
+  |   SOME(Bool),
+  |   IfExp(
+  |   | OpExp(EqOp,
+  |   |   VarExp(
+  |   |   | SimpleVar(tree)),
+  |   |   NilExp),
+  |   | VarExp(
+  |   |   SimpleVar(false)),
+  |   | IfExp(
+  |   |   OpExp(EqOp,
+  |   |   | VarExp(
+  |   |   |   FieldVar(
+  |   |   |   | SimpleVar(tree),
+  |   |   |   | value)),
+  |   |   | VarExp(
+  |   |   |   SimpleVar(value))),
+  |   |   VarExp(
+  |   |   | SimpleVar(true)),
+  |   |   IfExp(
+  |   |   | OpExp(LtOp,
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(tree),
+  |   |   |   |   value)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(value))),
+  |   |   | CallExp(containsTree,[
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(tree),
+  |   |   |   |   left)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(value))]),
+  |   |   | CallExp(containsTree,[
+  |   |   |   VarExp(
+  |   |   |   | FieldVar(
+  |   |   |   |   SimpleVar(tree),
+  |   |   |   |   right)),
+  |   |   |   VarExp(
+  |   |   |   | SimpleVar(value))])))))],
+  VarDec(set,true,NONE,
+  | CallExp(tree,[]))],
+  SeqExp[
+  | CallExp(print,[
+  |   StringExp("inserting the value 2\n")]),
+  | CallExp(insert,[
+  |   VarExp(
+  |   | SimpleVar(set)),
+  |   IntExp(2)]),
+  | CallExp(print,[
+  |   StringExp("inserting the value 15\n")]),
+  | CallExp(insert,[
+  |   VarExp(
+  |   | SimpleVar(set)),
+  |   IntExp(15)]),
+  | CallExp(print,[
+  |   StringExp("Does set contain the value 1?: ")]),
+  | CallExp(print,[
+  |   CallExp(boolToString,[
+  |   | CallExp(contains,[
+  |   |   VarExp(
+  |   |   | SimpleVar(set)),
+  |   |   IntExp(1)])])]),
+  | CallExp(print,[
+  |   StringExp("\n")]),
+  | CallExp(print,[
+  |   StringExp("Does set contain the value 2?: ")]),
+  | CallExp(print,[
+  |   CallExp(boolToString,[
+  |   | CallExp(contains,[
+  |   |   VarExp(
+  |   |   | SimpleVar(set)),
+  |   |   IntExp(2)])])]),
+  | CallExp(print,[
+  |   StringExp("\n")]),
+  | CallExp(print,[
+  |   StringExp("Does set contain the value 10?: ")]),
+  | CallExp(print,[
+  |   CallExp(boolToString,[
+  |   | CallExp(contains,[
+  |   |   VarExp(
+  |   |   | SimpleVar(set)),
+  |   |   IntExp(10)])])]),
+  | CallExp(print,[
+  |   StringExp("\n")])])

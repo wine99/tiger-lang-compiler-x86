@@ -1,0 +1,4 @@
+(INT,
+  CallExp(ord,[
+  | (STRING,
+  |   StringExp("0"))]))

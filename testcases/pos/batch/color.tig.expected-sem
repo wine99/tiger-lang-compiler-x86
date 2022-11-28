@@ -1,0 +1,34 @@
+(VOID,
+  LetExp([
+  | VarDec(blue,true,STRING,
+  |   (STRING,
+  |   | StringExp("\027[44m"))),
+  | VarDec(reset,true,STRING,
+  |   (STRING,
+  |   | StringExp("\027[0m")))],
+  | (VOID,
+  |   SeqExp[
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   VarExp(
+  |   |   |   | (STRING,
+  |   |   |   |   SimpleVar(blue))))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("Hello"))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   VarExp(
+  |   |   |   | (STRING,
+  |   |   |   |   SimpleVar(reset))))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\nBye\n"))])),
+  |   | (VOID,
+  |   |   CallExp(print,[
+  |   |   | (STRING,
+  |   |   |   StringExp("\027[34mHello\027[0m"))]))])))

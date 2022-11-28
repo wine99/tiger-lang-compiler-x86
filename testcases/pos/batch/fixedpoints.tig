@@ -1,0 +1,101 @@
+let
+  type fp = int
+  var PRESISION := 128
+
+  function mul( a : fp, b : fp ) : fp = a * b / PRESISION
+  function div( a : fp, b : fp ) : fp = ( a  * PRESISION ) / b
+  function fix( x : int) : fp = x * PRESISION
+
+
+  function base ( v : int ) : int = 
+    let var acc := 1 in
+      while ( v := v / 10 ; v >= 1 ) do
+        acc := acc * 10 ;
+      acc
+    end
+
+  function str ( v : int ) : string = 
+    let
+      var out := if v < 0 then "-" else ""
+      var val := if v < 0 then -v else v
+      var b   := base(val)
+      var off := ord( "0" )
+    in
+      while b <> 0 do
+        let
+          var d := val / b
+        in
+          val := val - b * d ;
+          b   := b / 10 ;
+          out := concat( out, chr( off + d ) )
+        end ;
+      out
+    end
+
+  /* Herons */
+  function sqrt( x : fp ) : fp =
+    let
+      var two := fix(2)
+      var out := div(x, two)
+    in
+      for i := 0 to 10 do
+        out := div(out + div(x, out), two);
+      out
+    end
+
+  function sin( x : fp ) : fp =
+    let
+      var x3 := mul(x, mul(x, x) )
+      var x2 := mul(x, x)
+      var out := div(x3, fix(6))
+    in
+      x3 := mul( x3, x2)  ;
+      out := out + div( x3, fix(120) ) ;
+      x3 := mul( x3, x2 ) ;
+      out := out - div( x3, fix(5040) ) ;
+      x3 := mul( x3, x2 ) ;
+      out := out - div( x3, fix(362880) ) ;
+      x - out
+    end
+
+  function fstr( x : fp ) : string = 
+    let
+      var sign := ""
+    in
+      if x < 0 then 
+        ( x := x * -1 ;
+          sign := "-" ) ;
+      let
+        var integerPart := concat(sign, concat( str( x / PRESISION ), "." ))
+        var decimals := x - x / PRESISION * PRESISION
+      in
+        if decimals = 0 then concat( integerPart, "0" )
+        else ( while decimals > 0 do
+                ( integerPart := concat( integerPart, str( decimals * 10 / PRESISION ) ) ;
+                  decimals := decimals * 10 - decimals * 10 / PRESISION * PRESISION ) ;
+              integerPart )
+      end
+    end
+
+
+
+
+in
+  print("Calculating a few squareroots:\n") ;
+  for x := 2 to 10 do
+    ( print("\tsqrt( ") ;
+      print(str(x)) ;
+      print(" ) = ") ;
+      print( fstr( sqrt( fix( x ) ) ) ) ;
+      print("\n") ) ;
+
+  print("Maybe a sinewave?:\n") ;
+  for x := 0 to 30 do
+    ( print("\tsin( ") ;
+      print( fstr( div(fix( x * 10 ), fix(100) ) ) ) ;
+      print(" ) = ") ;
+      print( fstr( sin( div(fix( x * 10 ), fix(100) ) ) ) ) ;
+      print("\n") ) ;
+  print("32 bits is not enough :(\n")  
+
+end

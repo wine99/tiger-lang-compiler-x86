@@ -1,0 +1,8 @@
+1:1:LET
+1:5:VAR
+1:9:ID x
+1:11:ASSIGN
+1:14:INT 10
+2:1:IN
+2:4:ID x
+3:1:END
