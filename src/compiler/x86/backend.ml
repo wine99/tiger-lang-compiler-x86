@@ -244,7 +244,10 @@ let arg_loc: int -> X86.operand = function
 | 3 -> X86.Reg X86.Rcx
 | 4 -> X86.Reg X86.R08
 | 5 -> X86.Reg X86.R09
-| n -> X86.Ind3(X86.Lit n, X86.Rbp)
+| n -> (
+  let r = (n-6)*8 in
+  X86.Ind3(X86.Lit r, X86.Rbp)
+  )
 
   
 (* The code for the entry-point of a function must do several things:
