@@ -238,12 +238,12 @@ let compile_lbl_block: lbl -> ctxt -> block -> elem = todo3
 *)
 
 let arg_loc: int -> X86.operand = function
-| 0 -> Asm.~% X86.Rdi
-| 1 -> Asm.~% X86.Rsi
-| 2 -> Asm.~% X86.Rdx
-| 3 -> Asm.~% X86.Rcx
-| 4 -> Asm.~% X86.R08
-| 5 -> Asm.~% X86.R09
+| 0 -> X86.Reg X86.Rdi
+| 1 -> X86.Reg X86.Rsi
+| 2 -> X86.Reg X86.Rdx
+| 3 -> X86.Reg X86.Rcx
+| 4 -> X86.Reg X86.R08
+| 5 -> X86.Reg X86.R09
 | n -> X86.Ind3(X86.Lit n, X86.Rbp)
 
   
