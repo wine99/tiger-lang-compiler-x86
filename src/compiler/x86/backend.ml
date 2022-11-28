@@ -12,6 +12,7 @@ open Tigercommon
 module S = Symbol
 open X86
 open Ll
+open X86.Asm
 
 exception BackendFatal (* use this for impossible cases *)
 
@@ -236,7 +237,14 @@ let compile_lbl_block: lbl -> ctxt -> block -> elem = todo3
    [ NOTE: the first six arguments are numbered 0 .. 5 ]
 *)
 
-let arg_loc: int -> X86.operand = todo1
+let arg_loc: int -> X86.operand = function
+| 0 -> Asm.~% X86.Rdi
+| 1 -> Asm.~% X86.Rsi
+| 2 -> Asm.~% X86.Rdx
+| 3 -> Asm.~% X86.Rcx
+| 4 -> Asm.~% X86.R08
+| 5 -> Asm.~% X86.R09
+| n -> X86.Ind3(X86.Lit n, X86.Rbp)
 
   
 (* The code for the entry-point of a function must do several things:

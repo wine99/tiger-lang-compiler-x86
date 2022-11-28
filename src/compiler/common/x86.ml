@@ -19,7 +19,7 @@ type imm = Lit of quad
 (* Registers:
     instruction pointer: rip
     arguments: rdi, rsi, rdx, rcx, r08, r09
-    callee-save: rbx, rbp, r12-r15
+    callee-save: rbx, rbp,; r12-r15
  *)
 
 type reg = Rip
