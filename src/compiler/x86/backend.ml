@@ -245,7 +245,7 @@ let arg_loc: int -> X86.operand = function
 | 4 -> X86.Reg X86.R08
 | 5 -> X86.Reg X86.R09
 | n -> (
-  let r = (n-6)*8 in
+  let r = (n-5)*8 in
   X86.Ind3(X86.Lit r, X86.Rbp)
   )
 
