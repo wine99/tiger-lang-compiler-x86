@@ -3,12 +3,9 @@
 (* Skeleton file -- expected to be modified as part of the assignment     *)
 (**************************************************************************)
 
-
 (* ll ir compilation -------------------------------------------------------- *)
 
-open Tigercommon 
-
-
+open Tigercommon
 module S = Symbol
 open X86
 open Ll
@@ -16,46 +13,41 @@ open X86.Asm
 
 exception BackendFatal (* use this for impossible cases *)
 
-exception NotImplemented 
+exception NotImplemented
 
 let todo1 _ = raise NotImplemented
-let todo2 _ _ = raise NotImplemented 
+
+let todo2 _ _ = raise NotImplemented
+
 let todo3 _ _ _ = raise NotImplemented
 
-
 (* Helpers ------------------------------------------------------------------ *)
-
 
 (* Platform-specific symbol generation *)
 
 type os = Linux | Darwin
 
-let os =  
+let os =
   let ic = Unix.open_process_in "uname" in
   let uname = input_line ic in
   let () = close_in ic in
-  match uname with 
-     "Linux" -> Linux 
-   | "Darwin" -> Darwin 
-   | _ -> raise BackendFatal
+  match uname with
+  | "Linux" -> Linux
+  | "Darwin" -> Darwin
+  | _ -> raise BackendFatal
 
 let mangle s =
-    match os with 
-	      Linux -> Symbol.name s
-     |  Darwin -> "_" ^ (Symbol.name s)
-    
+  match os with Linux -> Symbol.name s | Darwin -> "_" ^ Symbol.name s
 
 (* Mapping ll comparison operations to X86 condition codes *)
-let compile_cnd (c:Ll.cnd) : X86.cnd =
+let compile_cnd (c : Ll.cnd) : X86.cnd =
   match c with
-    Ll.Eq  -> X86.Eq
-  | Ll.Ne  -> X86.Neq
+  | Ll.Eq -> X86.Eq
+  | Ll.Ne -> X86.Neq
   | Ll.Slt -> X86.Lt
   | Ll.Sle -> X86.Le
   | Ll.Sgt -> X86.Gt
   | Ll.Sge -> X86.Ge
-
-
 
 (* locals and layout -------------------------------------------------------- *)
 
@@ -87,13 +79,10 @@ type layout = (Ll.uid * X86.operand) list
 
 (* A context contains the global type declarations (needed for getelementptr
    calculations) and a stack layout. *)
-type ctxt = { tdecls : (Ll.tid * Ll.ty) list
-            ; layout : layout
-            }
+type ctxt = {tdecls: (Ll.tid * Ll.ty) list; layout: layout}
 
 (* useful for looking up items in tdecls or layouts *)
-let lookup m x = List.assoc x m 
-
+let lookup m x = List.assoc x m
 
 (* compiling operands  ------------------------------------------------------ *)
 
@@ -113,7 +102,7 @@ let lookup m x = List.assoc x m
      That is, the X86 code: movq _gid %rax which looks like it should
      put the address denoted by _gid into %rax is not allowed.
      Instead, you need to compute an %rip-relative address using the
-     leaq instruction:   leaq _gid(%rip) %rax 
+     leaq instruction:   leaq _gid(%rip) %rax
 
    One strategy for compiling instruction operands is to use a
    designated register (or registers) for holding the values being
@@ -123,9 +112,7 @@ let lookup m x = List.assoc x m
    destination (usually a register).
 *)
 
-
-let compile_operand: ctxt -> X86.operand -> Ll.operand -> ins = todo3
-
+let compile_operand : ctxt -> X86.operand -> Ll.operand -> ins = todo3
 
 (* compiling call  ---------------------------------------------------------- *)
 
@@ -147,7 +134,6 @@ let compile_operand: ctxt -> X86.operand -> Ll.operand -> ins = todo3
    needed). ]
 *)
 
-
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
 (* The getelementptr instruction computes an address by indexing into
@@ -159,7 +145,7 @@ let compile_operand: ctxt -> X86.operand -> Ll.operand -> ins = todo3
    the appropriate arithemetic calculations.
 *)
 
-(* Function size_ty maps an LLVMlite type to a size in bytes. 
+(* Function size_ty maps an LLVMlite type to a size in bytes.
    (needed for getelementptr)
 
    - the size of a struct is the sum of the sizes of each component
@@ -171,10 +157,10 @@ let compile_operand: ctxt -> X86.operand -> Ll.operand -> ins = todo3
      your function should simply return 0
 *)
 
-let size_ty: (uid * ty) list -> ty -> quad = todo2 
+let size_ty : (uid * ty) list -> ty -> quad = todo2
 
-let compile_gep: ctxt -> ty * Ll.operand -> Ll.operand list -> ins list = todo3
-     
+let compile_gep : ctxt -> ty * Ll.operand -> Ll.operand list -> ins list =
+  todo3
 
 (* compiling instructions  -------------------------------------------------- *)
 
@@ -200,20 +186,73 @@ let compile_gep: ctxt -> ty * Ll.operand -> Ll.operand list -> ins list = todo3
    - Bitcast: does nothing interesting at the assembly level
 *)
 
-let compile_insn ctxt (id, ins): ctxt -> uid option * insn -> ins list = match ins with
-  | Binop (bop, ty, left_oper, right_oper) -> todo2
-  | Alloca ty -> todo2
-  | Load (ty, oper) -> todo2
-  | Store (ty, from_oper, to_oper) -> todo2
-  | Icmp (cnd, ty, left_oper, right_oper) -> todo2
-  | _ -> todo2
-(*| Call of ty * Ll.operand * (ty * Ll.operand) list
-  | Bitcast of ty * Ll.operand * ty
-  | Gep of ty * Ll.operand * Ll.operand list
-  | Zext of ty * Ll.operand * ty
-  | Ptrtoint of ty * Ll.operand * ty
-  | Comment of lbl
-   *)
+let actual_type ctxt = function
+  | ty ->
+      let rec act_tpe = function
+        | I1 -> I1
+        | I8 -> I8
+        | I64 -> I64
+        | Void -> Void
+        | Ptr t -> Ptr (act_tpe t)
+        | Struct ts -> Struct (List.map act_tpe ts)
+        | Array (n, t) -> Array (n, act_tpe t)
+        | Fun (params, ret_ty) ->
+            Fun (params |> List.map act_tpe, act_tpe ret_ty)
+        | Namedt tid -> act_tpe @@ List.assoc tid ctxt.tdecls
+      in
+      act_tpe ty
+
+let rec type_width ctxt = function
+  | ty -> (
+    match actual_type ctxt ty with
+    | I1 | I8 | I64 | Void | Ptr _ -> 8
+    | Struct ts -> ts |> List.map (type_width ctxt) |> List.fold_left ( + ) 8
+    | Array (n, t) -> n * type_width ctxt t
+    | Fun (params, ret_ty) ->
+        params
+        |> List.map (type_width ctxt)
+        |> List.fold_left ( + ) (type_width ctxt ret_ty)
+    | Namedt _ -> raise BackendFatal )
+
+let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
+  match ins with
+  | Binop (op, _, left, right) ->
+      let opx86 =
+        match op with
+        | Add -> X86.Addq
+        | Sub -> X86.Subq
+        | Mul -> X86.Imulq
+        | SDiv -> X86.Idivq
+        | Shl | Lshr | Ashr | And | Or | Xor -> raise NotImplemented
+      in
+      let left_x86 = compile_operand ctxt (X86.Reg X86.R11) left in
+      let right_x86 = compile_operand ctxt (X86.Reg X86.Rax) right in
+      [left_x86; right_x86; (opx86, [X86.Reg X86.R11; X86.Reg X86.Rax])]
+  | Alloca ty -> raise NotImplemented
+  | Load (ty, op) -> raise NotImplemented
+  | Store (ty, src, dest) -> raise NotImplemented
+  | Icmp (cnd, _, left, right) ->
+      let cndx86 =
+        match cnd with
+        | Eq -> X86.Eq
+        | Ne -> X86.Neq
+        | Slt -> X86.Lt
+        | Sle -> X86.Le
+        | Sgt -> X86.Gt
+        | Sge -> X86.Ge
+      in
+      let left_x86 = compile_operand ctxt (X86.Reg X86.R11) left in
+      let right_x86 = compile_operand ctxt (X86.Reg X86.Rax) right in
+      let cmp = (X86.Cmpq, [X86.Reg X86.R11; X86.Reg X86.Rax]) in
+      let set = (X86.Set cndx86, []) in
+      [left_x86; right_x86; cmp; set]
+  | Call (ty, func, args) ->
+      raise NotImplemented (* TODO : make compile_call helper. *)
+  | Bitcast (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
+  | Gep (ty, operand, ls) -> compile_gep ctxt (ty, operand) ls
+  | Zext (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
+  | Ptrtoint (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
+  | Comment str -> raise NotImplemented
 
 (* compiling terminators  --------------------------------------------------- *)
 
@@ -228,16 +267,25 @@ let compile_insn ctxt (id, ins): ctxt -> uid option * insn -> ins list = match i
    - Cbr branch should treat its operand as a boolean conditional
 *)
 
-let compile_terminator: ctxt -> terminator -> ins list = todo2
-
+let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
+  match term with
+  | Ret (_, oper_opt) -> (
+      let reset_sp = (X86.Movq, [X86.Reg X86.Rbp; X86.Reg X86.Rsp]) in
+      let pop_frame = (X86.Popq, [X86.Reg X86.Rbp]) in
+      let ret = (X86.Retq, []) in
+      let reset = [reset_sp; pop_frame; ret] in
+      match oper_opt with
+      | None -> reset
+      | Some oper -> compile_operand ctxt (X86.Reg X86.Rax) oper :: reset )
+  | Br lbl -> raise NotImplemented
+  | Cbr (oper, lbl1, lbl2) -> raise NotImplemented
 
 (* compiling blocks --------------------------------------------------------- *)
 
 (* We have left this helper function here for you to complete. *)
-let compile_block: ctxt -> block -> ins list = todo2
-  
-let compile_lbl_block: lbl -> ctxt -> block -> elem = todo3
+let compile_block : ctxt -> block -> ins list = todo2
 
+let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
@@ -249,19 +297,17 @@ let compile_lbl_block: lbl -> ctxt -> block -> elem = todo3
    [ NOTE: the first six arguments are numbered 0 .. 5 ]
 *)
 
-let arg_loc: int -> X86.operand = function
-| 0 -> X86.Reg X86.Rdi
-| 1 -> X86.Reg X86.Rsi
-| 2 -> X86.Reg X86.Rdx
-| 3 -> X86.Reg X86.Rcx
-| 4 -> X86.Reg X86.R08
-| 5 -> X86.Reg X86.R09
-| n -> (
-  let r = (n-5)*8 in
-  X86.Ind3(X86.Lit r, X86.Rbp)
-  )
+let arg_loc : int -> X86.operand = function
+  | 0 -> X86.Reg X86.Rdi
+  | 1 -> X86.Reg X86.Rsi
+  | 2 -> X86.Reg X86.Rdx
+  | 3 -> X86.Reg X86.Rcx
+  | 4 -> X86.Reg X86.R08
+  | 5 -> X86.Reg X86.R09
+  | n ->
+      let r = (n - 5) * 8 in
+      X86.Ind3 (X86.Lit r, X86.Rbp)
 
-  
 (* The code for the entry-point of a function must do several things:
 
    - since our simple compiler maps local %uids to stack slots,
@@ -280,7 +326,6 @@ let arg_loc: int -> X86.operand = function
 *)
 
 let compile_fdecl : (uid * ty) list -> uid -> fdecl -> elem list = todo3
-   
 
 (* compile_gdecl ------------------------------------------------------------ *)
 
@@ -288,20 +333,19 @@ let compile_fdecl : (uid * ty) list -> uid -> fdecl -> elem list = todo3
    a global uid to its associated X86 label.
 *)
 
-let rec compile_ginit = function 
-    GNull -> [Quad (Lit 0)]
-  | (GGid gid)   -> [Quad (Lbl (mangle gid))]
-  | (GInt c)     -> [Quad (Lit c)]
-  | (GString s)  -> [Asciz s]
-  | (GArray gs)  -> List.concat (List.map compile_gdecl gs)
-  | (GStruct gs) -> List.concat (List.map compile_gdecl gs)
+let rec compile_ginit = function
+  | GNull -> [Quad (Lit 0)]
+  | GGid gid -> [Quad (Lbl (mangle gid))]
+  | GInt c -> [Quad (Lit c)]
+  | GString s -> [Asciz s]
+  | GArray gs -> List.concat (List.map compile_gdecl gs)
+  | GStruct gs -> List.concat (List.map compile_gdecl gs)
+
 and compile_gdecl (_, g) = compile_ginit g
 
 (* compile_prog ------------------------------------------------------------- *)
 
-let compile_prog ({tdecls; gdecls; fdecls}:Ll.prog) : X86.prog =  
-  let g (lbl, gdecl) = Asm.data (mangle lbl) (compile_gdecl gdecl) in 
-  let f (name, fdecl) = compile_fdecl tdecls name fdecl in 
-  (List.map g gdecls) @ (List.concat (List.map f fdecls))
-  
-
+let compile_prog ({tdecls; gdecls; fdecls} : Ll.prog) : X86.prog =
+  let g (lbl, gdecl) = Asm.data (mangle lbl) (compile_gdecl gdecl) in
+  let f (name, fdecl) = compile_fdecl tdecls name fdecl in
+  List.map g gdecls @ List.concat (List.map f fdecls)
