@@ -200,8 +200,20 @@ let compile_gep: ctxt -> ty * Ll.operand -> Ll.operand list -> ins list = todo3
    - Bitcast: does nothing interesting at the assembly level
 *)
 
-let compile_insn: ctxt -> uid option * insn -> ins list = todo2
-   
+let compile_insn ctxt (id, ins): ctxt -> uid option * insn -> ins list = match ins with
+  | Binop (bop, ty, left_oper, right_oper) -> todo2
+  | Alloca ty -> todo2
+  | Load (ty, oper) -> todo2
+  | Store (ty, from_oper, to_oper) -> todo2
+  | Icmp (cnd, ty, left_oper, right_oper) -> todo2
+  | _ -> todo2
+(*| Call of ty * Ll.operand * (ty * Ll.operand) list
+  | Bitcast of ty * Ll.operand * ty
+  | Gep of ty * Ll.operand * Ll.operand list
+  | Zext of ty * Ll.operand * ty
+  | Ptrtoint of ty * Ll.operand * ty
+  | Comment of lbl
+   *)
 
 (* compiling terminators  --------------------------------------------------- *)
 
@@ -238,13 +250,16 @@ let compile_lbl_block: lbl -> ctxt -> block -> elem = todo3
 *)
 
 let arg_loc: int -> X86.operand = function
-| 0 -> Asm.~% X86.Rdi
-| 1 -> Asm.~% X86.Rsi
-| 2 -> Asm.~% X86.Rdx
-| 3 -> Asm.~% X86.Rcx
-| 4 -> Asm.~% X86.R08
-| 5 -> Asm.~% X86.R09
-| n -> X86.Ind3(X86.Lit n, X86.Rbp)
+| 0 -> X86.Reg X86.Rdi
+| 1 -> X86.Reg X86.Rsi
+| 2 -> X86.Reg X86.Rdx
+| 3 -> X86.Reg X86.Rcx
+| 4 -> X86.Reg X86.R08
+| 5 -> X86.Reg X86.R09
+| n -> (
+  let r = (n-5)*8 in
+  X86.Ind3(X86.Lit r, X86.Rbp)
+  )
 
   
 (* The code for the entry-point of a function must do several things:

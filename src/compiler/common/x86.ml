@@ -28,7 +28,7 @@ type reg = Rip
 
 type operand = Imm of imm        (* immediate *)
              | Reg of reg            (* register *)
-             | Ind1 of imm           (* indirect: displacement *)
+             | Ind1 of imm           (* indirect: displacement - global memory address *)
              | Ind2 of reg           (* indirect: (%reg) *)
              | Ind3 of (imm * reg)   (* indirect: displacement(%reg) *)
 
