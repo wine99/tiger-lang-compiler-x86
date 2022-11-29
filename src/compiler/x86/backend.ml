@@ -228,7 +228,9 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
       let left_x86 = compile_operand ctxt (X86.Reg X86.R11) left in
       let right_x86 = compile_operand ctxt (X86.Reg X86.Rax) right in
       [left_x86; right_x86; (opx86, [X86.Reg X86.R11; X86.Reg X86.Rax])]
-  | Alloca ty -> raise NotImplemented
+  | Alloca ty -> 
+    let type_width_bytes = type_width ctxt ty in
+    [(Subq, [Asm.$ type_width_bytes ; Asm.% Rsp])]
   | Load (ty, op) -> raise NotImplemented
   | Store (ty, src, dest) -> raise NotImplemented
   | Icmp (cnd, _, left, right) ->
@@ -247,7 +249,7 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
       let set = (X86.Set cndx86, []) in
       [left_x86; right_x86; cmp; set]
   | Call (ty, func, args) ->
-      raise NotImplemented (* TODO : make compile_call helper. *)
+      raise NotImplemented (* TODO : make compile_call helper. Remember to save caller-save registers before calling and restoring after return *)
   | Bitcast (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
   | Gep (ty, operand, ls) -> compile_gep ctxt (ty, operand) ls
   | Zext (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
