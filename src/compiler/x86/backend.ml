@@ -200,8 +200,20 @@ let compile_gep: ctxt -> ty * Ll.operand -> Ll.operand list -> ins list = todo3
    - Bitcast: does nothing interesting at the assembly level
 *)
 
-let compile_insn: ctxt -> uid option * insn -> ins list = todo2
-   
+let compile_insn ctxt (id, ins): ctxt -> uid option * insn -> ins list = match ins with
+  | Binop (bop, ty, left_oper, right_oper) -> todo2
+  | Alloca ty -> todo2
+  | Load (ty, oper) -> todo2
+  | Store (ty, from_oper, to_oper) -> todo2
+  | Icmp (cnd, ty, left_oper, right_oper) -> todo2
+  | _ -> todo2
+(*| Call of ty * Ll.operand * (ty * Ll.operand) list
+  | Bitcast of ty * Ll.operand * ty
+  | Gep of ty * Ll.operand * Ll.operand list
+  | Zext of ty * Ll.operand * ty
+  | Ptrtoint of ty * Ll.operand * ty
+  | Comment of lbl
+   *)
 
 (* compiling terminators  --------------------------------------------------- *)
 

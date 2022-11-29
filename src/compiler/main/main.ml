@@ -150,7 +150,9 @@ let tiger {file;phase;unfold;out; _} =
                  "%s\n\n%s\n%s" ll_target_triple runtime_fns ll_s1 in
              Format.fprintf out "%s" ll_s2
            )
-      | X86 ->
+      | X86 -> (*
+      { tdecls = []; gdecls = []; fdecls = [( Symbol.symbol("main"), { fty = ([], Ll.I64); param = []; cfg = ({ insns = []; terminator = Ll.Ret (Ll.I64, Some (Ll.Const 0))}, [])})]}
+      *)
         file |> parse
         |> semant
         |> hoist
