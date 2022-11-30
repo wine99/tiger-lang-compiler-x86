@@ -124,7 +124,9 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
   | Gid gid ->
       let lbl = mangle gid in
       (Leaq, [Ind3 (Lbl lbl, Rip); dest])
-  | Id uid -> raise NotImplemented
+  | Id uid -> 
+    let src = List.assoc uid ctxt.layout in
+    (Movq, [src; dest])
 
 (* compiling call  ---------------------------------------------------------- *)
 
@@ -320,12 +322,12 @@ let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
 *)
 
 let arg_loc : int -> X86.operand = function
-  | 0 -> Reg Rdi
-  | 1 -> Reg Rsi
-  | 2 -> Reg Rdx
-  | 3 -> Reg Rcx
-  | 4 -> Reg R08
-  | 5 -> Reg R09
+  | 0 -> ~% Rdi
+  | 1 -> ~% Rsi
+  | 2 -> ~% Rdx
+  | 3 -> ~% Rcx
+  | 4 -> ~% R08
+  | 5 -> ~% R09
   | n ->
       let r = (n - 5) * 8 in
       Ind3 (Lit r, Rbp)
