@@ -122,9 +122,8 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
       let num = Imm (Lit i) in
       (Movq, [num; dest])
   | Gid gid ->
-      let str_id = mangle gid in
-      (Leaq, [Ind3 (Lbl str_id, Rip); ~%Rax])
-      (* No movq after ??? *)
+      let lbl = mangle gid in
+      (Leaq, [Ind3 (Lbl lbl, Rip); dest])
   | Id uid -> raise NotImplemented
 
 (* compiling call  ---------------------------------------------------------- *)
