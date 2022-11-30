@@ -124,9 +124,9 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
   | Gid gid ->
       let lbl = mangle gid in
       (Leaq, [Ind3 (Lbl lbl, Rip); dest])
-  | Id uid -> 
-    let src = List.assoc uid ctxt.layout in
-    (Movq, [src; dest])
+  | Id uid ->
+      let src = List.assoc uid ctxt.layout in
+      (Movq, [src; dest])
 
 (* compiling call  ---------------------------------------------------------- *)
 
@@ -171,7 +171,30 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
      your function should simply return 0
 *)
 
-let size_ty : (uid * ty) list -> ty -> quad = todo2
+let actual_type tdecls = function
+  | ty ->
+      let rec act_tpe = function
+        | I1 -> I1
+        | I8 -> I8
+        | I64 -> I64
+        | Void -> Void
+        | Ptr t -> Ptr (act_tpe t)
+        | Struct ts -> Struct (List.map act_tpe ts)
+        | Array (n, t) -> Array (n, act_tpe t)
+        | Fun (params, ret_ty) ->
+            Fun (params |> List.map act_tpe, act_tpe ret_ty)
+        | Namedt tid -> act_tpe @@ List.assoc tid tdecls
+      in
+      act_tpe ty
+
+let rec size_ty tdecls = function
+  | ty -> (
+    match actual_type tdecls ty with
+    | I8 | Void | Fun _ -> 0
+    | I1 | I64 | Ptr _ -> 8
+    | Struct ts -> ts |> List.map (size_ty tdecls) |> List.fold_left ( + ) 8
+    | Array (n, t) -> n * size_ty tdecls t
+    | Namedt _ -> raise BackendFatal )
 
 let compile_gep : ctxt -> ty * Ll.operand -> Ll.operand list -> ins list =
   todo3
@@ -200,34 +223,6 @@ let compile_gep : ctxt -> ty * Ll.operand -> Ll.operand list -> ins list =
    - Bitcast: does nothing interesting at the assembly level
 *)
 
-let actual_type ctxt = function
-  | ty ->
-      let rec act_tpe = function
-        | I1 -> I1
-        | I8 -> I8
-        | I64 -> I64
-        | Void -> Void
-        | Ptr t -> Ptr (act_tpe t)
-        | Struct ts -> Struct (List.map act_tpe ts)
-        | Array (n, t) -> Array (n, act_tpe t)
-        | Fun (params, ret_ty) ->
-            Fun (params |> List.map act_tpe, act_tpe ret_ty)
-        | Namedt tid -> act_tpe @@ List.assoc tid ctxt.tdecls
-      in
-      act_tpe ty
-
-let rec type_width ctxt = function
-  | ty -> (
-    match actual_type ctxt ty with
-    | I1 | I8 | I64 | Void | Ptr _ -> 8
-    | Struct ts -> ts |> List.map (type_width ctxt) |> List.fold_left ( + ) 8
-    | Array (n, t) -> n * type_width ctxt t
-    | Fun (params, ret_ty) ->
-        params
-        |> List.map (type_width ctxt)
-        |> List.fold_left ( + ) (type_width ctxt ret_ty)
-    | Namedt _ -> raise BackendFatal )
-
 let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
   match ins with
   | Binop (op, _, left, right) ->
@@ -243,8 +238,8 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
       let right_x86 = compile_operand ctxt ~%Rax right in
       [left_x86; right_x86; (op_x86, [~%R11; ~%Rax])]
   | Alloca ty ->
-      let type_width_bytes = type_width ctxt ty in
-      [(Subq, [~$type_width_bytes; ~%Rsp])]
+      let type_width = size_ty ctxt.tdecls ty in
+      [(Subq, [~$type_width; ~%Rsp])]
   | Load (_, op) ->
       let op_x86 = compile_operand ctxt ~%R11 op in
       let load_ins = (Movq, [Ind2 R11; ~%Rax]) in
@@ -322,12 +317,12 @@ let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
 *)
 
 let arg_loc : int -> X86.operand = function
-  | 0 -> ~% Rdi
-  | 1 -> ~% Rsi
-  | 2 -> ~% Rdx
-  | 3 -> ~% Rcx
-  | 4 -> ~% R08
-  | 5 -> ~% R09
+  | 0 -> ~%Rdi
+  | 1 -> ~%Rsi
+  | 2 -> ~%Rdx
+  | 3 -> ~%Rcx
+  | 4 -> ~%R08
+  | 5 -> ~%R09
   | n ->
       let r = (n - 5) * 8 in
       Ind3 (Lit r, Rbp)
