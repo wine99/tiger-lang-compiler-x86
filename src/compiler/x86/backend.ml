@@ -42,12 +42,12 @@ let mangle s =
 (* Mapping ll comparison operations to X86 condition codes *)
 let compile_cnd (c : Ll.cnd) : X86.cnd =
   match c with
-  | Ll.Eq -> X86.Eq
-  | Ll.Ne -> X86.Neq
-  | Ll.Slt -> X86.Lt
-  | Ll.Sle -> X86.Le
-  | Ll.Sgt -> X86.Gt
-  | Ll.Sge -> X86.Ge
+  | Ll.Eq -> Eq
+  | Ll.Ne -> Neq
+  | Ll.Slt -> Lt
+  | Ll.Sle -> Le
+  | Ll.Sgt -> Gt
+  | Ll.Sge -> Ge
 
 (* locals and layout -------------------------------------------------------- *)
 
@@ -112,7 +112,19 @@ let lookup m x = List.assoc x m
    destination (usually a register).
 *)
 
-let compile_operand : ctxt -> X86.operand -> Ll.operand -> ins = todo3
+let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
+    ins =
+  match oper with
+  | Null ->
+      let num = Imm (Lit 0) in
+      (Movq, [num; dest])
+  | Const i ->
+      let num = Imm (Lit i) in
+      (Movq, [num; dest])
+  | Gid gid ->
+      let lbl = mangle gid in
+      (Leaq, [Ind3 (Lbl lbl, Rip); dest])
+  | Id uid -> raise NotImplemented
 
 (* compiling call  ---------------------------------------------------------- *)
 
@@ -217,43 +229,51 @@ let rec type_width ctxt = function
 let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
   match ins with
   | Binop (op, _, left, right) ->
-      let opx86 =
+      let op_x86 =
         match op with
-        | Add -> X86.Addq
-        | Sub -> X86.Subq
-        | Mul -> X86.Imulq
-        | SDiv -> X86.Idivq
+        | Add -> Addq
+        | Sub -> Subq
+        | Mul -> Imulq
+        | SDiv -> Idivq
         | Shl | Lshr | Ashr | And | Or | Xor -> raise NotImplemented
       in
-      let left_x86 = compile_operand ctxt (X86.Reg X86.R11) left in
-      let right_x86 = compile_operand ctxt (X86.Reg X86.Rax) right in
-      [left_x86; right_x86; (opx86, [X86.Reg X86.R11; X86.Reg X86.Rax])]
-  | Alloca ty -> 
-    let type_width_bytes = type_width ctxt ty in
-    [(Subq, [Asm.$ type_width_bytes ; Asm.% Rsp])]
-  | Load (ty, op) -> raise NotImplemented
-  | Store (ty, src, dest) -> raise NotImplemented
+      let left_x86 = compile_operand ctxt ~%R11 left in
+      let right_x86 = compile_operand ctxt ~%Rax right in
+      [left_x86; right_x86; (op_x86, [~%R11; ~%Rax])]
+  | Alloca ty ->
+      let type_width_bytes = type_width ctxt ty in
+      [(Subq, [~$type_width_bytes; ~%Rsp])]
+  | Load (_, op) ->
+      let op_x86 = compile_operand ctxt ~%R11 op in
+      let load_ins = (Movq, [Ind2 R11; ~%Rax]) in
+      [op_x86; load_ins]
+  | Store (_, src, dest) ->
+      let src_x86 = compile_operand ctxt ~%R11 src in
+      let dest_x86 = compile_operand ctxt ~%Rax dest in
+      let store_ins = (Movq, [Ind2 R11; Ind2 Rax]) in
+      [src_x86; dest_x86; store_ins]
   | Icmp (cnd, _, left, right) ->
-      let cndx86 =
+      let cndx86 : X86.cnd =
         match cnd with
-        | Eq -> X86.Eq
-        | Ne -> X86.Neq
-        | Slt -> X86.Lt
-        | Sle -> X86.Le
-        | Sgt -> X86.Gt
-        | Sge -> X86.Ge
+        | Eq -> Eq
+        | Ne -> Neq
+        | Slt -> Lt
+        | Sle -> Le
+        | Sgt -> Gt
+        | Sge -> Ge
       in
-      let left_x86 = compile_operand ctxt (X86.Reg X86.R11) left in
-      let right_x86 = compile_operand ctxt (X86.Reg X86.Rax) right in
-      let cmp = (X86.Cmpq, [X86.Reg X86.R11; X86.Reg X86.Rax]) in
-      let set = (X86.Set cndx86, []) in
+      let left_x86 = compile_operand ctxt ~%R11 left in
+      let right_x86 = compile_operand ctxt ~%Rax right in
+      let cmp = (Cmpq, [~%R11; ~%Rax]) in
+      let set = (Set cndx86, []) in
       [left_x86; right_x86; cmp; set]
   | Call (ty, func, args) ->
-      raise NotImplemented (* TODO : make compile_call helper. Remember to save caller-save registers before calling and restoring after return *)
-  | Bitcast (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
+      raise NotImplemented
+      (* TODO : make compile_call helper. Remember to save caller-save registers before calling and restoring after return *)
+  | Bitcast (_, op, _) -> [compile_operand ctxt ~%Rax op]
   | Gep (ty, operand, ls) -> compile_gep ctxt (ty, operand) ls
-  | Zext (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
-  | Ptrtoint (_, op, _) -> [compile_operand ctxt (X86.Reg X86.Rax) op]
+  | Zext (_, op, _) -> [compile_operand ctxt ~%Rax op]
+  | Ptrtoint (_, op, _) -> [compile_operand ctxt ~%Rax op]
   | Comment str -> raise NotImplemented
 
 (* compiling terminators  --------------------------------------------------- *)
@@ -272,13 +292,13 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
 let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
   match term with
   | Ret (_, oper_opt) -> (
-      let reset_sp = (X86.Movq, [X86.Reg X86.Rbp; X86.Reg X86.Rsp]) in
-      let pop_frame = (X86.Popq, [X86.Reg X86.Rbp]) in
-      let ret = (X86.Retq, []) in
+      let reset_sp = (Movq, [Reg Rbp; Reg Rsp]) in
+      let pop_frame = (Popq, [Reg Rbp]) in
+      let ret = (Retq, []) in
       let reset = [reset_sp; pop_frame; ret] in
       match oper_opt with
       | None -> reset
-      | Some oper -> compile_operand ctxt (X86.Reg X86.Rax) oper :: reset )
+      | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
   | Br lbl -> raise NotImplemented
   | Cbr (oper, lbl1, lbl2) -> raise NotImplemented
 
@@ -300,15 +320,15 @@ let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
 *)
 
 let arg_loc : int -> X86.operand = function
-  | 0 -> X86.Reg X86.Rdi
-  | 1 -> X86.Reg X86.Rsi
-  | 2 -> X86.Reg X86.Rdx
-  | 3 -> X86.Reg X86.Rcx
-  | 4 -> X86.Reg X86.R08
-  | 5 -> X86.Reg X86.R09
+  | 0 -> Reg Rdi
+  | 1 -> Reg Rsi
+  | 2 -> Reg Rdx
+  | 3 -> Reg Rcx
+  | 4 -> Reg R08
+  | 5 -> Reg R09
   | n ->
       let r = (n - 5) * 8 in
-      X86.Ind3 (X86.Lit r, X86.Rbp)
+      Ind3 (Lit r, Rbp)
 
 (* The code for the entry-point of a function must do several things:
 
