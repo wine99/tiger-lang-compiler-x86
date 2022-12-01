@@ -50,10 +50,7 @@ let compile_cnd (c : Ll.cnd) : X86.cnd =
   | Ll.Sge -> Ge
 
 let foreach f l =
-  let rec loop = function
-  | [] -> ()
-  | x :: xs -> f(x) ; loop xs 
-  in
+  let rec loop = function [] -> () | x :: xs -> f x ; loop xs in
   loop l
 
 (* locals and layout -------------------------------------------------------- *)
@@ -158,25 +155,22 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
 (* TODO :
    - Save caller-save registers before calling.
    - Restoring after return. *)
-let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
-  let callee_saved = [Rax ; R11] in
-  let f_mov_in = fun x acc -> (
-    (Movq, [~%x ; ~%Rsp]) :: (Movq, [~%Rsp ; Ind3 (Lit (-8), Rsp)]) :: acc
-  ) in
-  let mov_in = List.fold_right f_mov_in callee_saved [] in
-  
-  let f_args = (fun x acc -> (compile_operand ctxt (~%Rax) (snd x)) :: acc (* not this register *)
-  ) in
+let compile_call (ctxt : ctxt) (func : Ll.operand)
+    (args : (ty * Ll.operand) list) : ins list =
+  let caller_saved = [Rax; R11] in
+  (* Add stuff later *)
+  let f_mov_in x acc = (Pushq, [~%x]) :: acc in
+  let mov_in = List.fold_right f_mov_in caller_saved [] in
+  let f_args x acc =
+    compile_operand ctxt ~%Rax (snd x) :: acc (* not this register *)
+  in
   let args_86 = List.fold_right f_args args [] in
-
-  let func_86 = compile_operand ctxt (~%R10) func in (* maybe another reg ??? *)
-  
+  let func_86 = compile_operand ctxt ~%R10 func in
+  (* maybe another reg ??? *)
   let call = (Callq, [~%R10]) in
-
-  let f_mov_out = fun x -> (Movq, [~%x ; ~%Rsp]) :: (Movq, [~%Rsp ; Ind3 (Lit (-8), Rsp)]) in
-  let mov_out = List.rev callee_saved |> foreach (fun x -> ) in
-
-  mov_in @ args_86 @ [ func_86 ; call]
+  let f_mov_out acc x = (Popq, [~%x]) :: acc in
+  let mov_out = List.fold_left f_mov_out [] caller_saved in
+  mov_out @ mov_in @ args_86 @ [func_86; call]
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
@@ -299,8 +293,7 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
       let cmp = (Cmpq, [~%R11; ~%Rax]) in
       let set = (Set cndx86, []) in
       [left_x86; right_x86; cmp; set]
-  | Call (ty, func, args) ->
-      compile_call ctxt func args
+  | Call (ty, func, args) -> compile_call ctxt func args
   | Bitcast (_, op, _) -> [compile_operand ctxt ~%Rax op]
   | Gep (ty, operand, ls) -> compile_gep ctxt (ty, operand) ls
   | Zext (_, op, _) -> [compile_operand ctxt ~%Rax op]
@@ -330,36 +323,34 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
       match oper_opt with
       | None -> reset
       | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
-  | Br uid -> (
-    let lbl = ctxt.layout |> List.assoc uid in
-    [(Jmp, [lbl])]
-  )
-  | Cbr (oper, uid1, uid2) -> (
-    let lbl1 = ctxt.layout |> List.assoc uid1 in
-    let lbl2 = ctxt.layout |> List.assoc uid2 in
-    let op_86 = compile_operand ctxt (~%Rax) oper in
-    let cmp = (Cmpq, [~%Rax ; Imm (Lit 0)]) in
-    let jmp1 = (J Eq, [lbl2]) in
-    let jmp2 = (Jmp, [lbl1]) in
-    [op_86 ; cmp ; jmp1 ; jmp2]
-  )
+  | Br uid ->
+      let lbl = ctxt.layout |> List.assoc uid in
+      [(Jmp, [lbl])]
+  | Cbr (oper, uid1, uid2) ->
+      let lbl1 = ctxt.layout |> List.assoc uid1 in
+      let lbl2 = ctxt.layout |> List.assoc uid2 in
+      let op_86 = compile_operand ctxt ~%Rax oper in
+      let cmp = (Cmpq, [~%Rax; Imm (Lit 0)]) in
+      let jmp1 = (J Eq, [lbl2]) in
+      let jmp2 = (Jmp, [lbl1]) in
+      [op_86; cmp; jmp1; jmp2]
 
 (* compiling blocks --------------------------------------------------------- *)
 
 (* We have left this helper function here for you to complete. *)
-let compile_block (ctxt : ctxt) ({insns ; terminator} : block) : ins list = 
-  let f = (fun acc -> fun x -> acc @ (compile_insn ctxt x)) in
-  let insns_86 : ins list = insns |> List.fold_left (f) [] in
+let compile_block (ctxt : ctxt) ({insns; terminator} : block) : ins list =
+  let f acc x = acc @ compile_insn ctxt x in
+  let insns_86 : ins list = insns |> List.fold_left f [] in
   let term_86 = compile_terminator ctxt terminator in
-insns_86 @ term_86
-  
+  insns_86 @ term_86
 
 let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
   let lbl_str = mangle lbl in
-  let global = false in (* Not sure about this... *)
+  let global = false in
+  (* Not sure about this... *)
   let block_86 = compile_block ctxt block in
   let asm = Text block_86 in
-  {lbl = lbl_str ; global ; asm}
+  {lbl= lbl_str; global; asm}
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
@@ -399,44 +390,47 @@ let arg_loc : int -> X86.operand = function
      to hold all of the local stack slots.
 *)
 
-let lbl_of =
-  function uid -> S.name uid
+let lbl_of = function uid -> S.name uid
 
 let rec drop n = function
-| [] -> []
-| _ :: xs when n > 0 -> drop (n - 1) xs
-| ls -> ls
+  | [] -> []
+  | _ :: xs when n > 0 -> drop (n - 1) xs
+  | ls -> ls
 
-let enumerate l = 
+let enumerate l =
   let rec loop n acc = function
-  | [] -> acc
-  | _ :: xs -> loop (n + 1) (acc @ [n]) xs
+    | [] -> acc
+    | _ :: xs -> loop (n + 1) (acc @ [n]) xs
   in
   loop 0 [] l
 
-  (* what to do about stack space for local declarations? i.e. what about the layout??? *)
-let compile_fdecl (tdecls : (uid * ty) list) (uid : uid) ({ fty = (arg_ty, ret_ty) ; param ; cfg } : fdecl) : elem list =
+(* what to do about stack space for local declarations? i.e. what about the layout??? *)
+let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
+    ({fty= arg_ty, ret_ty; param; cfg} : fdecl) : elem list =
   let old_ptr = (Pushq, [~%Rbp]) in
-  let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
+  let new_ptr = (Movq, [~%Rsp; ~%Rbp]) in
   let stack_args = arg_ty |> drop 6 in
-  let args_size = stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0 in
-  let locals_size = raise NotImplemented
-  (* locals_size should not map over tdecls but rather some list of local var declarations *)
-    (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*) in
-  let local_space = (Subq, [~$(args_size + locals_size) ; ~%Rsp]) in
-  let prologue: ins list = [old_ptr ; new_ptr ; local_space] in
-
+  let args_size =
+    stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0
+  in
+  let locals_size =
+    raise NotImplemented
+    (* locals_size should not map over tdecls but rather some list of local var declarations *)
+    (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*)
+  in
+  let local_space = (Subq, [~$(args_size + locals_size); ~%Rsp]) in
+  let prologue : ins list = [old_ptr; new_ptr; local_space] in
   let arg_locs = param |> enumerate |> List.map arg_loc in
   let arg_layout = List.combine param arg_locs in
   let layout = arg_layout in
-  let ctxt = {tdecls ; layout} in
-
-  let entry_block = gtext (lbl_of uid) (prologue @ (compile_block ctxt (fst cfg))) in
-  let f_lbl_block = fun x acc -> (compile_lbl_block (fst x) ctxt (snd x)) :: acc in
-  let lbl_blocks: elem list = List.fold_right f_lbl_block (snd cfg) [] in
-  
+  let ctxt = {tdecls; layout} in
+  let entry_block =
+    gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
+  in
+  let f_lbl_block x acc = compile_lbl_block (fst x) ctxt (snd x) :: acc in
+  let lbl_blocks : elem list = List.fold_right f_lbl_block (snd cfg) [] in
   entry_block :: lbl_blocks
-  
+
 (* compile_gdecl ------------------------------------------------------------ *)
 
 (* Compile a global value into an X86 global data declaration and map
