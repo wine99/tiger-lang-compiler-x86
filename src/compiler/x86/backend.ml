@@ -148,18 +148,23 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
    needed). ]
 *)
 
-let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand list)) : ins list =
-  let old_ptr = (Pushq, [~%Rbp]) in
-  let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
-  let local_space = (Subq, [~$112 ; ~%Rsp]) in
-  let prologue = [old_ptr ; new_ptr ; local_space] in
-  
-  let func_86 = compile_operand ctxt (~%R10) func in (* maybe another reg ??? *)
+(* TODO :
+   - Save caller-save registers before calling.
+   - Restoring after return. *)
+let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
   (*let f_args = (fun x acc ->
     let (_, op) = x in 
     (compile_operand ctxt (arg_loc i) op) :: acc
   ) in
   let args_86 = List.fold_right f_args args [] in*)
+  
+  let old_ptr = (Pushq, [~%Rbp]) in
+  let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
+  let local_space = (Subq, [~$112 ; ~%Rsp]) in
+  let prologue = [old_ptr ; new_ptr ; local_space] in
+
+  let func_86 = compile_operand ctxt (~%R10) func in (* maybe another reg ??? *)
+  
   raise NotImplemented
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
@@ -279,8 +284,7 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
       let set = (Set cndx86, []) in
       [left_x86; right_x86; cmp; set]
   | Call (ty, func, args) ->
-      raise NotImplemented
-      (* TODO : make compile_call helper. Remember to save caller-save registers before calling and restoring after return *)
+      compile_call ctxt func args
   | Bitcast (_, op, _) -> [compile_operand ctxt ~%Rax op]
   | Gep (ty, operand, ls) -> compile_gep ctxt (ty, operand) ls
   | Zext (_, op, _) -> [compile_operand ctxt ~%Rax op]
