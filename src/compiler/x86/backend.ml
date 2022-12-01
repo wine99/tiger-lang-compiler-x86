@@ -15,9 +15,9 @@ exception BackendFatal (* use this for impossible cases *)
 
 exception NotImplemented
 
-let todo1 _ = raise NotImplemented
+(*let todo1 _ = raise NotImplemented*)
 
-let todo2 _ _ = raise NotImplemented
+(*let todo2 _ _ = raise NotImplemented*)
 
 let todo3 _ _ _ = raise NotImplemented
 
@@ -318,9 +318,19 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
 (* compiling blocks --------------------------------------------------------- *)
 
 (* We have left this helper function here for you to complete. *)
-let compile_block : ctxt -> block -> ins list = todo2
+let compile_block (ctxt : ctxt) ({insns ; terminator} : block) : ins list = 
+  let f = (fun acc -> fun x -> acc @ (compile_insn ctxt x)) in
+  let insns_86 : ins list = insns |> List.fold_left (f) [] in
+  let term_86 = compile_terminator ctxt terminator in
+insns_86 @ term_86
+  
 
-let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
+let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
+  let lbl_str = mangle lbl in
+  let global = false in (* Not sure about this... *)
+  let block_86 = compile_block ctxt block in
+  let asm = Text block_86 in
+  {lbl = lbl_str ; global ; asm}
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
