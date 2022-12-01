@@ -362,7 +362,7 @@ let arg_loc : int -> X86.operand = function
      to hold all of the local stack slots.
 *)
 
-let compile_fdecl (args : (uid * ty) list) (uid : uid) (fdecl : fdecl) : elem list =
+let compile_fdecl (ls : (uid * ty) list) (uid : uid) ({ param ; cfg ; _ } : fdecl) : elem list =
   raise NotImplemented
 
 (* compile_gdecl ------------------------------------------------------------ *)
