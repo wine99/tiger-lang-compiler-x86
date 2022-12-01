@@ -232,7 +232,12 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
         | Sub -> Subq
         | Mul -> Imulq
         | SDiv -> Idivq
-        | Shl | Lshr | Ashr | And | Or | Xor -> raise NotImplemented
+        | Shl -> Shlq
+        | Lshr -> Shrq
+        | Ashr -> Sarq
+        | And -> Andq
+        | Or -> Orq
+        | Xor -> Xorq
       in
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
