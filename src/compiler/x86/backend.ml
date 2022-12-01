@@ -152,16 +152,9 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
    - Save caller-save registers before calling.
    - Restoring after return. *)
 let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
-  (*let f_args = (fun x acc ->
-    let (_, op) = x in 
-    (compile_operand ctxt (arg_loc i) op) :: acc
+  (*let f_args = (fun x acc -> (compile_operand ctxt (arg_loc i) (snd x)) :: acc
   ) in
   let args_86 = List.fold_right f_args args [] in*)
-  
-  let old_ptr = (Pushq, [~%Rbp]) in
-  let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
-  let local_space = (Subq, [~$112 ; ~%Rsp]) in
-  let prologue = [old_ptr ; new_ptr ; local_space] in
 
   let func_86 = compile_operand ctxt (~%R10) func in (* maybe another reg ??? *)
   
@@ -362,7 +355,14 @@ let arg_loc : int -> X86.operand = function
      to hold all of the local stack slots.
 *)
 
-let compile_fdecl (locals : (uid * ty) list) (uid : uid) ({ param ; cfg ; _ } : fdecl) : elem list =
+let compile_fdecl (tdecls : (uid * ty) list) (uid : uid) ({ fty = (arg_ty, ret_ty) ; param ; cfg } : fdecl) : elem list =
+  let old_ptr = (Pushq, [~%Rbp]) in
+  let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
+  let args_size = arg_ty |> List.map (size_ty tdecls) |> List.fold_left ( + ) (-6) in
+  let locals_size = tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0 in
+  let local_space = (Subq, [~$(args_size + locals_size) ; ~%Rsp]) in
+  let prologue = [old_ptr ; new_ptr ; local_space] in
+  
   raise NotImplemented
 
 (* compile_gdecl ------------------------------------------------------------ *)
