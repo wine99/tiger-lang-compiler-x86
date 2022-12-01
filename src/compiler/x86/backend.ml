@@ -361,7 +361,7 @@ let arg_loc : int -> X86.operand = function
   | 4 -> ~%R08
   | 5 -> ~%R09
   | n ->
-      let r = (n - 5) * 8 in
+      let r = (n - 6) * 8 in
       Ind3 (Lit r, Rbp)
 
 (* The code for the entry-point of a function must do several things:
@@ -381,16 +381,44 @@ let arg_loc : int -> X86.operand = function
      to hold all of the local stack slots.
 *)
 
+let lbl_of =
+  function uid -> S.name uid
+
+let rec drop n = function
+| [] -> []
+| _ :: xs when n > 0 -> drop (n - 1) xs
+| ls -> ls
+
+let enumerate l = 
+  let rec loop n acc = function
+  | [] -> acc
+  | _ :: xs -> loop (n + 1) (acc @ [n]) xs
+  in
+  loop 0 [] l
+
+  (* what to do about stack space for local declarations? i.e. what about the layout??? *)
 let compile_fdecl (tdecls : (uid * ty) list) (uid : uid) ({ fty = (arg_ty, ret_ty) ; param ; cfg } : fdecl) : elem list =
   let old_ptr = (Pushq, [~%Rbp]) in
   let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
-  let args_size = arg_ty |> List.map (size_ty tdecls) |> List.fold_left ( + ) (-6) in
-  let locals_size = tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0 in
+  let stack_args = arg_ty |> drop 6 in
+  let args_size = stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0 in
+  let locals_size = raise NotImplemented
+  (* locals_size should not map over tdecls but rather some list of local var declarations *)
+    (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*) in
   let local_space = (Subq, [~$(args_size + locals_size) ; ~%Rsp]) in
-  let prologue = [old_ptr ; new_ptr ; local_space] in
-  
-  raise NotImplemented
+  let prologue: ins list = [old_ptr ; new_ptr ; local_space] in
 
+  let arg_locs = param |> enumerate |> List.map arg_loc in
+  let arg_layout = List.combine param arg_locs in
+  let layout = arg_layout in
+  let ctxt = {tdecls ; layout} in
+
+  let entry_block = gtext (lbl_of uid) (prologue @ (compile_block ctxt (fst cfg))) in
+  let f_lbl_block = fun x acc -> (compile_lbl_block (fst x) ctxt (snd x)) :: acc in
+  let lbl_blocks: elem list = List.fold_right f_lbl_block (snd cfg) [] in
+  
+  entry_block :: lbl_blocks
+  
 (* compile_gdecl ------------------------------------------------------------ *)
 
 (* Compile a global value into an X86 global data declaration and map
