@@ -148,6 +148,10 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
    needed). ]
 *)
 
+let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand list)) : ins list =
+  let args_86 = List.fold_right (fun x acc -> compile_operand x :: acc) [] in
+  raise NotImplemented
+
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
 (* The getelementptr instruction computes an address by indexing into
