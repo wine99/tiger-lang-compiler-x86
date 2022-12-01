@@ -191,7 +191,7 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
 let compile_call (ctxt : ctxt) (func : Ll.operand)
     (args : (ty * Ll.operand) list) : ins list =
   (* Save registers on stack *)
-  let caller_saved = [Rax; R11] in
+  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
   (* Add stuff later *)
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
   (* Function call *)
@@ -415,12 +415,12 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
   let args_size =
     stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0
   in
-  let locals_size =
+  (*let locals_size =
     raise NotImplemented
     (* locals_size should not map over tdecls but rather some list of local var declarations *)
     (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*)
-  in
-  let local_space = (Subq, [~$(args_size + locals_size); ~%Rsp]) in
+  in*)
+  let local_space = (Subq, [~$(args_size (*+ locals_size*)); ~%Rsp]) in
   let prologue : ins list = [old_ptr; new_ptr; local_space] in
   let arg_locs = param |> enumerate |> List.map arg_loc in
   let arg_layout = List.combine param arg_locs in
