@@ -149,7 +149,17 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
 *)
 
 let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand list)) : ins list =
-  let args_86 = List.fold_right (fun x acc -> compile_operand x :: acc) [] in
+  let old_ptr = (Pushq, [~%Rbp]) in
+  let new_ptr = (Movq, [~%Rsp ; ~%Rbp]) in
+  let local_space = (Subq, [~$112 ; ~%Rsp]) in
+  let prologue = [old_ptr ; new_ptr ; local_space] in
+  
+  let func_86 = compile_operand ctxt (~%R10) func in (* maybe another reg ??? *)
+  (*let f_args = (fun x acc ->
+    let (_, op) = x in 
+    (compile_operand ctxt (arg_loc i) op) :: acc
+  ) in
+  let args_86 = List.fold_right f_args args [] in*)
   raise NotImplemented
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
