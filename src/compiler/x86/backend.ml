@@ -309,7 +309,12 @@ let compile_block (ctxt : ctxt) ({insns ; terminator} : block) : ins list =
 insns_86 @ term_86
   
 
-let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
+let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
+  let lbl_str = mangle lbl in
+  let global = false in (* Not sure about this... *)
+  let block_86 = compile_block ctxt block in
+  let asm = Text block_86 in
+  {lbl = lbl_str ; global ; asm}
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
