@@ -203,11 +203,13 @@ let compile_gep (ctxt : ctxt) ((op_ty, op) : (ty * Ll.operand)) (indices : Ll.op
   let op_86 = compile_operand ctxt (~%Rax) op in
   let idx_regs = [~%R10 ; ~%R11] in
   let indices_86 = indices |> List.combine idx_regs |> List.map (fun (reg, idx) -> compile_operand ctxt reg idx) in
-  let add_i_size = (Addq, [])
-in
-let add_j_size = raise NotImplemented in
-
-  raise NotImplemented
+  let mul_i_size = (Imulq, [~$op_size ; List.hd idx_regs]) (* remember imulq is 128 bits i.e. 2 registers *) in
+  let mul_j_size = List.nth_opt indices_86 2 |> Option.map (fun _ -> (Imulq, [~$8 ; List.tl idx_regs |> List.hd])) in
+  let add_size = (match mul_j_size with
+    | Some v -> v :: [(Addq, idx_regs)]
+    | None -> [(Addq, [List.hd idx_regs ; ~$0])]
+  ) in
+  [op_86 ; mul_i_size] @ add_size
 
 (* compiling instructions  -------------------------------------------------- *)
 
