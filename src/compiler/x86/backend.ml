@@ -15,9 +15,9 @@ exception BackendFatal (* use this for impossible cases *)
 
 exception NotImplemented
 
-let todo1 _ = raise NotImplemented
+(*let todo1 _ = raise NotImplemented*)
 
-let todo2 _ _ = raise NotImplemented
+(*let todo2 _ _ = raise NotImplemented*)
 
 let todo3 _ _ _ = raise NotImplemented
 
@@ -244,7 +244,12 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
         | Sub -> Subq
         | Mul -> Imulq
         | SDiv -> Idivq
-        | Shl | Lshr | Ashr | And | Or | Xor -> raise NotImplemented
+        | Shl -> Shlq
+        | Lshr -> Shrq
+        | Ashr -> Sarq
+        | And -> Andq
+        | Or -> Orq
+        | Xor -> Xorq
       in
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
@@ -307,15 +312,36 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
       match oper_opt with
       | None -> reset
       | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
-  | Br lbl -> raise NotImplemented
-  | Cbr (oper, lbl1, lbl2) -> raise NotImplemented
+  | Br uid -> (
+    let lbl = ctxt.layout |> List.assoc uid in
+    [(Jmp, [lbl])]
+  )
+  | Cbr (oper, uid1, uid2) -> (
+    let lbl1 = ctxt.layout |> List.assoc uid1 in
+    let lbl2 = ctxt.layout |> List.assoc uid2 in
+    let op_86 = compile_operand ctxt (~%Rax) oper in
+    let cmp = (Cmpq, [~%Rax ; Imm (Lit 0)]) in
+    let jmp1 = (J Eq, [lbl2]) in
+    let jmp2 = (Jmp, [lbl1]) in
+    [op_86 ; cmp ; jmp1 ; jmp2]
+  )
 
 (* compiling blocks --------------------------------------------------------- *)
 
 (* We have left this helper function here for you to complete. *)
-let compile_block : ctxt -> block -> ins list = todo2
+let compile_block (ctxt : ctxt) ({insns ; terminator} : block) : ins list = 
+  let f = (fun acc -> fun x -> acc @ (compile_insn ctxt x)) in
+  let insns_86 : ins list = insns |> List.fold_left (f) [] in
+  let term_86 = compile_terminator ctxt terminator in
+insns_86 @ term_86
+  
 
-let compile_lbl_block : lbl -> ctxt -> block -> elem = todo3
+let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
+  let lbl_str = mangle lbl in
+  let global = false in (* Not sure about this... *)
+  let block_86 = compile_block ctxt block in
+  let asm = Text block_86 in
+  {lbl = lbl_str ; global ; asm}
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
