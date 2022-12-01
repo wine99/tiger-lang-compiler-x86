@@ -157,19 +157,15 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
    - Restoring after return. *)
 let compile_call (ctxt : ctxt) (func : Ll.operand)
     (args : (ty * Ll.operand) list) : ins list =
-  let caller_saved = [Rax; R11] in
-  (* Add stuff later *)
-  let f_mov_in x acc = (Pushq, [~%x]) :: acc in
-  let mov_in = List.fold_right f_mov_in caller_saved [] in
-  let f_args x acc =
-    compile_operand ctxt ~%Rax (snd x) :: acc (* not this register *)
-  in
-  let args_86 = List.fold_right f_args args [] in
-  let func_86 = compile_operand ctxt ~%R10 func in
-  (* maybe another reg ??? *)
+  (* Save registers on stack *)
+  let caller_saved = [Rax; R11] in (* Add stuff later *)
+  let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x]) ) in
+  (* Function call *)
+  let args_86 = args |> List.map (fun x -> compile_operand ctxt ~%Rax (snd x)) in
+  let func_86 = compile_operand ctxt ~%R10 func in (* maybe another reg ??? *)
   let call = (Callq, [~%R10]) in
-  let f_mov_out acc x = (Popq, [~%x]) :: acc in
-  let mov_out = List.fold_left f_mov_out [] caller_saved in
+  (* Restore registers from stack. *)
+  let mov_out = caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x])) in
   mov_out @ mov_in @ args_86 @ [func_86; call]
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
