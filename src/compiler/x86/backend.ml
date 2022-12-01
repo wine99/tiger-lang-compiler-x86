@@ -196,8 +196,18 @@ let rec size_ty tdecls = function
     | Array (n, t) -> n * size_ty tdecls t
     | Namedt _ -> raise BackendFatal )
 
-let compile_gep : ctxt -> ty * Ll.operand -> Ll.operand list -> ins list =
-  todo3
+    (* gep my_rec* %my_rec0, i32 i, i32 j *)
+    (* i * op_size + op_86 + 8 * j *)
+let compile_gep (ctxt : ctxt) ((op_ty, op) : (ty * Ll.operand)) (indices : Ll.operand list) : ins list =
+  let op_size = (match op_ty with | Ptr t -> size_ty ctxt.tdecls t | _ -> raise BackendFatal) in
+  let op_86 = compile_operand ctxt (~%Rax) op in
+  let idx_regs = [~%R10 ; ~%R11] in
+  let indices_86 = indices |> List.combine idx_regs |> List.map (fun (reg, idx) -> compile_operand ctxt reg idx) in
+  let add_i_size = (Addq, [])
+in
+let add_j_size = raise NotImplemented in
+
+  raise NotImplemented
 
 (* compiling instructions  -------------------------------------------------- *)
 
