@@ -406,12 +406,15 @@ let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
      to hold all of the local stack slots.
 *)
 
-(* what to do about stack space for local declarations? i.e. what about the layout??? *)
+
+(* construct layout *)
+(* TODO: put all args on stack *)
 let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
     ({fty= arg_ty, ret_ty; param; cfg} : fdecl) : elem list =
   let old_ptr = (Pushq, [~%Rbp]) in
   let new_ptr = (Movq, [~%Rsp; ~%Rbp]) in
-  let stack_args = arg_ty |> drop 6 in
+  let locals_size = match (List.hd arg_ty) with | Ptr t -> size_ty tdecls t | _ -> raise BackendFatal in
+  let stack_args = arg_ty |> drop 6 in 
   let args_size =
     stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0
   in
@@ -420,7 +423,7 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
     (* locals_size should not map over tdecls but rather some list of local var declarations *)
     (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*)
   in*)
-  let local_space = (Subq, [~$(args_size (*+ locals_size*)); ~%Rsp]) in
+  let local_space = (Subq, [~$(args_size + locals_size); ~%Rsp]) in
   let prologue : ins list = [old_ptr; new_ptr; local_space] in
   let arg_locs = param |> enumerate |> List.map arg_loc in
   let arg_layout = List.combine param arg_locs in
