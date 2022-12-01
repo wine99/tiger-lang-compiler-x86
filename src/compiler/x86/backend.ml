@@ -196,20 +196,36 @@ let rec size_ty tdecls = function
     | Array (n, t) -> n * size_ty tdecls t
     | Namedt _ -> raise BackendFatal )
 
-    (* gep my_rec* %my_rec0, i32 i, i32 j *)
-    (* i * op_size + op_86 + 8 * j *)
-let compile_gep (ctxt : ctxt) ((op_ty, op) : (ty * Ll.operand)) (indices : Ll.operand list) : ins list =
-  let op_size = (match op_ty with | Ptr t -> size_ty ctxt.tdecls t | _ -> raise BackendFatal) in
-  let op_86 = compile_operand ctxt (~%Rax) op in
-  let idx_regs = [~%R10 ; ~%R11] in
-  let indices_86 = indices |> List.combine idx_regs |> List.map (fun (reg, idx) -> compile_operand ctxt reg idx) in
-  let mul_i_size = (Imulq, [~$op_size ; List.hd idx_regs]) (* remember imulq is 128 bits i.e. 2 registers *) in
-  let mul_j_size = List.nth_opt indices_86 2 |> Option.map (fun _ -> (Imulq, [~$8 ; List.tl idx_regs |> List.hd])) in
-  let add_size = (match mul_j_size with
-    | Some v -> v :: [(Addq, idx_regs)]
-    | None -> [(Addq, [List.hd idx_regs ; ~$0])]
-  ) in
-  [op_86 ; mul_i_size] @ add_size
+(* gep my_rec* %my_rec0, i32 i, i32 j *)
+(* i * op_size + op_86 + 8 * j *)
+let compile_gep (ctxt : ctxt) ((op_ty, op) : ty * Ll.operand)
+    (indices : Ll.operand list) : ins list =
+  let op_size =
+    match op_ty with
+    | Ptr t -> size_ty ctxt.tdecls t
+    | _ -> raise BackendFatal
+  in
+  let op_86 = compile_operand ctxt ~%Rax op in
+  let idx_regs = [~%R10; ~%R11] in
+  let indices_86 =
+    indices |> List.combine idx_regs
+    |> List.map (fun (reg, idx) -> compile_operand ctxt reg idx)
+  in
+  let mul_i_size =
+    (Imulq, [~$op_size; List.hd idx_regs])
+    (* remember imulq is 128 bits i.e. 2 registers *)
+  in
+  let mul_j_size =
+    List.nth_opt indices_86 2
+    |> Option.map (fun _ -> (Imulq, [~$8; List.tl idx_regs |> List.hd]))
+  in
+  let add_size =
+    match mul_j_size with
+    | Some v -> v :: [(Addq, List.rev idx_regs)]
+    | None -> [(Addq, [~$0; List.hd idx_regs])]
+  in
+  let add_last = (Addq, [~%Rax; List.hd idx_regs]) in
+  [op_86; mul_i_size] @ add_size @ [add_last]
 
 (* compiling instructions  -------------------------------------------------- *)
 
@@ -313,36 +329,34 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
       match oper_opt with
       | None -> reset
       | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
-  | Br uid -> (
-    let lbl = ctxt.layout |> List.assoc uid in
-    [(Jmp, [lbl])]
-  )
-  | Cbr (oper, uid1, uid2) -> (
-    let lbl1 = ctxt.layout |> List.assoc uid1 in
-    let lbl2 = ctxt.layout |> List.assoc uid2 in
-    let op_86 = compile_operand ctxt (~%Rax) oper in
-    let cmp = (Cmpq, [~%Rax ; Imm (Lit 0)]) in
-    let jmp1 = (J Eq, [lbl2]) in
-    let jmp2 = (Jmp, [lbl1]) in
-    [op_86 ; cmp ; jmp1 ; jmp2]
-  )
+  | Br uid ->
+      let lbl = ctxt.layout |> List.assoc uid in
+      [(Jmp, [lbl])]
+  | Cbr (oper, uid1, uid2) ->
+      let lbl1 = ctxt.layout |> List.assoc uid1 in
+      let lbl2 = ctxt.layout |> List.assoc uid2 in
+      let op_86 = compile_operand ctxt ~%Rax oper in
+      let cmp = (Cmpq, [~%Rax; Imm (Lit 0)]) in
+      let jmp1 = (J Eq, [lbl2]) in
+      let jmp2 = (Jmp, [lbl1]) in
+      [op_86; cmp; jmp1; jmp2]
 
 (* compiling blocks --------------------------------------------------------- *)
 
 (* We have left this helper function here for you to complete. *)
-let compile_block (ctxt : ctxt) ({insns ; terminator} : block) : ins list = 
-  let f = (fun acc -> fun x -> acc @ (compile_insn ctxt x)) in
-  let insns_86 : ins list = insns |> List.fold_left (f) [] in
+let compile_block (ctxt : ctxt) ({insns; terminator} : block) : ins list =
+  let f acc x = acc @ compile_insn ctxt x in
+  let insns_86 : ins list = insns |> List.fold_left f [] in
   let term_86 = compile_terminator ctxt terminator in
-insns_86 @ term_86
-  
+  insns_86 @ term_86
 
 let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
   let lbl_str = mangle lbl in
-  let global = false in (* Not sure about this... *)
+  let global = false in
+  (* Not sure about this... *)
   let block_86 = compile_block ctxt block in
   let asm = Text block_86 in
-  {lbl = lbl_str ; global ; asm}
+  {lbl= lbl_str; global; asm}
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
