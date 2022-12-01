@@ -304,9 +304,9 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
     let lbl1 = ctxt.layout |> List.assoc uid1 in
     let lbl2 = ctxt.layout |> List.assoc uid2 in
     let op_86 = compile_operand ctxt (~%Rax) oper in
-    let cmp = (Cmpq, [~%Rax ; Imm (Lit 0)]) in
-    let jmp1 = (J Eq, [lbl2]) in
-    let jmp2 = (Jmp, [lbl1]) in
+    let cmp = (Cmpq, [~%Rax ; Imm (Lit 1)]) in
+    let jmp1 = (J Eq, [lbl1]) in
+    let jmp2 = (Jmp, [lbl2]) in
     [op_86 ; cmp ; jmp1 ; jmp2]
   )
 
