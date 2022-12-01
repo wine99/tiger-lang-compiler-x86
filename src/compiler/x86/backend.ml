@@ -49,6 +49,13 @@ let compile_cnd (c : Ll.cnd) : X86.cnd =
   | Ll.Sgt -> Gt
   | Ll.Sge -> Ge
 
+let foreach f l =
+  let rec loop = function
+  | [] -> ()
+  | x :: xs -> f(x) ; loop xs 
+  in
+  loop l
+
 (* locals and layout -------------------------------------------------------- *)
 
 (* One key problem in compiling the LLVM IR is how to map its local
@@ -152,13 +159,24 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
    - Save caller-save registers before calling.
    - Restoring after return. *)
 let compile_call (ctxt : ctxt) (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
-  (*let f_args = (fun x acc -> (compile_operand ctxt (arg_loc i) (snd x)) :: acc
+  let callee_saved = [Rax ; R11] in
+  let f_mov_in = fun x acc -> (
+    (Movq, [~%x ; ~%Rsp]) :: (Movq, [~%Rsp ; Ind3 (Lit (-8), Rsp)]) :: acc
   ) in
-  let args_86 = List.fold_right f_args args [] in*)
+  let mov_in = List.fold_right f_mov_in callee_saved [] in
+  
+  let f_args = (fun x acc -> (compile_operand ctxt (~%Rax) (snd x)) :: acc (* not this register *)
+  ) in
+  let args_86 = List.fold_right f_args args [] in
 
   let func_86 = compile_operand ctxt (~%R10) func in (* maybe another reg ??? *)
   
-  raise NotImplemented
+  let call = (Callq, [~%R10]) in
+
+  let f_mov_out = fun x -> (Movq, [~%x ; ~%Rsp]) :: (Movq, [~%Rsp ; Ind3 (Lit (-8), Rsp)]) in
+  let mov_out = List.rev callee_saved |> foreach (fun x -> ) in
+
+  mov_in @ args_86 @ [ func_86 ; call]
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
@@ -305,8 +323,8 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
 let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
   match term with
   | Ret (_, oper_opt) -> (
-      let reset_sp = (Movq, [Reg Rbp; Reg Rsp]) in
-      let pop_frame = (Popq, [Reg Rbp]) in
+      let reset_sp = (Movq, [~%Rbp; ~%Rsp]) in
+      let pop_frame = (Popq, [~%Rbp]) in
       let ret = (Retq, []) in
       let reset = [reset_sp; pop_frame; ret] in
       match oper_opt with
