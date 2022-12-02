@@ -231,11 +231,16 @@ let compile_call (ctxt : ctxt) (func : Ll.operand)
   in
   let func_86 = compile_operand ctxt ~%R10 func in
   let call = (Callq, [~%R10]) in
+  let mv_rsp_to_caller_save_regs =
+    if is_even (List.length arg_stack) then
+      (Addq, [~$(List.length arg_stack * 8); ~%Rsp])
+    else (Addq, [~$(8 + (List.length arg_stack * 8)); ~%Rsp])
+  in
   (* Restore registers from stack. *)
   let mov_out =
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
-  mov_in @ mov_arg_reg @ mov_arg_stack @ [func_86; call] @ mov_out
+  mov_in @ mov_arg_reg @ mov_arg_stack @ [func_86; call ; mv_rsp_to_caller_save_regs] @ mov_out
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
