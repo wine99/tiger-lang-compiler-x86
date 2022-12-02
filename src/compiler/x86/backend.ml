@@ -208,12 +208,10 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
     - pop args from stack (i.e. add to rsp) 
     - restore caller-save registers (done)
     - maybe take additional arg from compile_inst that specifies destination
-    (i.e. if %rax is supposed to go to a stack slot)
+    (i.e. if %rax is supposed to go to a stack slot) - match on this in compile_instn -- not here
       *)
 let compile_call (ctxt : ctxt) (func : Ll.operand)
     (args : (ty * Ll.operand) list) : ins list =
-  (* Save registers on stack *)
-  (* Add stuff later *)
   let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
   (* Function call *)
