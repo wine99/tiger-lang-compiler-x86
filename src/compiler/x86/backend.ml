@@ -53,6 +53,14 @@ let foreach f l =
   let rec loop = function [] -> () | x :: xs -> f x ; loop xs in
   loop l
 
+let split_index i l =
+  let rec loop j acc = function
+    | [] -> (acc, [])
+    | x :: xs ->
+        if j > 0 then loop (j - 1) (x :: acc) xs else (List.rev acc, xs)
+  in
+  loop i [] l
+
 let lbl_of = function uid -> S.name uid
 
 let rec drop n = function
@@ -67,6 +75,10 @@ let enumerate l =
   in
   loop 0 [] l
 
+let is_even = function n -> n mod 2 = 0
+
+let align = function n when n mod 16 = 0 -> n | n -> n + 1
+
 (* This helper function computes the location of the nth incoming
    function argument: either in a register or relative to %rbp,
    according to the calling conventions.  You might find it useful for
@@ -75,7 +87,8 @@ let enumerate l =
    [ NOTE: the first six arguments are numbered 0 .. 5 ]
 *)
 
-let arg_loc : int -> X86.operand = function
+let arg_loc (arg_n : int) : X86.operand =
+  match arg_n with
   | 0 -> ~%Rdi
   | 1 -> ~%Rsi
   | 2 -> ~%Rdx
@@ -83,7 +96,7 @@ let arg_loc : int -> X86.operand = function
   | 4 -> ~%R08
   | 5 -> ~%R09
   | n ->
-      let r = (n - 6) * 8 in
+      let r = (n - 3) * 8 in
       Ind3 (Lit r, Rbp)
 
 (* locals and layout -------------------------------------------------------- *)
@@ -188,24 +201,46 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
 (* TODO :
    - Save caller-save registers before calling.
    - Restoring after return. *)
+(*
+    - save caller-save registers on stack before calling (done)
+    - push args to registers and stack
+    - call func (?done)
+    - pop args from stack (i.e. add to rsp) 
+    - restore caller-save registers (done)
+    - maybe take additional arg from compile_inst that specifies destination
+    (i.e. if %rax is supposed to go to a stack slot) - match on this in compile_instn -- not here
+      *)
 let compile_call (ctxt : ctxt) (func : Ll.operand)
     (args : (ty * Ll.operand) list) : ins list =
-  (* Save registers on stack *)
   let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
-  (* Add stuff later *)
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
   (* Function call *)
-  let args_86 =
-    args |> enumerate |> List.map arg_loc |> List.combine args
-    |> List.map (fun ((_, op), loc) -> compile_operand ctxt loc op)
+  let arg_reg, arg_stack = split_index 6 args in
+  let mov_arg_reg =
+    arg_reg |> List.mapi (fun i (_, x) -> compile_operand ctxt (arg_loc i) x)
+  in
+  let f_mov_arg_stack (_, x) =
+    compile_operand ctxt ~%Rax x :: [(Pushq, [~%Rax])]
+  in
+  let mov_arg_stack =
+    arg_stack |> List.rev |> List.concat_map f_mov_arg_stack
+  in
+  let mov_arg_stack =
+    if is_even (List.length arg_stack) then mov_arg_reg
+    else (Subq, [~$8; ~%Rsp]) :: mov_arg_stack
   in
   let func_86 = compile_operand ctxt ~%R10 func in
   let call = (Callq, [~%R10]) in
+  let mv_rsp_to_caller_save_regs =
+    if is_even (List.length arg_stack) then
+      (Addq, [~$(List.length arg_stack * 8); ~%Rsp])
+    else (Addq, [~$(8 + (List.length arg_stack * 8)); ~%Rsp])
+  in
   (* Restore registers from stack. *)
   let mov_out =
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
-  mov_out @ mov_in @ args_86 @ [func_86; call]
+  mov_in @ mov_arg_reg @ mov_arg_stack @ [func_86; call ; mv_rsp_to_caller_save_regs] @ mov_out
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
@@ -310,7 +345,8 @@ let compile_gep (ctxt : ctxt) ((op_ty, op) : ty * Ll.operand)
    - Bitcast: does nothing interesting at the assembly level
 *)
 
-let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
+let compile_insn (ctxt : ctxt) ((opt_local_var, ins) : uid option * insn) :
+    ins list =
   match ins with
   | Binop (op, _, left, right) ->
       let op_x86 =
@@ -380,9 +416,9 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
   match term with
   | Ret (_, oper_opt) -> (
       let reset_sp = (Movq, [~%Rbp; ~%Rsp]) in
-      let pop_frame = (Popq, [~%Rbp]) in
+      let restore_rbp = (Popq, [~%Rbp]) in
       let ret = (Retq, []) in
-      let reset = [reset_sp; pop_frame; ret] in
+      let reset = [reset_sp; restore_rbp; ret] in
       match oper_opt with
       | None -> reset
       | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
@@ -434,28 +470,68 @@ let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
      to hold all of the local stack slots.
 *)
 
+let type_op_insn : Ll.insn -> Ll.ty = function
+  | Binop (_, ty, _, _) -> ty
+  | Alloca ty -> ty (* TODO Ptr ty *)
+  | Load (ty, _) -> ty
+  | Store (ty, _, _) -> ty
+  | Icmp (_, ty, _, _) -> ty
+  | Call (ty, _, _) -> ty
+  | Bitcast (_, _, ty) -> ty
+  | Gep (ty, _, _) -> ty
+  | Zext (_, _, ty) -> ty
+  | Ptrtoint (_, _, ty) -> ty
+  | Comment _ -> Ll.Void
 
-(* construct layout *)
-(* TODO: put all args on stack *)
+let collect_uids (cfg : cfg) =
+  let rec loop acc = function
+    | [] -> acc
+    | (Some uid, insn) :: tail -> loop ((uid, type_op_insn insn) :: acc) tail
+    | (None, _) :: tail -> loop acc tail
+  in
+  let head_block = loop [] (fst cfg).insns in
+  let tail_block =
+    snd cfg |> List.map snd
+    |> List.map (fun b -> b.insns)
+    |> List.concat_map (loop [])
+  in
+  head_block @ tail_block
+
+(* construct layout - figure out how to get uids of local vars *)
+(*
+   - create x86 function prologue (done)
+   - save callee-saved registers (only those we use) (we don't use any -> done)
+   - construct layout (done)
+   (and decrement rsp to acommodate these vars i.e. get total amount of space,
+    note that args are before the return addr so we don't need to allocate space for these) (done)
+   - compile body (done)
+   - create x86 function epilogue (done, handled by compile_terminator)
+   - ensure rsp is 16 byte aligned (just check mod 16) (done)
+   *)
+
 let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
-    ({fty= arg_ty, ret_ty; param; cfg} : fdecl) : elem list =
+    ({param; cfg; _} : fdecl) : elem list =
   let old_ptr = (Pushq, [~%Rbp]) in
   let new_ptr = (Movq, [~%Rsp; ~%Rbp]) in
-  let locals_size = match (List.hd arg_ty) with | Ptr t -> size_ty tdecls t | _ -> raise BackendFatal in
-  let stack_args = arg_ty |> drop 6 in 
-  let args_size =
-    stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0
+  let locals = collect_uids cfg in
+  let locals_uids = List.map fst locals in
+  let locals_size =
+    List.map snd locals
+    |> List.map (size_ty tdecls)
+    |> List.fold_left ( + ) 0 |> align
   in
-  (*let locals_size =
-    raise NotImplemented
-    (* locals_size should not map over tdecls but rather some list of local var declarations *)
-    (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*)
-  in*)
-  let local_space = (Subq, [~$(args_size + locals_size); ~%Rsp]) in
+  let locals_layout =
+    locals |> enumerate
+    |> List.map (fun n -> n * -8)
+    |> List.map (fun n -> Ind3 (Lit n, Rbp))
+    |> List.combine locals_uids
+  in
+  let local_space = (Subq, [~$locals_size; ~%Rsp]) in
   let prologue : ins list = [old_ptr; new_ptr; local_space] in
-  let arg_locs = param |> enumerate |> List.map arg_loc in
-  let arg_layout = List.combine param arg_locs in
-  let layout = arg_layout in
+  let arg_layout =
+    param |> enumerate |> List.map arg_loc |> List.combine param
+  in
+  let layout = arg_layout @ locals_layout in
   let ctxt = {tdecls; layout} in
   let entry_block =
     gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
