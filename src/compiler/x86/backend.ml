@@ -49,6 +49,43 @@ let compile_cnd (c : Ll.cnd) : X86.cnd =
   | Ll.Sgt -> Gt
   | Ll.Sge -> Ge
 
+let foreach f l =
+  let rec loop = function [] -> () | x :: xs -> f x ; loop xs in
+  loop l
+
+let lbl_of = function uid -> S.name uid
+
+let rec drop n = function
+  | [] -> []
+  | _ :: xs when n > 0 -> drop (n - 1) xs
+  | ls -> ls
+
+let enumerate l =
+  let rec loop n acc = function
+    | [] -> acc
+    | _ :: xs -> loop (n + 1) (acc @ [n]) xs
+  in
+  loop 0 [] l
+
+(* This helper function computes the location of the nth incoming
+   function argument: either in a register or relative to %rbp,
+   according to the calling conventions.  You might find it useful for
+   compile_fdecl.
+
+   [ NOTE: the first six arguments are numbered 0 .. 5 ]
+*)
+
+let arg_loc : int -> X86.operand = function
+  | 0 -> ~%Rdi
+  | 1 -> ~%Rsi
+  | 2 -> ~%Rdx
+  | 3 -> ~%Rcx
+  | 4 -> ~%R08
+  | 5 -> ~%R09
+  | n ->
+      let r = (n - 6) * 8 in
+      Ind3 (Lit r, Rbp)
+
 (* locals and layout -------------------------------------------------------- *)
 
 (* One key problem in compiling the LLVM IR is how to map its local
@@ -147,6 +184,28 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
    [ NOTE: Don't forget to preserve caller-save registers (only if
    needed). ]
 *)
+
+(* TODO :
+   - Save caller-save registers before calling.
+   - Restoring after return. *)
+let compile_call (ctxt : ctxt) (func : Ll.operand)
+    (args : (ty * Ll.operand) list) : ins list =
+  (* Save registers on stack *)
+  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
+  (* Add stuff later *)
+  let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
+  (* Function call *)
+  let args_86 =
+    args |> enumerate |> List.map arg_loc |> List.combine args
+    |> List.map (fun ((_, op), loc) -> compile_operand ctxt loc op)
+  in
+  let func_86 = compile_operand ctxt ~%R10 func in
+  let call = (Callq, [~%R10]) in
+  (* Restore registers from stack. *)
+  let mov_out =
+    caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
+  in
+  mov_out @ mov_in @ args_86 @ [func_86; call]
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
@@ -297,9 +356,7 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
       let cmp = (Cmpq, [~%R11; ~%Rax]) in
       let set = (Set cndx86, []) in
       [left_x86; right_x86; cmp; set]
-  | Call (ty, func, args) ->
-      raise NotImplemented
-      (* TODO : make compile_call helper. Remember to save caller-save registers before calling and restoring after return *)
+  | Call (ty, func, args) -> compile_call ctxt func args
   | Bitcast (_, op, _) -> [compile_operand ctxt ~%Rax op]
   | Gep (ty, operand, ls) -> compile_gep ctxt (ty, operand) ls
   | Zext (_, op, _) -> [compile_operand ctxt ~%Rax op]
@@ -322,8 +379,8 @@ let compile_insn (ctxt : ctxt) ((id, ins) : uid option * insn) : ins list =
 let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
   match term with
   | Ret (_, oper_opt) -> (
-      let reset_sp = (Movq, [Reg Rbp; Reg Rsp]) in
-      let pop_frame = (Popq, [Reg Rbp]) in
+      let reset_sp = (Movq, [~%Rbp; ~%Rsp]) in
+      let pop_frame = (Popq, [~%Rbp]) in
       let ret = (Retq, []) in
       let reset = [reset_sp; pop_frame; ret] in
       match oper_opt with
@@ -360,25 +417,6 @@ let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
 
 (* compile_fdecl ------------------------------------------------------------ *)
 
-(* This helper function computes the location of the nth incoming
-   function argument: either in a register or relative to %rbp,
-   according to the calling conventions.  You might find it useful for
-   compile_fdecl.
-
-   [ NOTE: the first six arguments are numbered 0 .. 5 ]
-*)
-
-let arg_loc : int -> X86.operand = function
-  | 0 -> ~%Rdi
-  | 1 -> ~%Rsi
-  | 2 -> ~%Rdx
-  | 3 -> ~%Rcx
-  | 4 -> ~%R08
-  | 5 -> ~%R09
-  | n ->
-      let r = (n - 5) * 8 in
-      Ind3 (Lit r, Rbp)
-
 (* The code for the entry-point of a function must do several things:
 
    - since our simple compiler maps local %uids to stack slots,
@@ -396,7 +434,35 @@ let arg_loc : int -> X86.operand = function
      to hold all of the local stack slots.
 *)
 
-let compile_fdecl : (uid * ty) list -> uid -> fdecl -> elem list = todo3
+
+(* construct layout *)
+(* TODO: put all args on stack *)
+let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
+    ({fty= arg_ty, ret_ty; param; cfg} : fdecl) : elem list =
+  let old_ptr = (Pushq, [~%Rbp]) in
+  let new_ptr = (Movq, [~%Rsp; ~%Rbp]) in
+  let locals_size = match (List.hd arg_ty) with | Ptr t -> size_ty tdecls t | _ -> raise BackendFatal in
+  let stack_args = arg_ty |> drop 6 in 
+  let args_size =
+    stack_args |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0
+  in
+  (*let locals_size =
+    raise NotImplemented
+    (* locals_size should not map over tdecls but rather some list of local var declarations *)
+    (*tdecls |> List.map snd |> List.map (size_ty tdecls) |> List.fold_left ( + ) 0*)
+  in*)
+  let local_space = (Subq, [~$(args_size + locals_size); ~%Rsp]) in
+  let prologue : ins list = [old_ptr; new_ptr; local_space] in
+  let arg_locs = param |> enumerate |> List.map arg_loc in
+  let arg_layout = List.combine param arg_locs in
+  let layout = arg_layout in
+  let ctxt = {tdecls; layout} in
+  let entry_block =
+    gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
+  in
+  let f_lbl_block x acc = compile_lbl_block (fst x) ctxt (snd x) :: acc in
+  let lbl_blocks : elem list = List.fold_right f_lbl_block (snd cfg) [] in
+  entry_block :: lbl_blocks
 
 (* compile_gdecl ------------------------------------------------------------ *)
 
