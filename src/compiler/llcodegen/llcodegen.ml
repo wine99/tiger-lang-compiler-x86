@@ -511,12 +511,12 @@ and cgVar ?(load = true) (ctxt : context) (H.Var {var_base; ty; _}) =
       if load then aiwf "field" @@ Ll.Load (return_llty, field_ptr)
       else return field_ptr
   | SubscriptVar (var, exp) ->
-      let inbound_lbl = fresh "inbound_lbl" in
+      (* let inbound_lbl = fresh "inbound_lbl" in
       let inbound2_lbl = fresh "inbound2_lbl" in
-      let outbound_lbl = fresh "outbound_lbl" in
+      let outbound_lbl = fresh "outbound_lbl" in *)
       let* arrptr = cgVar ctxt var in
       let* index = cgExp ctxt exp in
-      let* arr_ptr = aiwf "arr_ptr" @@ Bitcast (ptr_i8, arrptr, Ptr I64) in
+      (* let* arr_ptr = aiwf "arr_ptr" @@ Bitcast (ptr_i8, arrptr, Ptr I64) in
       let* arr_size_ptr_raw =
         aiwf "arr_size_ptr_raw" @@ Gep (I64, arr_ptr, [Ll.Const (-1)])
       in
@@ -546,7 +546,7 @@ and cgVar ?(load = true) (ctxt : context) (H.Var {var_base; ty; _}) =
         (B.term_block @@ Ll.Cbr (cmp2, inbound2_lbl, outbound_lbl), Ll.Null)
       in
       (* Inbound 2 branch *)
-      let* _ = (B.start_block @@ inbound2_lbl, Ll.Null) in
+      let* _ = (B.start_block @@ inbound2_lbl, Ll.Null) in *)
       let* arr_ptr =
         aiwf "arr_ptr" @@ Bitcast (ptr_i8, arrptr, Ptr return_llty)
       in
@@ -570,7 +570,7 @@ and assoc_index a l =
   loop l 0
 
 and mk_var_load_inst ctxt ty var_ptr =
-  let null_lbl = fresh "null_lbl" in
+  (* let null_lbl = fresh "null_lbl" in
   let not_null_lbl = fresh "not_null_lbl" in
   let* cmp =
     aiwf "var_cmp" @@ Ll.Icmp (Ll.Eq, Ll.Ptr ty, Ll.Null, var_ptr)
@@ -597,7 +597,7 @@ and mk_var_load_inst ctxt ty var_ptr =
   in
   let* _ = (B.term_block @@ Ll.Br not_null_lbl, Ll.Null) in
   (* Not-null branch *)
-  let* _ = (B.start_block @@ not_null_lbl, Ll.Null) in
+  let* _ = (B.start_block @@ not_null_lbl, Ll.Null) in *)
   aiwf "var" @@ Ll.Load (ty, var_ptr)
 
 (* Usage: pass locals to parent_ptr *)

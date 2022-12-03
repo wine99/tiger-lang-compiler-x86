@@ -1,4 +1,5 @@
 [
+  {"file": "post/batch/simple_plus.tig", "feature-sets": ["xasm1"]},
   {"file": "neg/lex/123abc.tig", "feature-sets": ["lex0"]},
   {"file": "neg/lex/emoji.tig", "feature-sets": ["lex0"]},
   {"file": "neg/lex/emoji_ff.tig", "feature-sets": ["lex0", "lex2"]},
@@ -67,7 +68,7 @@
   {"file": "pos/batch/lexer_ascii.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "par0", "sem0", "xasm1", "xasm2"]},
   {"file": "pos/batch/lexer_ascii_alt.tig", "feature-sets": ["lex0", "lex2", "llvm0", "par0", "sem0", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/batch/lexer_formfeed.tig", "feature-sets": ["lex0", "lex2", "llvm0", "par0", "sem0", "xasm1", "xasm2"]},
-  {"file": "pos/batch/lisp.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "par3", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
+  // {"file": "pos/batch/lisp.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "par3", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/batch/lots_of_locals.tig", "feature-sets": ["lex0", "lex2", "llvm0", "llvm2", "par0", "par1", "par2", "sem0", "sem2", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/batch/nil_seq_last_ok.tig", "feature-sets": ["lex0", "lex1", "llvm0", "llvm2", "par0", "par1", "par2", "sem0", "sem2", "xasm1", "xasm2"]},
   {"file": "pos/batch/queens.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
@@ -118,7 +119,7 @@
   {"file": "pos/batch/zero.tig", "feature-sets": ["lex0", "llvm0", "par0", "sem0", "xasm1", "xasm2"]},
   {"file": "pos/interactive/chessfortwo.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/interactive/gameoflife.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
-  {"file": "pos/interactive/lisp.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "par3", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
+  // {"file": "pos/interactive/lisp.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "par3", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/interactive/mandelbrot.tig", "feature-sets": ["lex0", "lex2", "llvm0", "llvm1", "llvm3", "llvm4", "par0", "par1", "par3", "sem0", "sem1", "sem3", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/interactive/maze.tig", "feature-sets": ["lex0", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},
   {"file": "pos/interactive/merge.tig", "feature-sets": ["lex0", "lex1", "lex2", "llvm0", "llvm1", "llvm2", "llvm3", "llvm4", "par0", "par1", "par2", "par3", "sem0", "sem1", "sem2", "sem3", "xasm1", "xasm2", "xasm3"]},

@@ -18,6 +18,7 @@ let defaultPhasesToCheck =
   let open TestPhases in 
     [ 
      X86 Batch; X86 Interactive
+     (* LL Batch; LL Interactive *)
     ]
         
           
