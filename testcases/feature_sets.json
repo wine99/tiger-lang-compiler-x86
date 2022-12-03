@@ -1,4 +1,5 @@
 [
+  {"file": "post/batch/simple_plus.tig", "feature-sets": ["xasm1"]},
   {"file": "neg/lex/123abc.tig", "feature-sets": ["lex0"]},
   {"file": "neg/lex/emoji.tig", "feature-sets": ["lex0"]},
   {"file": "neg/lex/emoji_ff.tig", "feature-sets": ["lex0", "lex2"]},
