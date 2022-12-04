@@ -433,8 +433,13 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       ( match opt_local_var with
       | Some id -> comment :: compile_gep ctxt (lookup id) (ty, operand) ls
       | None -> raise BackendFatal )
-  | Zext (_, op, _) -> [comment; compile_operand ctxt ~%Rax op]
-  | Ptrtoint (_, op, _) -> [comment; compile_operand ctxt ~%Rax op]
+  | Bitcast (_, op, _) | Zext (_, op, _) | Ptrtoint (_, op, _) ->
+      ( match opt_local_var with
+      | Some id ->
+          [ comment
+          ; compile_operand ctxt ~%Rax op
+          ; (Movq, [~%Rax; lookup id])]
+      | None -> raise BackendFatal )
   | Comment _ -> []
 
 (* compiling terminators  --------------------------------------------------- *)
