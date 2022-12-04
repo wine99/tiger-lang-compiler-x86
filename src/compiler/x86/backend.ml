@@ -324,12 +324,20 @@ let compile_gep (ctxt : ctxt) (target : X86.operand) ((op_ty, op) : ty * Ll.oper
   let offset =
     match indices with
     (* array indexing *)
-    | [Const i] ->
+    | [i] ->
         [ (Movq, [~$op_size; ~%R11])
-        ; (Imulq, [~$i; ~%R11])
+        ; compile_operand ctxt ~%R10 i
+        ; (Pushq, [~%Rdx])
+        ; (Imulq, [~%R10; ~%R11])
+        ; (Popq, [~%Rdx])
         ; (Addq, [~%R11; ~%Rax]) ]
     (* field accessing *)
-    | [Const 0; Const j] -> [(Addq, [~$(8 * j); ~%Rax])]
+    | [Const 0; j] ->
+        [ compile_operand ctxt ~%R11 j
+        ; (Pushq, [~%Rdx])
+        ; (Imulq, [~$8; ~%R11])
+        ; (Popq, [~%Rdx])
+        ; (Addq, [~%R11; ~%Rax])]
     | _ -> raise BackendFatal
   in
   op_86 :: offset @ [(Movq, [~%Rax; target])]
