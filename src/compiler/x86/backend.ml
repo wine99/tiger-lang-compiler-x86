@@ -418,8 +418,9 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
       let cmp = (Cmpq, [~%R11; ~%Rax]) in
-      let set = (Set cndx86, []) in
-      [comment; left_x86; right_x86; cmp; set]
+      let clear_rax = (Movq, [~$0; ~%Rax]) in
+      let set = (Set cndx86, [~%Al]) in
+      [comment; left_x86; right_x86; cmp; clear_rax; set]
   | Call (ty, func, args) ->
       ( match opt_local_var with
       | Some id -> comment :: compile_call ctxt (lookup id) func args
@@ -460,10 +461,11 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
       [(Jmp, [~$$(mangle uid)])]
   | Cbr (oper, uid1, uid2) ->
       let op_86 = compile_operand ctxt ~%Rax oper in
-      let cmp = (Cmpq, [~%Rax; Imm (Lit 0)]) in
+      let reg_of_0 = (Movq, [~$0; ~%R11]) in
+      let cmp = (Cmpq, [~%Rax; ~%R11]) in
       let jmp1 = (J Eq, [~$$(mangle uid2)]) in
       let jmp2 = (Jmp, [~$$(mangle uid1)]) in
-      [op_86; cmp; jmp1; jmp2]
+      [op_86; reg_of_0; cmp; jmp1; jmp2]
 
 (* compiling blocks --------------------------------------------------------- *)
 
