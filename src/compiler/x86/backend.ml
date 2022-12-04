@@ -206,7 +206,7 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
     - maybe take additional arg from compile_inst that specifies destination
     (i.e. if %rax is supposed to go to a stack slot) - match on this in compile_instn -- not here
       *)
-let compile_call (ctxt : ctxt) (target : X86.operand) (func : Ll.operand)
+let compile_call (ctxt : ctxt) (target : X86.operand option) (func : Ll.operand)
     (args : (ty * Ll.operand) list) : ins list =
   let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
@@ -227,7 +227,11 @@ let compile_call (ctxt : ctxt) (target : X86.operand) (func : Ll.operand)
   in
   let func_86 = compile_operand ctxt ~%R10 func in
   let call = (Callq, [~%R10]) in
-  let store_result = (Movq, [~%Rax; target]) in
+  let store_result = 
+    match target with
+    | Some target -> [(Movq, [~%Rax; target])]
+    | None -> []
+  in
   let undo_mov_arg_stack =
     (Addq, [~$(List.length arg_stack |> ( * ) 8 |> align); ~%Rsp])
   in
@@ -236,8 +240,8 @@ let compile_call (ctxt : ctxt) (target : X86.operand) (func : Ll.operand)
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
   mov_in @ mov_arg_reg @ mov_arg_stack
-  @ [func_86; call; store_result; undo_mov_arg_stack]
-  @ mov_out
+  @ [func_86; call] @ store_result
+  @ [undo_mov_arg_stack] @ mov_out
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
@@ -423,9 +427,8 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       [comment; left_x86; right_x86; cmp; clear_rax; set]
   | Call (ty, func, args) ->
       ( match opt_local_var with
-      | Some id -> comment :: compile_call ctxt (lookup id) func args
-      | None -> raise BackendFatal )
-  | Bitcast (_, op, _) -> comment :: [compile_operand ctxt ~%Rax op]
+      | Some id -> comment :: compile_call ctxt (Some (lookup id)) func args
+      | None -> comment :: compile_call ctxt None func args )
   | Gep (ty, operand, ls) ->
       ( match opt_local_var with
       | Some id -> comment :: compile_gep ctxt (lookup id) (ty, operand) ls
