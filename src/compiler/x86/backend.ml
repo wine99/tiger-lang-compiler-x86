@@ -51,7 +51,7 @@ let compile_cnd (c : Ll.cnd) : X86.cnd =
 
 let split_index i l =
   let rec loop j acc = function
-    | [] -> (acc, [])
+    | [] -> (List.rev acc, [])
     | x :: xs ->
         if j > 0 then loop (j - 1) (x :: acc) xs else (List.rev acc, xs)
   in
@@ -206,7 +206,7 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
     - maybe take additional arg from compile_inst that specifies destination
     (i.e. if %rax is supposed to go to a stack slot) - match on this in compile_instn -- not here
       *)
-let compile_call (ctxt : ctxt) (func : Ll.operand)
+let compile_call (ctxt : ctxt) (target : X86.operand) (func : Ll.operand)
     (args : (ty * Ll.operand) list) : ins list =
   let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
@@ -222,11 +222,12 @@ let compile_call (ctxt : ctxt) (func : Ll.operand)
     arg_stack |> List.rev |> List.concat_map f_mov_arg_stack
   in
   let mov_arg_stack =
-    if is_even (List.length arg_stack) then mov_arg_reg
+    if is_even (List.length arg_stack) then mov_arg_stack
     else (Subq, [~$8; ~%Rsp]) :: mov_arg_stack
   in
   let func_86 = compile_operand ctxt ~%R10 func in
   let call = (Callq, [~%R10]) in
+  let store_result = (Movq, [~%Rax; target]) in
   let undo_mov_arg_stack =
     (Addq, [~$(List.length arg_stack |> ( * ) 8 |> align); ~%Rsp])
   in
@@ -235,7 +236,7 @@ let compile_call (ctxt : ctxt) (func : Ll.operand)
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
   mov_in @ mov_arg_reg @ mov_arg_stack
-  @ [func_86; call; undo_mov_arg_stack]
+  @ [func_86; call; store_result; undo_mov_arg_stack]
   @ mov_out
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
@@ -288,17 +289,12 @@ let rec size_ty tdecls = function
 
 (* gep my_rec* %my_rec0, i32 i, i32 j *)
 (* i * op_size + op_86 + 8 * j *)
-let compile_gep (ctxt : ctxt) ((op_ty, op) : ty * Ll.operand)
+let compile_gep (ctxt : ctxt) (target : X86.operand) ((op_ty, op) : ty * Ll.operand)
     (indices : Ll.operand list) : ins list =
   let ty = actual_type ctxt.tdecls op_ty in
   let op_size = size_ty ctxt.tdecls ty in
   (* print_string (string_of_ty ty ^ "  " ^ string_of_int op_size ^ "\n") ; *)
-  let op_86 =
-    match op with
-    | Id uid -> (Leaq, [lookup ctxt.layout uid; ~%Rax])
-    | Null -> (Movq, [~$0; ~%Rax])
-    | _ -> raise BackendFatal
-  in
+  let op_86 = compile_operand ctxt ~%Rax op in
   (*
   let idx_regs = [~%R10; ~%R11] in
   let indices_86 =
@@ -332,7 +328,7 @@ let compile_gep (ctxt : ctxt) ((op_ty, op) : ty * Ll.operand)
     | [Const 0; Const j] -> [(Addq, [~$(8 * j); ~%Rax])]
     | _ -> raise BackendFatal
   in
-  op_86 :: offset
+  op_86 :: offset @ [(Movq, [~%Rax; target])]
 
 (* compiling instructions  -------------------------------------------------- *)
 
@@ -360,6 +356,7 @@ let compile_gep (ctxt : ctxt) ((op_ty, op) : ty * Ll.operand)
 
 let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
     ins list =
+  let lookup = lookup ctxt.layout in
   let comment =
     (X86.Comment (string_of_named_insn (opt_local_var, insn)), [])
   in
@@ -381,18 +378,25 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
       [comment; left_x86; right_x86; (op_x86, [~%R11; ~%Rax])]
-  | Alloca _ ->
-      []
-      (*
-      let type_width = size_ty ctxt.tdecls ty in
-      [(Subq, [~$type_width; ~%Rsp])]
-      *)
+  | Alloca _ -> (
+      (* x = alloc y
+         y occupies some amount of memeries in stack,
+         and x is the pointer next to it (on the lower side),
+         this also agrees with the func size_of_uid in func collect_uids *)
+      match opt_local_var with
+      | Some uid -> 
+          [ comment
+          ; (Leaq, [lookup uid; ~%Rax])
+          ; (Addq, [~$8; ~%Rax])
+          ; (Movq, [~%Rax; lookup uid])]
+      | _ -> raise BackendFatal
+  )
   | Load (_, op) ->
       let op_x86 = compile_operand ctxt ~%R11 op in
       let load_ins = (Movq, [Ind2 R11; ~%Rax]) in
       let store_back =
         match opt_local_var with
-        | Some id -> (Movq, [~%Rax; List.assoc id ctxt.layout])
+        | Some id -> (Movq, [~%Rax; lookup id])
         | None -> raise BackendFatal
       in
       [comment; op_x86; load_ins; store_back]
@@ -416,15 +420,14 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let cmp = (Cmpq, [~%R11; ~%Rax]) in
       let set = (Set cndx86, []) in
       [comment; left_x86; right_x86; cmp; set]
-  | Call (ty, func, args) -> comment :: compile_call ctxt func args
+  | Call (ty, func, args) ->
+      ( match opt_local_var with
+      | Some id -> comment :: compile_call ctxt (lookup id) func args
+      | None -> raise BackendFatal )
   | Bitcast (_, op, _) -> comment :: [compile_operand ctxt ~%Rax op]
   | Gep (ty, operand, ls) ->
-      comment
-      ::
       ( match opt_local_var with
-      | Some id ->
-          compile_gep ctxt (ty, operand) ls
-          @ [(Movq, [~%Rax; List.assoc id ctxt.layout])]
+      | Some id -> comment :: compile_gep ctxt (lookup id) (ty, operand) ls
       | None -> raise BackendFatal )
   | Zext (_, op, _) -> [comment; compile_operand ctxt ~%Rax op]
   | Ptrtoint (_, op, _) -> [comment; compile_operand ctxt ~%Rax op]
@@ -454,13 +457,8 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
       | None -> reset
       | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
   | Br uid ->
-      (* let lbl = ctxt.layout |> List.assoc uid in *)
       [(Jmp, [~$$(mangle uid)])]
   | Cbr (oper, uid1, uid2) ->
-      (*
-      let lbl1 = ctxt.layout |> List.assoc uid1 in
-      let lbl2 = ctxt.layout |> List.assoc uid2 in
-      *)
       let op_86 = compile_operand ctxt ~%Rax oper in
       let cmp = (Cmpq, [~%Rax; Imm (Lit 0)]) in
       let jmp1 = (J Eq, [~$$(mangle uid2)]) in
@@ -503,11 +501,15 @@ let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
      to hold all of the local stack slots.
 *)
 
-let rec print_layout = function
-  | [] -> ()
-  | (id, op) :: tail ->
-      print_string @@ Symbol.name id ^ ": " ^ X86.string_of_operand op ^ "\n" ;
-      print_layout tail
+let print_layout name layout =
+  let rec print_layout = function
+    | [] -> print_newline ()
+    | (id, op) :: tail ->
+        print_string @@ "  " ^ Symbol.name id ^ ": " ^ X86.string_of_operand op ^ "\n" ;
+        print_layout tail
+  in
+  print_string @@ "layout of function " ^ Symbol.name name ^ ":\n" ;
+  print_layout layout
 
 let type_op_insn : Ll.insn -> Ll.ty = function
   | Binop (_, ty, _, _) -> ty
@@ -524,7 +526,8 @@ let type_op_insn : Ll.insn -> Ll.ty = function
 
 let collect_uids tdecls (cfg : cfg) =
   let size_of_uid tdecls = function
-    | Alloca ty -> size_ty tdecls ty
+    (* see comment in the Alloca case in func compile_insn *)
+    | Alloca ty -> size_ty tdecls ty + 8
     | _ -> 8
   in
   let rec loop acc = function
@@ -574,7 +577,7 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
     param |> enumerate |> List.map arg_loc |> List.combine param
   in
   let layout = arg_layout @ locals_layout in
-  print_layout layout ;
+  print_layout uid layout ;
   let ctxt = {tdecls; layout} in
   let entry_block =
     gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
