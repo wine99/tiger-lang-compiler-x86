@@ -429,10 +429,15 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       in
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
-      let cmp = (Cmpq, [~%R11; ~%Rax]) in
+      (* operands of cmp in x86 are reversed *)
+      let cmp = (Cmpq, [~%Rax; ~%R11]) in
       let clear_rax = (Movq, [~$0; ~%Rax]) in
       let set = (Set cndx86, [~%Al]) in
-      [comment; left_x86; right_x86; cmp; clear_rax; set]
+      ( match opt_local_var with
+      | Some id ->
+          [ comment; left_x86; right_x86; cmp; clear_rax; set
+          ; (Movq, [~%Rax; lookup id])]
+      | None -> raise BackendFatal )
   | Call (ty, func, args) ->
       ( match opt_local_var with
       | Some id -> comment :: compile_call ctxt (Some (lookup id)) func args
