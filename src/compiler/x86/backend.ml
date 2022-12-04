@@ -389,7 +389,21 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       in
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
-      [comment; left_x86; right_x86; (op_x86, [~%R11; ~%Rax])]
+      let op =
+        match op_x86 with
+        | Imulq ->
+            [(Pushq, [~%Rdx]); (op_x86, [~%R11; ~%Rax]); (Popq, [~%Rdx])]
+        | Idivq -> 
+            [(Pushq, [~%Rdx]); (Cqto, []); (op_x86, [~%R11; ~%Rax]); (Popq, [~%Rdx])]
+        | Subq ->
+            [(op_x86, [~%Rax; ~%R11]); (Movq, [~%R11; ~%Rax])]
+        | _ -> [(op_x86, [~%R11; ~%Rax])]
+      in
+      ( match opt_local_var with
+      | Some id ->
+          [ comment; left_x86; right_x86 ]
+          @ op @ [(Movq, [~%Rax; lookup id])]
+      | None -> raise BackendFatal )
   | Alloca _ -> (
       (* x = alloc y
          y occupies some amount of memeries in stack,
