@@ -301,16 +301,12 @@ let compile_gep (ctxt : ctxt) (target : X86.operand)
     | [i] ->
         [ (Movq, [~$op_size; ~%R11])
         ; compile_operand ctxt ~%R10 i
-        ; (Pushq, [~%Rdx])
         ; (Imulq, [~%R10; ~%R11])
-        ; (Popq, [~%Rdx])
         ; (Addq, [~%R11; ~%Rax]) ]
     (* field accessing *)
     | [Const 0; j] ->
         [ compile_operand ctxt ~%R11 j
-        ; (Pushq, [~%Rdx])
         ; (Imulq, [~$8; ~%R11])
-        ; (Popq, [~%Rdx])
         ; (Addq, [~%R11; ~%Rax]) ]
     | _ -> raise BackendFatal
   in
@@ -366,7 +362,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let op =
         match op_x86 with
         | Imulq ->
-            [(Pushq, [~%Rdx]); (op_x86, [~%R11; ~%Rax]); (Popq, [~%Rdx])]
+            [(op_x86, [~%R11; ~%Rax])]
         | Idivq ->
             [ (Pushq, [~%Rdx])
             ; (Cqto, [])
