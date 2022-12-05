@@ -368,7 +368,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
             ; (Cqto, [])
             ; (op_x86, [right_reg])
             ; (Popq, [~%Rdx]) ]
-        | Subq ->
+        | Subq | Shlq | Shrq | Sarq ->
             [(op_x86, [right_reg; left_reg]); (Movq, [left_reg; right_reg])]
         | _ -> [(op_x86, [left_reg; right_reg])]
       in
