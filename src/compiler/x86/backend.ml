@@ -206,9 +206,9 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
     - maybe take additional arg from compile_inst that specifies destination
     (i.e. if %rax is supposed to go to a stack slot) - match on this in compile_instn -- not here
       *)
-let compile_call (ctxt : ctxt) (target : X86.operand option) (func : Ll.operand)
-    (args : (ty * Ll.operand) list) : ins list =
-  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
+let compile_call (ctxt : ctxt) (target : X86.operand option)
+    (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
+  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10] in
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
   (* Function call *)
   let arg_reg, arg_stack = split_index 6 args in
@@ -227,10 +227,8 @@ let compile_call (ctxt : ctxt) (target : X86.operand option) (func : Ll.operand)
   in
   let func_86 = compile_operand ctxt ~%R10 func in
   let call = (Callq, [~%R10]) in
-  let store_result = 
-    match target with
-    | Some target -> [(Movq, [~%Rax; target])]
-    | None -> []
+  let store_result =
+    match target with Some target -> [(Movq, [~%Rax; target])] | None -> []
   in
   let undo_mov_arg_stack =
     (Addq, [~$(List.length arg_stack |> ( * ) 8 |> align); ~%Rsp])
@@ -239,8 +237,7 @@ let compile_call (ctxt : ctxt) (target : X86.operand option) (func : Ll.operand)
   let mov_out =
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
-  mov_in @ mov_arg_reg @ mov_arg_stack
-  @ [func_86; call] @ store_result
+  mov_in @ mov_arg_reg @ mov_arg_stack @ [func_86; call] @ store_result
   @ [undo_mov_arg_stack] @ mov_out
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
@@ -293,54 +290,27 @@ let rec size_ty tdecls = function
 
 (* gep my_rec* %my_rec0, i32 i, i32 j *)
 (* i * op_size + op_86 + 8 * j *)
-let compile_gep (ctxt : ctxt) (target : X86.operand) ((op_ty, op) : ty * Ll.operand)
-    (indices : Ll.operand list) : ins list =
+let compile_gep (ctxt : ctxt) (target : X86.operand)
+    ((op_ty, op) : ty * Ll.operand) (indices : Ll.operand list) : ins list =
   let ty = actual_type ctxt.tdecls op_ty in
   let op_size = size_ty ctxt.tdecls ty in
-  (* print_string (string_of_ty ty ^ "  " ^ string_of_int op_size ^ "\n") ; *)
   let op_86 = compile_operand ctxt ~%Rax op in
-  (*
-  let idx_regs = [~%R10; ~%R11] in
-  let indices_86 =
-    indices |> List.combine idx_regs
-    |> List.map (fun (reg, idx) -> compile_operand ctxt reg idx)
-  in
-  let mul_i_size =
-    (Imulq, [~$op_size; List.hd idx_regs])
-    (* remember imulq is 128 bits i.e. 2 registers *)
-  in
-  let mul_j_size =
-    List.nth_opt indices_86 2
-    |> Option.map (fun _ -> (Imulq, [~$8; List.tl idx_regs |> List.hd]))
-  in
-  let add_size =
-    match mul_j_size with
-    | Some v -> v :: [(Addq, List.rev idx_regs)]
-    | None -> [(Addq, [~$0; List.hd idx_regs])]
-  in
-  let add_last = (Addq, [~%Rax; List.hd idx_regs]) in
-  [op_86; mul_i_size] @ add_size @ [add_last]
-  *)
   let offset =
     match indices with
     (* array indexing *)
     | [i] ->
         [ (Movq, [~$op_size; ~%R11])
         ; compile_operand ctxt ~%R10 i
-        ; (Pushq, [~%Rdx])
         ; (Imulq, [~%R10; ~%R11])
-        ; (Popq, [~%Rdx])
         ; (Addq, [~%R11; ~%Rax]) ]
     (* field accessing *)
     | [Const 0; j] ->
         [ compile_operand ctxt ~%R11 j
-        ; (Pushq, [~%Rdx])
         ; (Imulq, [~$8; ~%R11])
-        ; (Popq, [~%Rdx])
-        ; (Addq, [~%R11; ~%Rax])]
+        ; (Addq, [~%R11; ~%Rax]) ]
     | _ -> raise BackendFatal
   in
-  op_86 :: offset @ [(Movq, [~%Rax; target])]
+  (op_86 :: offset) @ [(Movq, [~%Rax; target])]
 
 (* compiling instructions  -------------------------------------------------- *)
 
@@ -373,50 +343,55 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
     (X86.Comment (string_of_named_insn (opt_local_var, insn)), [])
   in
   match insn with
-  | Binop (op, _, left, right) ->
+  | Binop (op, _, left, right) -> (
       let op_x86 =
         match op with
-        | Add -> Addq
-        | Sub -> Subq
-        | Mul -> Imulq
-        | SDiv -> Idivq
-        | Shl -> Shlq
-        | Lshr -> Shrq
-        | Ashr -> Sarq
-        | And -> Andq
-        | Or -> Orq
-        | Xor -> Xorq
+        | Add -> Addq (* Not-ordered *)
+        | Sub -> Subq (* Ordered *)
+        | Mul -> Imulq (* Not-ordered *)
+        | SDiv -> Idivq (* Order *)
+        | Shl -> Shlq (* Order, switch order for x86 *)
+        | Lshr -> Shrq (* Order, switch order for x86 *)
+        | Ashr -> Sarq (* Order, switch order for x86 *)
+        | And -> Andq (* Not-ordered *)
+        | Or -> Orq (* Not-ordered *)
+        | Xor -> Xorq (* Not-ordered *)
       in
-      let left_x86 = compile_operand ctxt ~%R11 left in
-      let right_x86 = compile_operand ctxt ~%Rax right in
+      let left_reg = ~%Rax in
+      let right_reg = ~%R11 in
+      let left_x86 = compile_operand ctxt left_reg left in
+      let right_x86 = compile_operand ctxt right_reg right in
       let op =
         match op_x86 with
-        | Imulq ->
-            [(Pushq, [~%Rdx]); (op_x86, [~%R11; ~%Rax]); (Popq, [~%Rdx])]
-        | Idivq -> 
-            [(Pushq, [~%Rdx]); (Cqto, []); (op_x86, [~%R11; ~%Rax]); (Popq, [~%Rdx])]
-        | Subq ->
-            [(op_x86, [~%Rax; ~%R11]); (Movq, [~%R11; ~%Rax])]
-        | _ -> [(op_x86, [~%R11; ~%Rax])]
+        | Idivq ->
+            [ (Pushq, [~%Rdx])
+            ; (Cqto, [])
+            ; (op_x86, [right_reg])
+            ; (Popq, [~%Rdx]) ]
+        | Subq | Shlq | Shrq | Sarq ->
+            [(op_x86, [right_reg; left_reg]); (Movq, [left_reg; right_reg])]
+        | _ -> [(op_x86, [left_reg; right_reg])]
       in
-      ( match opt_local_var with
-      | Some id ->
-          [ comment; left_x86; right_x86 ]
-          @ op @ [(Movq, [~%Rax; lookup id])]
-      | None -> raise BackendFatal )
+      match (opt_local_var, op_x86) with
+      | Some id, Idivq ->
+          [comment; left_x86; right_x86] @ op @ [(Movq, [~%Rax; lookup id])]
+      | Some id, _ ->
+          [comment; left_x86; right_x86]
+          @ op
+          @ [(Movq, [right_reg; lookup id])]
+      | None, _ -> raise BackendFatal )
   | Alloca _ -> (
-      (* x = alloc y
-         y occupies some amount of memeries in stack,
-         and x is the pointer next to it (on the lower side),
-         this also agrees with the func size_of_uid in func collect_uids *)
-      match opt_local_var with
-      | Some uid -> 
-          [ comment
-          ; (Leaq, [lookup uid; ~%Rax])
-          ; (Addq, [~$8; ~%Rax])
-          ; (Movq, [~%Rax; lookup uid])]
-      | _ -> raise BackendFatal
-  )
+    (* x = alloc y
+       y occupies some amount of memory in stack,
+       and x is the pointer next to it (on the lower side),
+       this also agrees with the func size_of_uid in func collect_uids *)
+    match opt_local_var with
+    | Some uid ->
+        [ comment
+        ; (Leaq, [lookup uid; ~%Rax])
+        ; (Addq, [~$8; ~%Rax])
+        ; (Movq, [~%Rax; lookup uid]) ]
+    | _ -> raise BackendFatal )
   | Load (_, op) ->
       let op_x86 = compile_operand ctxt ~%R11 op in
       let load_ins = (Movq, [Ind2 R11; ~%Rax]) in
@@ -431,7 +406,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let dest_x86 = compile_operand ctxt ~%Rax dest in
       let store_ins = (Movq, [~%R11; Ind2 Rax]) in
       [comment; src_x86; dest_x86; store_ins]
-  | Icmp (cnd, _, left, right) ->
+  | Icmp (cnd, _, left, right) -> (
       let cndx86 : X86.cnd =
         match cnd with
         | Eq -> Eq
@@ -445,28 +420,32 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let right_x86 = compile_operand ctxt ~%Rax right in
       (* operands of cmp in x86 are reversed *)
       let cmp = (Cmpq, [~%Rax; ~%R11]) in
-      let clear_rax = (Movq, [~$0; ~%Rax]) in
-      let set = (Set cndx86, [~%Al]) in
-      ( match opt_local_var with
-      | Some id ->
-          [ comment; left_x86; right_x86; cmp; clear_rax; set
-          ; (Movq, [~%Rax; lookup id])]
-      | None -> raise BackendFatal )
-  | Call (ty, func, args) ->
-      ( match opt_local_var with
-      | Some id -> comment :: compile_call ctxt (Some (lookup id)) func args
-      | None -> comment :: compile_call ctxt None func args )
-  | Gep (ty, operand, ls) ->
-      ( match opt_local_var with
-      | Some id -> comment :: compile_gep ctxt (lookup id) (ty, operand) ls
-      | None -> raise BackendFatal )
-  | Bitcast (_, op, _) | Zext (_, op, _) | Ptrtoint (_, op, _) ->
-      ( match opt_local_var with
-      | Some id ->
-          [ comment
-          ; compile_operand ctxt ~%Rax op
-          ; (Movq, [~%Rax; lookup id])]
-      | None -> raise BackendFatal )
+      let res =
+        Option.map
+          (fun id ->
+            let op = lookup id in
+            [ comment
+            ; left_x86
+            ; right_x86
+            ; cmp
+            ; (Movq, [~$0; op])
+            ; (Set cndx86, [op]) ] )
+          opt_local_var
+      in
+      match res with Some x -> x | None -> raise BackendFatal )
+  | Call (ty, func, args) -> (
+    match opt_local_var with
+    | Some id -> comment :: compile_call ctxt (Some (lookup id)) func args
+    | None -> comment :: compile_call ctxt None func args )
+  | Gep (ty, operand, ls) -> (
+    match opt_local_var with
+    | Some id -> comment :: compile_gep ctxt (lookup id) (ty, operand) ls
+    | None -> raise BackendFatal )
+  | Bitcast (_, op, _) | Zext (_, op, _) | Ptrtoint (_, op, _) -> (
+    match opt_local_var with
+    | Some id ->
+        [comment; compile_operand ctxt ~%Rax op; (Movq, [~%Rax; lookup id])]
+    | None -> raise BackendFatal )
   | Comment _ -> []
 
 (* compiling terminators  --------------------------------------------------- *)
@@ -492,8 +471,7 @@ let compile_terminator (ctxt : ctxt) (term : terminator) : ins list =
       match oper_opt with
       | None -> reset
       | Some oper -> compile_operand ctxt ~%Rax oper :: reset )
-  | Br uid ->
-      [(Jmp, [~$$(mangle uid)])]
+  | Br uid -> [(Jmp, [~$$(mangle uid)])]
   | Cbr (oper, uid1, uid2) ->
       let op_86 = compile_operand ctxt ~%Rax oper in
       let reg_of_0 = (Movq, [~$0; ~%R11]) in
@@ -542,7 +520,8 @@ let print_layout name layout =
   let rec print_layout = function
     | [] -> print_newline ()
     | (id, op) :: tail ->
-        print_string @@ "  " ^ Symbol.name id ^ ": " ^ X86.string_of_operand op ^ "\n" ;
+        print_string @@ "  " ^ Symbol.name id ^ ": "
+        ^ X86.string_of_operand op ^ "\n" ;
         print_layout tail
   in
   print_string @@ "layout of function " ^ Symbol.name name ^ ":\n" ;

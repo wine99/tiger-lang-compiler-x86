@@ -25,7 +25,6 @@ type imm = Lit of quad
 type reg = Rip
          | Rax | Rbx | Rcx | Rdx | Rsi | Rdi | Rbp | Rsp
          | R08 | R09 | R10 | R11 | R12 | R13 | R14 | R15
-         | Al
 
 type operand = Imm of imm        (* immediate *)
              | Reg of reg            (* register *)
@@ -85,7 +84,6 @@ let string_of_reg (r:reg) : string =
   | Rsi -> "%rsi" | Rdi -> "%rdi" | Rbp -> "%rbp" | Rsp -> "%rsp"
   | R08 -> "%r8"  | R09 -> "%r9"  | R10 -> "%r10" | R11 -> "%r11"
   | R12 -> "%r12" | R13 -> "%r13" | R14 -> "%r14" | R15 -> "%r15"
-  | Al -> "%al"
 
 let string_of_lbl (l:lbl) : string = l
 
