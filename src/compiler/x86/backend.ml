@@ -346,35 +346,40 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
   | Binop (op, _, left, right) -> (
       let op_x86 =
         match op with
-        | Add -> Addq
-        | Sub -> Subq
-        | Mul -> Imulq
-        | SDiv -> Idivq
-        | Shl -> Shlq
-        | Lshr -> Shrq
-        | Ashr -> Sarq
-        | And -> Andq
-        | Or -> Orq
-        | Xor -> Xorq
+        | Add -> Addq (* Not-ordered *)
+        | Sub -> Subq (* Ordered *)
+        | Mul -> Imulq (* Not-ordered *)
+        | SDiv -> Idivq (* Order *)
+        | Shl -> Shlq (* Order, switch order for x86 *)
+        | Lshr -> Shrq (* Order, switch order for x86 *)
+        | Ashr -> Sarq (* Order, switch order for x86 *)
+        | And -> Andq (* Not-ordered *)
+        | Or -> Orq (* Not-ordered *)
+        | Xor -> Xorq (* Not-ordered *)
       in
-      let left_x86 = compile_operand ctxt ~%R11 left in
-      let right_x86 = compile_operand ctxt ~%Rax right in
+      let left_reg = ~%Rax in
+      let right_reg = ~%R11 in
+      let left_x86 = compile_operand ctxt left_reg left in
+      let right_x86 = compile_operand ctxt right_reg right in
       let op =
         match op_x86 with
-        | Imulq ->
-            [(op_x86, [~%R11; ~%Rax])]
         | Idivq ->
             [ (Pushq, [~%Rdx])
             ; (Cqto, [])
-            ; (op_x86, [~%R11; ~%Rax])
+            ; (op_x86, [right_reg])
             ; (Popq, [~%Rdx]) ]
-        | Subq -> [(op_x86, [~%Rax; ~%R11]); (Movq, [~%R11; ~%Rax])]
-        | _ -> [(op_x86, [~%R11; ~%Rax])]
+        | Subq ->
+            [(op_x86, [right_reg; left_reg]); (Movq, [left_reg; right_reg])]
+        | _ -> [(op_x86, [left_reg; right_reg])]
       in
-      match opt_local_var with
-      | Some id ->
+      match (opt_local_var, op_x86) with
+      | Some id, Idivq ->
           [comment; left_x86; right_x86] @ op @ [(Movq, [~%Rax; lookup id])]
-      | None -> raise BackendFatal )
+      | Some id, _ ->
+          [comment; left_x86; right_x86]
+          @ op
+          @ [(Movq, [right_reg; lookup id])]
+      | None, _ -> raise BackendFatal )
   | Alloca _ -> (
     (* x = alloc y
        y occupies some amount of memory in stack,
