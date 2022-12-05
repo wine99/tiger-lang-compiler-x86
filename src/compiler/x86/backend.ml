@@ -294,30 +294,7 @@ let compile_gep (ctxt : ctxt) (target : X86.operand)
     ((op_ty, op) : ty * Ll.operand) (indices : Ll.operand list) : ins list =
   let ty = actual_type ctxt.tdecls op_ty in
   let op_size = size_ty ctxt.tdecls ty in
-  (* print_string (string_of_ty ty ^ "  " ^ string_of_int op_size ^ "\n") ; *)
   let op_86 = compile_operand ctxt ~%Rax op in
-  (*
-  let idx_regs = [~%R10; ~%R11] in
-  let indices_86 =
-    indices |> List.combine idx_regs
-    |> List.map (fun (reg, idx) -> compile_operand ctxt reg idx)
-  in
-  let mul_i_size =
-    (Imulq, [~$op_size; List.hd idx_regs])
-    (* remember imulq is 128 bits i.e. 2 registers *)
-  in
-  let mul_j_size =
-    List.nth_opt indices_86 2
-    |> Option.map (fun _ -> (Imulq, [~$8; List.tl idx_regs |> List.hd]))
-  in
-  let add_size =
-    match mul_j_size with
-    | Some v -> v :: [(Addq, List.rev idx_regs)]
-    | None -> [(Addq, [~$0; List.hd idx_regs])]
-  in
-  let add_last = (Addq, [~%Rax; List.hd idx_regs]) in
-  [op_86; mul_i_size] @ add_size @ [add_last]
-  *)
   let offset =
     match indices with
     (* array indexing *)
