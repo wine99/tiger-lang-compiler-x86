@@ -404,7 +404,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       | None -> raise BackendFatal )
   | Alloca _ -> (
     (* x = alloc y
-       y occupies some amount of memeries in stack,
+       y occupies some amount of memory in stack,
        and x is the pointer next to it (on the lower side),
        this also agrees with the func size_of_uid in func collect_uids *)
     match opt_local_var with
