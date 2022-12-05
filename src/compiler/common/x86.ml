@@ -25,7 +25,6 @@ type imm = Lit of quad
 type reg = Rip
          | Rax | Rbx | Rcx | Rdx | Rsi | Rdi | Rbp | Rsp
          | R08 | R09 | R10 | R11 | R12 | R13 | R14 | R15
-         | Al
 
 type operand = Imm of imm        (* immediate *)
              | Reg of reg            (* register *)
