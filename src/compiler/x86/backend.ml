@@ -208,7 +208,7 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
       *)
 let compile_call (ctxt : ctxt) (target : X86.operand option)
     (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
-  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10; R11] in
+  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10] in
   let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
   (* Function call *)
   let arg_reg, arg_stack = split_index 6 args in
