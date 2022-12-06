@@ -51,7 +51,7 @@ let split_index i l =
 
 let lbl_of = function uid -> S.name uid
 
-let enumerate l = List.mapi (fun i _ -> i) l
+let enumerate = List.mapi (fun i _ -> i)
 
 let is_even = function n -> n mod 2 = 0
 
