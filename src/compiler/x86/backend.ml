@@ -57,6 +57,9 @@ let is_even = function n -> n mod 2 = 0
 
 let align = function n when n mod 16 = 0 -> n | n -> n + 8
 
+(* Define function composition because the OCaml stdlib does not have it :) *)
+let ( >> ) f g x = g (f x)
+
 (* This helper function computes the location of the nth incoming
    function argument: either in a register or relative to %rbp,
    according to the calling conventions.  You might find it useful for
@@ -502,7 +505,6 @@ let collect_uids tdecls (cfg : cfg) =
         loop ((uid, size_of_uid tdecls insn) :: acc) tail
     | (None, _) :: tail -> loop acc tail
   in
-  let ( >> ) f g x = g (f x) in
   let head_block = loop [] (fst cfg).insns |> List.rev in
   let tail_block =
     snd cfg |> List.map snd
