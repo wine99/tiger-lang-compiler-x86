@@ -433,7 +433,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
           opt_local_var
       in
       match res with Some x -> x | None -> raise BackendFatal )
-  | Call (ty, func, args) -> (
+  | Call (_, func, args) -> (
     match opt_local_var with
     | Some id -> comment :: compile_call ctxt (Some (lookup id)) func args
     | None -> comment :: compile_call ctxt None func args )
