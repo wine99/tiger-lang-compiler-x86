@@ -51,11 +51,14 @@ let split_index i l =
 
 let lbl_of = function uid -> S.name uid
 
-let enumerate l = List.mapi (fun i _ -> i) l
+let enumerate = List.mapi (fun i _ -> i)
 
 let is_even = function n -> n mod 2 = 0
 
 let align = function n when n mod 16 = 0 -> n | n -> n + 8
+
+(* Define function composition because the OCaml stdlib does not have it :) *)
+let ( >> ) f g x = g (f x)
 
 (* This helper function computes the location of the nth incoming
    function argument: either in a register or relative to %rbp,
@@ -490,17 +493,6 @@ let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
      to hold all of the local stack slots.
 *)
 
-let print_layout name layout =
-  let rec print_layout = function
-    | [] -> print_newline ()
-    | (id, op) :: tail ->
-        print_string @@ "  " ^ Symbol.name id ^ ": "
-        ^ X86.string_of_operand op ^ "\n" ;
-        print_layout tail
-  in
-  print_string @@ "layout of function " ^ Symbol.name name ^ ":\n" ;
-  print_layout layout
-
 let collect_uids tdecls (cfg : cfg) =
   let size_of_uid tdecls = function
     (* see comment in the Alloca case in func compile_insn *)
@@ -513,7 +505,6 @@ let collect_uids tdecls (cfg : cfg) =
         loop ((uid, size_of_uid tdecls insn) :: acc) tail
     | (None, _) :: tail -> loop acc tail
   in
-  let ( >> ) f g x = g (f x) in
   let head_block = loop [] (fst cfg).insns |> List.rev in
   let tail_block =
     snd cfg |> List.map snd
@@ -554,7 +545,6 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
     param |> enumerate |> List.map arg_loc |> List.combine param
   in
   let layout = arg_layout @ locals_layout in
-  print_layout uid layout ;
   let ctxt = {tdecls; layout} in
   let entry_block =
     gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
