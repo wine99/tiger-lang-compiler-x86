@@ -490,17 +490,6 @@ let compile_lbl_block (lbl : lbl) (ctxt : ctxt) (block : block) : elem =
      to hold all of the local stack slots.
 *)
 
-let print_layout name layout =
-  let rec print_layout = function
-    | [] -> print_newline ()
-    | (id, op) :: tail ->
-        print_string @@ "  " ^ Symbol.name id ^ ": "
-        ^ X86.string_of_operand op ^ "\n" ;
-        print_layout tail
-  in
-  print_string @@ "layout of function " ^ Symbol.name name ^ ":\n" ;
-  print_layout layout
-
 let collect_uids tdecls (cfg : cfg) =
   let size_of_uid tdecls = function
     (* see comment in the Alloca case in func compile_insn *)
@@ -554,7 +543,6 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
     param |> enumerate |> List.map arg_loc |> List.combine param
   in
   let layout = arg_layout @ locals_layout in
-  print_layout uid layout ;
   let ctxt = {tdecls; layout} in
   let entry_block =
     gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
