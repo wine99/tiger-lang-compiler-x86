@@ -13,14 +13,6 @@ open X86.Asm
 
 exception BackendFatal (* use this for impossible cases *)
 
-exception NotImplemented
-
-(*let todo1 _ = raise NotImplemented*)
-
-(*let todo2 _ _ = raise NotImplemented*)
-
-let todo3 _ _ _ = raise NotImplemented
-
 (* Helpers ------------------------------------------------------------------ *)
 
 (* Platform-specific symbol generation *)
@@ -59,17 +51,7 @@ let split_index i l =
 
 let lbl_of = function uid -> S.name uid
 
-let rec drop n = function
-  | [] -> []
-  | _ :: xs when n > 0 -> drop (n - 1) xs
-  | ls -> ls
-
-let enumerate l =
-  let rec loop n acc = function
-    | [] -> acc
-    | _ :: xs -> loop (n + 1) (acc @ [n]) xs
-  in
-  loop 0 [] l
+let enumerate l = List.mapi (fun i _ -> i) l
 
 let is_even = function n -> n mod 2 = 0
 
@@ -407,15 +389,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
       let store_ins = (Movq, [~%R11; Ind2 Rax]) in
       [comment; src_x86; dest_x86; store_ins]
   | Icmp (cnd, _, left, right) -> (
-      let cndx86 : X86.cnd =
-        match cnd with
-        | Eq -> Eq
-        | Ne -> Neq
-        | Slt -> Lt
-        | Sle -> Le
-        | Sgt -> Gt
-        | Sge -> Ge
-      in
+      let cndx86 = compile_cnd cnd in
       let left_x86 = compile_operand ctxt ~%R11 left in
       let right_x86 = compile_operand ctxt ~%Rax right in
       (* operands of cmp in x86 are reversed *)
@@ -433,7 +407,7 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
           opt_local_var
       in
       match res with Some x -> x | None -> raise BackendFatal )
-  | Call (ty, func, args) -> (
+  | Call (_, func, args) -> (
     match opt_local_var with
     | Some id -> comment :: compile_call ctxt (Some (lookup id)) func args
     | None -> comment :: compile_call ctxt None func args )
@@ -526,19 +500,6 @@ let print_layout name layout =
   in
   print_string @@ "layout of function " ^ Symbol.name name ^ ":\n" ;
   print_layout layout
-
-let type_op_insn : Ll.insn -> Ll.ty = function
-  | Binop (_, ty, _, _) -> ty
-  | Alloca ty -> ty
-  | Load (ty, _) -> ty
-  | Store (ty, _, _) -> ty
-  | Icmp (_, ty, _, _) -> ty
-  | Call (ty, _, _) -> ty
-  | Bitcast (_, _, ty) -> ty
-  | Gep (ty, _, _) -> ty
-  | Zext (_, _, ty) -> ty
-  | Ptrtoint (_, _, ty) -> ty
-  | Comment _ -> Ll.Void
 
 let collect_uids tdecls (cfg : cfg) =
   let size_of_uid tdecls = function
