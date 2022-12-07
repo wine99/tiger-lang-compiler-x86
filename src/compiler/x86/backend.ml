@@ -353,13 +353,12 @@ let compile_insn (ctxt : ctxt) ((opt_local_var, insn) : uid option * insn) :
             ; (Popq, [~%Rdx]) ]
         | Subq ->
             [(op_x86, [right_reg; left_reg]); (Movq, [left_reg; right_reg])]
-        | Shlq | Shrq | Sarq ->
-          (match right with
-            | Const i ->
+        | Shlq | Shrq | Sarq -> (
+          match right with
+          | Const i ->
               let num = Imm (Lit i) in
-              [(op_x86, [num ; left_reg]) ; (Movq, [left_reg; right_reg])]
-            | _ -> raise BackendFatal
-          )
+              [(op_x86, [num; left_reg]); (Movq, [left_reg; right_reg])]
+          | _ -> raise BackendFatal )
         | _ -> [(op_x86, [left_reg; right_reg])]
       in
       match (opt_local_var, op_x86) with
