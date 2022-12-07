@@ -49,8 +49,6 @@ let split_index i l =
   in
   loop i [] l
 
-let lbl_of = function uid -> S.name uid
-
 let enumerate = List.mapi (fun i _ -> i)
 
 let is_even = function n -> n mod 2 = 0
@@ -554,7 +552,7 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
   let layout = arg_layout @ locals_layout in
   let ctxt = {tdecls; layout} in
   let entry_block =
-    gtext (lbl_of uid) (prologue @ compile_block ctxt (fst cfg))
+    gtext (mangle uid) (prologue @ compile_block ctxt (fst cfg))
   in
   let f_lbl_block x acc = compile_lbl_block (fst x) ctxt (snd x) :: acc in
   let lbl_blocks : elem list = List.fold_right f_lbl_block (snd cfg) [] in
