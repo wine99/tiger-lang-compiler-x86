@@ -271,29 +271,30 @@ let rec size_ty tdecls = function
     | Array (n, t) -> n * size_ty tdecls t
     | Namedt _ -> raise BackendFatal )
 
-(* gep my_rec* %my_rec0, i32 i, i32 j *)
-(* i * op_size + op_86 + 8 * j *)
 let compile_gep (ctxt : ctxt) (target : X86.operand)
     ((op_ty, op) : ty * Ll.operand) (indices : Ll.operand list) : ins list =
+  let cmpl_op = compile_operand ctxt in
   let ty = actual_type ctxt.tdecls op_ty in
-  let op_size = size_ty ctxt.tdecls ty in
-  let op_86 = compile_operand ctxt ~%Rax op in
-  let offset =
-    match indices with
-    (* array indexing *)
-    | [i] ->
-        [ (Movq, [~$op_size; ~%R11])
-        ; compile_operand ctxt ~%R10 i
-        ; (Imulq, [~%R10; ~%R11])
-        ; (Addq, [~%R11; ~%Rax]) ]
-    (* field accessing *)
-    | [Const 0; j] ->
-        [ compile_operand ctxt ~%R11 j
-        ; (Imulq, [~$8; ~%R11])
-        ; (Addq, [~%R11; ~%Rax]) ]
-    | _ -> raise BackendFatal
+  let ty_size = size_ty ctxt.tdecls ty in
+  let base = cmpl_op ~%Rax op in
+  let macro_offset =
+    List.nth_opt indices 0
+    |> Option.map (cmpl_op ~%R11)
+    |> Option.map (fun s ->
+           [s; (Imulq, [~$ty_size; ~%R11]); (Addq, [~%R11; ~%Rax])] )
+    |> Option.to_list |> List.flatten
   in
-  (op_86 :: offset) @ [(Movq, [~%Rax; target])]
+  let micro_offset =
+    List.tl indices
+    |> List.fold_left
+         (fun acc ll_oper ->
+           let oper_x86 = cmpl_op ~%R11 ll_oper in
+           let st = (Imulq, [~$8; ~%R11]) in
+           let ofst = (Addq, [~%R11; ~%Rax]) in
+           acc @ [oper_x86; st; ofst] )
+         []
+  in
+  (base :: macro_offset) @ micro_offset @ [(Movq, [~%Rax; target])]
 
 (* compiling instructions  -------------------------------------------------- *)
 
