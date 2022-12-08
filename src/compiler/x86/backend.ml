@@ -192,7 +192,9 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
 let compile_call (ctxt : ctxt) (target : X86.operand option)
     (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
   let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10] in
-  let mov_in = caller_saved |> List.map (fun x -> (Pushq, [~%x])) in
+  let save_caller_save =
+    caller_saved |> List.map (fun x -> (Pushq, [~%x]))
+  in
   (* Function call *)
   let arg_reg, arg_stack = split_index 6 args in
   let mov_arg_reg =
@@ -208,20 +210,22 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
     if is_even (List.length arg_stack) then mov_arg_stack
     else (Subq, [~$8; ~%Rsp]) :: mov_arg_stack
   in
-  let func_86 = compile_operand ctxt ~%R10 func in
+  let load_func_x86 = compile_operand ctxt ~%R10 func in
   let call = (Callq, [~%R10]) in
   let store_result =
     match target with Some target -> [(Movq, [~%Rax; target])] | None -> []
   in
-  let undo_mov_arg_stack =
-    (Addq, [~$(List.length arg_stack |> ( * ) 8 |> align); ~%Rsp])
+  let size_arg_stack = List.length arg_stack |> ( * ) 8 |> align in
+  let pop_args =
+    if size_arg_stack = 0 then [] else [(Addq, [~$size_arg_stack; ~%Rsp])]
   in
   (* Restore registers from stack. *)
-  let mov_out =
+  let restore_caller_save =
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
-  mov_in @ mov_arg_reg @ mov_arg_stack @ [func_86; call] @ store_result
-  @ [undo_mov_arg_stack] @ mov_out
+  let push_args = mov_arg_reg @ mov_arg_stack in
+  save_caller_save @ push_args @ [load_func_x86; call] @ store_result
+  @ pop_args @ restore_caller_save
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
@@ -271,29 +275,30 @@ let rec size_ty tdecls = function
     | Array (n, t) -> n * size_ty tdecls t
     | Namedt _ -> raise BackendFatal )
 
-(* gep my_rec* %my_rec0, i32 i, i32 j *)
-(* i * op_size + op_86 + 8 * j *)
 let compile_gep (ctxt : ctxt) (target : X86.operand)
     ((op_ty, op) : ty * Ll.operand) (indices : Ll.operand list) : ins list =
+  let cmpl_op = compile_operand ctxt in
   let ty = actual_type ctxt.tdecls op_ty in
-  let op_size = size_ty ctxt.tdecls ty in
-  let op_86 = compile_operand ctxt ~%Rax op in
-  let offset =
-    match indices with
-    (* array indexing *)
-    | [i] ->
-        [ (Movq, [~$op_size; ~%R11])
-        ; compile_operand ctxt ~%R10 i
-        ; (Imulq, [~%R10; ~%R11])
-        ; (Addq, [~%R11; ~%Rax]) ]
-    (* field accessing *)
-    | [Const 0; j] ->
-        [ compile_operand ctxt ~%R11 j
-        ; (Imulq, [~$8; ~%R11])
-        ; (Addq, [~%R11; ~%Rax]) ]
-    | _ -> raise BackendFatal
+  let ty_size = size_ty ctxt.tdecls ty in
+  let base = cmpl_op ~%Rax op in
+  let macro_offset =
+    List.nth_opt indices 0
+    |> Option.map (cmpl_op ~%R11)
+    |> Option.map (fun s ->
+           [s; (Imulq, [~$ty_size; ~%R11]); (Addq, [~%R11; ~%Rax])] )
+    |> Option.to_list |> List.flatten
   in
-  (op_86 :: offset) @ [(Movq, [~%Rax; target])]
+  let micro_offset =
+    List.tl indices
+    |> List.fold_left
+         (fun acc ll_oper ->
+           let oper_x86 = cmpl_op ~%R11 ll_oper in
+           let st = (Imulq, [~$8; ~%R11]) in
+           let ofst = (Addq, [~%R11; ~%Rax]) in
+           acc @ [oper_x86; st; ofst] )
+         []
+  in
+  (base :: macro_offset) @ micro_offset @ [(Movq, [~%Rax; target])]
 
 (* compiling instructions  -------------------------------------------------- *)
 
@@ -543,9 +548,10 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
         (new_index, (id, Ind3 (Lit (-new_index), Rbp))) )
       0 locals
   in
-  let locals_size = align locals_size in
-  let local_space = (Subq, [~$locals_size; ~%Rsp]) in
-  let prologue : ins list = [old_ptr; new_ptr; local_space] in
+  let alloc_local_space =
+    if locals_size = 0 then [] else [(Subq, [~$(align locals_size); ~%Rsp])]
+  in
+  let prologue : ins list = [old_ptr; new_ptr] @ alloc_local_space in
   let arg_layout =
     param |> enumerate |> List.map arg_loc |> List.combine param
   in
