@@ -108,7 +108,10 @@ type layout = (Ll.uid * X86.operand) list
 
 (* A context contains the global type declarations (needed for getelementptr
    calculations) and a stack layout. *)
-type ctxt = {tdecls: (Ll.tid * Ll.ty) list; layout: layout; caller_save: X86.operand list}
+type ctxt =
+  { tdecls: (Ll.tid * Ll.ty) list
+  ; layout: layout
+  ; caller_save: X86.operand list }
 
 (* useful for looking up items in tdecls or layouts *)
 let lookup m x = List.assoc x m
@@ -211,7 +214,7 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
   in
   let call =
     match func with
-    | Gid id -> (Callq, [Imm (Lbl (S.name id))])
+    | Gid id -> [(Callq, [Imm (Lbl (S.name id))])]
     | _ -> raise BackendFatal
   in
   let store_result =
@@ -226,8 +229,8 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
     ctxt.caller_save |> List.rev |> List.map (fun x -> (Popq, [x]))
   in
   let push_args = mov_arg_reg @ mov_arg_stack in
-  save_caller_save @ push_args @ [call] @ store_result
-  @ pop_args @ restore_caller_save
+  save_caller_save @ push_args @ call @ store_result @ pop_args
+  @ restore_caller_save
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
 
