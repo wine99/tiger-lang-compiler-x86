@@ -210,8 +210,11 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
     if is_even (List.length arg_stack) then mov_arg_stack
     else (Subq, [~$8; ~%Rsp]) :: mov_arg_stack
   in
-  let load_func_x86 = compile_operand ctxt ~%R10 func in
-  let call = (Callq, [~%R10]) in
+  let call =
+    match func with
+    | Gid id -> (Callq, [Imm (Lbl (S.name id))])
+    | _ -> raise BackendFatal
+  in
   let store_result =
     match target with Some target -> [(Movq, [~%Rax; target])] | None -> []
   in
@@ -224,7 +227,7 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
     caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
   in
   let push_args = mov_arg_reg @ mov_arg_stack in
-  save_caller_save @ push_args @ [load_func_x86; call] @ store_result
+  save_caller_save @ push_args @ [call] @ store_result
   @ pop_args @ restore_caller_save
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
