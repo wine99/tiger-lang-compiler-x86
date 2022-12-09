@@ -108,7 +108,7 @@ type layout = (Ll.uid * X86.operand) list
 
 (* A context contains the global type declarations (needed for getelementptr
    calculations) and a stack layout. *)
-type ctxt = {tdecls: (Ll.tid * Ll.ty) list; layout: layout}
+type ctxt = {tdecls: (Ll.tid * Ll.ty) list; layout: layout; caller_save: X86.operand list}
 
 (* useful for looking up items in tdecls or layouts *)
 let lookup m x = List.assoc x m
@@ -191,9 +191,8 @@ let compile_operand (ctxt : ctxt) (dest : X86.operand) (oper : Ll.operand) :
       *)
 let compile_call (ctxt : ctxt) (target : X86.operand option)
     (func : Ll.operand) (args : (ty * Ll.operand) list) : ins list =
-  let caller_saved = [Rax; R11; Rcx; Rdx; Rsi; Rdi; R08; R09; R10] in
   let save_caller_save =
-    caller_saved |> List.map (fun x -> (Pushq, [~%x]))
+    ctxt.caller_save |> List.map (fun x -> (Pushq, [x]))
   in
   (* Function call *)
   let arg_reg, arg_stack = split_index 6 args in
@@ -210,8 +209,11 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
     if is_even (List.length arg_stack) then mov_arg_stack
     else (Subq, [~$8; ~%Rsp]) :: mov_arg_stack
   in
-  let load_func_x86 = compile_operand ctxt ~%R10 func in
-  let call = (Callq, [~%R10]) in
+  let call =
+    match func with
+    | Gid id -> (Callq, [Imm (Lbl (S.name id))])
+    | _ -> raise BackendFatal
+  in
   let store_result =
     match target with Some target -> [(Movq, [~%Rax; target])] | None -> []
   in
@@ -221,10 +223,10 @@ let compile_call (ctxt : ctxt) (target : X86.operand option)
   in
   (* Restore registers from stack. *)
   let restore_caller_save =
-    caller_saved |> List.rev |> List.map (fun x -> (Popq, [~%x]))
+    ctxt.caller_save |> List.rev |> List.map (fun x -> (Popq, [x]))
   in
   let push_args = mov_arg_reg @ mov_arg_stack in
-  save_caller_save @ push_args @ [load_func_x86; call] @ store_result
+  save_caller_save @ push_args @ [call] @ store_result
   @ pop_args @ restore_caller_save
 
 (* compiling getelementptr (gep)  ------------------------------------------- *)
@@ -552,11 +554,11 @@ let compile_fdecl (tdecls : (uid * ty) list) (uid : uid)
     if locals_size = 0 then [] else [(Subq, [~$(align locals_size); ~%Rsp])]
   in
   let prologue : ins list = [old_ptr; new_ptr] @ alloc_local_space in
-  let arg_layout =
-    param |> enumerate |> List.map arg_loc |> List.combine param
-  in
+  let arg_locs = param |> enumerate |> List.map arg_loc in
+  let caller_save = fst (split_index 6 arg_locs) in
+  let arg_layout = List.combine param arg_locs in
   let layout = arg_layout @ locals_layout in
-  let ctxt = {tdecls; layout} in
+  let ctxt = {tdecls; layout; caller_save} in
   let entry_block =
     gtext (mangle uid) (prologue @ compile_block ctxt (fst cfg))
   in
